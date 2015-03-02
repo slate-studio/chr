@@ -1,0 +1,28 @@
+/* File & Image ------------------------------------------------------------ */
+.input-file,
+.input-image {
+  min-height: 102px; // NOTE: calculated based on image thumbnail size
+
+  a { color: $positiveColor; @include truncate; }
+  a:hover { text-decoration: underline; }
+
+  input[type=file] { margin-top: .5em; }
+  input[type=checkbox] { display: inline; width: auto; margin-right: .5em; margin-left: 1em; }
+  label { display: inline; font-size: .8em; }
+
+  &.empty {
+    input[type=file] { margin-top: .2em; }
+  }
+}
+
+.input-image:not(.empty) {
+  padding-left: 6.5em;
+  position: relative;
+  img {
+    position: absolute;
+    border-radius: 4px;
+    left: 1em;
+    top: .8em;
+    width: 4.7em;
+  }
+}

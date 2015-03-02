@@ -1,0 +1,89 @@
+/* Generic ----------------------------------------------------------------- */
+*, *:before, *:after { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+       font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+  a  { text-decoration: none; }
+}
+html, body, .view { overflow: hidden; } // .module
+
+/* Settings ---------------------------------------------------------------- */
+$positiveColor:  rgb( 74,135,238) !default;
+$stableColor:    rgb(178,178,178) !default;
+$lightColor:     rgb(210,210,210) !default;
+$assertiveColor: rgb(239, 78, 58) !default;
+$neutralColor:   rgb(246,246,246) !default;
+$contrastColor:  rgb(230,230,230) !default;
+$white:          rgb(255,255,255) !default;
+$black:          #333 !default;
+
+/* Mixins ------------------------------------------------------------------ */
+@mixin absolutePosition($coordinates: null null null null) {
+  position: absolute; top: nth($coordinates, 1); right: nth($coordinates, 2); bottom: nth($coordinates, 3); left: nth($coordinates, 4); }
+
+@mixin truncate {
+  text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+
+@mixin user-select-none {
+  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;
+}
+
+@mixin border($color) {
+  &:after { content: ''; display: block; height: 1px; //width: 100%;
+            background-color: $color; @include position(absolute, 0px 0px null 1em); }
+}
+
+@mixin noBorder { &:after { display: none; } }
+
+@mixin customScrollbar {
+  &::-webkit-scrollbar { width: 6px; background-color: $neutralColor; }
+  &::-webkit-scrollbar-thumb { background-color: $contrastColor; border-radius: 3px; }
+}
+
+@mixin scrollable { overflow: hidden; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+
+/* Imports ----------------------------------------------------------------- */
+@import "icons";
+@import "list";
+
+/* Menu -------------------------------------------------------------------- */
+.menu:before { content: 'CMS'; font-weight: 800; color: $contrastColor; line-height: 2.7;
+               position: absolute; display: block; margin-top: -2.7em; padding-left: 1em;
+               background-color: #fff; width: 100%; }
+.menu { margin-top: 2.7em; font-size: .8em; letter-spacing: 1px; }
+
+/* Headers ----------------------------------------------------------------- */
+.view header,
+.list header    { text-align: center; position: relative; z-index: 1; line-height: 2.6; max-height: 42px; background-color: $white;
+  .title        { font-weight: 500; padding: 1px 60px 0 40px; color: $black;
+                  @include truncate; }
+  .back, .close { @include absolutePosition(0 inherit inherit 0); @extend .icon-back; overflow: hidden; height: 41px; }
+  .new   { @include absolutePosition(0 0 inherit inherit); @extend .icon-plus; }
+  .save  { @include absolutePosition(0 1em inherit inherit); color: $positiveColor; &:hover { opacity: .5; } }
+}
+
+/* Items ------------------------------------------------------------------- */
+.items  { @include absolutePosition(42px 0 0 0); @include scrollable(); padding-bottom: 5em; }
+.menu a, .items .item {
+                  display: block; position: relative;
+                  padding: 1em; color: $black; @include border($neutralColor); margin-top: -1px;
+  &.active      { background-color: $neutralColor; z-index: 1; }
+  &:first-child { @include noBorder(); }
+}
+.items .item {
+  &.has-subtitle  { padding: .6em 1em; }
+  &.has-thumbnail { padding-left: 4.1em; }
+  &.has-thumbnail .item-title              { line-height: 2.15; }
+  &.has-thumbnail.has-subtitle             { padding-top: 1em; padding-bottom: .75em; }
+  &.has-thumbnail.has-subtitle .item-title { line-height: 1.2; }
+  &.reorderable   { padding-right: 2.5em; }
+  .icon-reorder   { top: 50%; margin-top: -20px; right: 0; }
+}
+.item-title     { @include truncate; }
+.item-subtitle  { @include truncate; color: $stableColor; font-size: .8em; line-height: 1.5; }
+.item-thumbnail { @include absolutePosition(.5em 0 0 .5em); width: 3.1em; height: 3.1em; }
+.item-thumbnail img { width: 100%; border-radius: 25px; }
+
+
+
+
+

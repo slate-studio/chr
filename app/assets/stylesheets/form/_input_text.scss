@@ -1,0 +1,48 @@
+/* CodeMirror --------------------------------------------------------------- */
+.input-html .CodeMirror {
+  border: 1px solid $contrastColor;
+  height: auto;
+}
+
+/* Redactor ---------------------------------------------------------------- */
+.input-redactor {
+  .redactor-box     { margin-bottom: 0; }
+  .redactor-toolbar { box-shadow: none; border-bottom: 2px solid $contrastColor; }
+  .redactor-editor  { border: 1px solid $contrastColor; border-top: 0; }
+}
+
+.redactor-box textarea { background: $white; color: $black; }
+
+.redactor-box-fullscreen {
+  .redactor-toolbar           { box-shadow: none; border-bottom: 2px solid $contrastColor; }
+  .redactor-placeholder:after { content: ''; }
+  .redactor-editor            { padding-bottom: 5em; border: none; }
+}
+
+.redactor-placeholder:after { color: $lightColor!important; }
+
+/* Modals: Files & Images -------------------------------------------------- */
+
+#redactor-modal-close { text-align: center; top: 5px; right: 5px; color: $stableColor; }
+#redactor-modal-close:hover { color: $black; }
+
+#redactor-modal header  { padding: 1.25em 2em 1.25em; font-size: 14px; }
+#redactor-modal section { padding: .5em 2em 2em; }
+
+#redactor-modal-tabber a        { border-color: $contrastColor; color: $black; }
+#redactor-modal-tabber a:hover  { background-color: $positiveColor; border-color: $positiveColor; color: $white; }
+#redactor-modal-tabber a.active { cursor: default; background-color: $contrastColor; border-color: $contrastColor; color: $black; }
+
+#redactor-modal label                    { margin: 20px 0 5px 0 !important; color: $stableColor; }
+#redactor-modal input[type="text"]       { box-shadow: none; border-color: $contrastColor;       }
+#redactor-modal input[type="text"]:focus { border-color: $positiveColor; box-shadow: none;       }
+
+#redactor-modal #redactor-modal-list         { overflow: auto; margin: 0; max-height: 374px; }
+#redactor-modal #redactor-modal-list li      { border-bottom-color: $contrastColor;          }
+#redactor-modal #redactor-modal-list a:hover { background-color: $neutralColor;              }
+
+#redactor-modal-images-list    { overflow: auto; height: 368px; margin: 1.5em 0 0; padding: 0; list-style: none;     }
+#redactor-modal-images-list li { float: left; margin: 0 1px 1px 0; width: 75px; height: 75px; display: inline-block; }
+
+#redactor-modal-tabber + #redactor-modal-image-droparea { margin-top: 1.5em;   }
+#redactor-modal-image-droparea #redactor-droparea       { padding: 172px 20px; }
