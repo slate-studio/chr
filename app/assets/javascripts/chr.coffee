@@ -1,4 +1,3 @@
-#= require modernizr
 #= require jquery
 #= require jquery_ujs
 #= require ./chr/vendor/jquery.scrollparent
@@ -15,9 +14,9 @@
 #= require ./chr/core/_module
 
 #= require ./chr/form/_form
+#= require ./chr/form/_inputString
 #= require ./chr/form/_inputCheckbox
 #= require ./chr/form/_inputColor
-#= require ./chr/form/_inputString
 #= require ./chr/form/_inputFile
 #= require ./chr/form/_inputHidden
 #= require ./chr/form/_inputList

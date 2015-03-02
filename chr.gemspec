@@ -23,11 +23,10 @@ out of the box: Rails, Firebase and localStorage.
   s.files         = `git ls-files`.split("\n")
   s.require_paths = ['lib']
 
-  s.add_dependency('bourbon')
-  s.add_dependency('jquery-rails')
-  s.add_dependency('coffee-rails')
-  s.add_dependency('modernizr-rails')
-  s.add_dependency('normalize-rails')
+  s.add_dependency('bourbon',         '~> 4.1')
+  s.add_dependency('jquery-rails',    '~> 4.0')
+  s.add_dependency('coffee-rails',    '~> 4.1')
+  s.add_dependency('normalize-rails', '~> 3.0')
 end
 
 
