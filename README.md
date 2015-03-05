@@ -2,18 +2,9 @@
 
 ## A simple and lightweight library for building data management web apps
 
-## Browser support
-
-- Chrome 26+
-- Firefox 29+
-- Internet Explorer 9+
-- Opera 15+
-- Safari 6.1+
-
 ## The Character family
 
-- [Mongosteen](https://github.com/slate-studio/mongosteen): An easy way to add restful actions
-- [Character Admin](https://github.com/slate-studio/chr-admin): Flexible javascript admin solution for Rails applications
+- [Mongosteen](https://github.com/slate-studio/mongosteen): An easy way to add restful actions for mongoid models
 
 ## Credits
 
