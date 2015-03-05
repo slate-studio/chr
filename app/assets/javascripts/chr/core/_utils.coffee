@@ -18,7 +18,7 @@
 @_escapeHtml = (string) -> String(string).replace /[&<>"'\/]/g, (s) -> _entityMap[s]
 
 # String.titleize
-if typeof String.prototype.startsWith != 'function'
+if typeof String.prototype.titleize != 'function'
   String.prototype.titleize = () -> return this.replace(/_/g, ' ').replace(/\b./g, ((m) -> m.toUpperCase()))
 
 # String.reverse
