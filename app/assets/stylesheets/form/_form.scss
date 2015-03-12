@@ -33,15 +33,6 @@
       @include absolutePosition(.4em .8em inherit inherit);
     }
   }
-
-  /* Imports --------------------------------------------------------------- */
-  @import "input_checkbox";
-  @import "input_color";
-  @import "input_file";
-  @import "input_list";
-  @import "input_string";
-  @import "input_text";
-  @import "nested_form";
 }
 
 

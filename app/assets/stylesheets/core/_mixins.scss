@@ -1,0 +1,24 @@
+/* Mixins ------------------------------------------------------------------ */
+@mixin absolutePosition($coordinates: null null null null) {
+  position: absolute; top: nth($coordinates, 1); right: nth($coordinates, 2); bottom: nth($coordinates, 3); left: nth($coordinates, 4); }
+
+@mixin truncate {
+  text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+
+@mixin user-select-none {
+  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;
+}
+
+@mixin border($color) {
+  &:after { content: ''; display: block; height: 1px; //width: 100%;
+            background-color: $color; @include position(absolute, 0px 0px null 1em); }
+}
+
+@mixin noBorder { &:after { display: none; } }
+
+@mixin customScrollbar {
+  &::-webkit-scrollbar { width: 6px; background-color: $neutralColor; }
+  &::-webkit-scrollbar-thumb { background-color: $contrastColor; border-radius: 3px; }
+}
+
+@mixin scrollable { overflow: hidden; overflow-y: scroll; -webkit-overflow-scrolling: touch; }

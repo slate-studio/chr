@@ -1,5 +1,3 @@
-#= require jquery
-#= require jquery_ujs
 #= require ./chr/vendor/jquery.scrollparent
 #= require ./chr/vendor/jquery.textarea_autosize
 #= require ./chr/vendor/jquery.typeahead
@@ -29,13 +27,3 @@
 
 #= require ./chr/core/_utils
 #= require ./chr/core/_chr
-
-# -------------------------------------
-# Settings
-# -------------------------------------
-$.fx.speeds._default = 200
-
-
-
-
-

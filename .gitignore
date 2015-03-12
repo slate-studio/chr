@@ -5,3 +5,5 @@ _site
 *swp
 Gemfile.lock
 tmp
+dist
+node_modules

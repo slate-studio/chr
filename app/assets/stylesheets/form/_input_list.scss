@@ -1,5 +1,5 @@
 /* List -------------------------------------------------------------------- */
-.input-list {
+.view .input-list {
   input   { padding-left: 2em; margin-top: .1em; }
   ul      { line-height: 1.5; margin: 0 0 0 2em; list-style: none; padding: 0; }
   ul li   { @include user-select-none; position: relative; }
@@ -16,7 +16,7 @@
   }
 }
 
-.input-list {
+.view .input-list {
   .twitter-typeahead       { width: 100%; }
   .twitter-typeahead:after {
     content: '+';

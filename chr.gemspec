@@ -14,8 +14,7 @@ Gem::Specification.new do |s|
   s.description = <<-DESC
 Character is a library written in CoffeeScript with a help of jQuery that allows to
 build data management web applications like CMS, news reader, email client etc. in a
-very fast and flexible way. It's responsive by default and supports a few data stores
-out of the box: Rails, Firebase and localStorage.
+very fast and flexible way. It's responsive by default and is data source independent.
   DESC
 
   s.rubyforge_project = 'chr'
@@ -24,7 +23,6 @@ out of the box: Rails, Firebase and localStorage.
   s.require_paths = ['lib']
 
   s.add_dependency('bourbon',         '>= 3.2')
-  s.add_dependency('jquery-rails',    '>= 3.1')
   s.add_dependency('coffee-rails',    '>= 4.0')
   s.add_dependency('normalize-rails', '>= 3.0')
 end

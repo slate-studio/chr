@@ -1,6 +1,6 @@
 /* File & Image ------------------------------------------------------------ */
-.input-file,
-.input-image {
+.view .input-file,
+.view .input-image {
   min-height: 102px; // NOTE: calculated based on image thumbnail size
 
   a { color: $positiveColor; @include truncate; }
@@ -15,7 +15,7 @@
   }
 }
 
-.input-image:not(.empty) {
+.view .input-image:not(.empty) {
   padding-left: 6.5em;
   position: relative;
   img {

@@ -1,7 +1,16 @@
-@import "normalize-rails";
 @import "bourbon";
 
+@import "core/settings";
+@import "core/mixins";
+@import "core/icons";
 @import "core/main";
-@import "form/form";
-
+@import "core/list";
 @import "core/responsive";
+
+@import "form/form";
+@import "form/input_checkbox";
+@import "form/input_color";
+@import "form/input_file";
+@import "form/input_list";
+@import "form/input_string";
+@import "form/nested_form";

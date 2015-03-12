@@ -6,45 +6,6 @@ html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
 }
 html, body, .view { overflow: hidden; } // .module
 
-/* Settings ---------------------------------------------------------------- */
-$positiveColor:  rgb( 74,135,238) !default;
-$stableColor:    rgb(178,178,178) !default;
-$lightColor:     rgb(210,210,210) !default;
-$assertiveColor: rgb(239, 78, 58) !default;
-$neutralColor:   rgb(246,246,246) !default;
-$contrastColor:  rgb(230,230,230) !default;
-$white:          rgb(255,255,255) !default;
-$black:          #333 !default;
-
-/* Mixins ------------------------------------------------------------------ */
-@mixin absolutePosition($coordinates: null null null null) {
-  position: absolute; top: nth($coordinates, 1); right: nth($coordinates, 2); bottom: nth($coordinates, 3); left: nth($coordinates, 4); }
-
-@mixin truncate {
-  text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-
-@mixin user-select-none {
-  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;
-}
-
-@mixin border($color) {
-  &:after { content: ''; display: block; height: 1px; //width: 100%;
-            background-color: $color; @include position(absolute, 0px 0px null 1em); }
-}
-
-@mixin noBorder { &:after { display: none; } }
-
-@mixin customScrollbar {
-  &::-webkit-scrollbar { width: 6px; background-color: $neutralColor; }
-  &::-webkit-scrollbar-thumb { background-color: $contrastColor; border-radius: 3px; }
-}
-
-@mixin scrollable { overflow: hidden; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
-
-/* Imports ----------------------------------------------------------------- */
-@import "icons";
-@import "list";
-
 /* Menu -------------------------------------------------------------------- */
 .menu:before { content: 'CHR'; font-weight: 800; color: $contrastColor; line-height: 2.7;
                position: absolute; display: block; margin-top: -2.7em; padding-left: 1em;
