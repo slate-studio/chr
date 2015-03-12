@@ -1,0 +1,36 @@
+{
+  "name": "chr",
+  "version": "0.1.4",
+  "homepage": "https://github.com/slate-studio/chr",
+  "authors": [
+    "Slate Studio (http://www.slatestudio.com)"
+  ],
+  "license": "MIT",
+  "description": "A simple and lightweight library for building data management web apps",
+  "main": "app/assets/stylesheets/_chr.scss, app/assets/javascripts/chr-dist.js",
+  "keywords": [
+    "library",
+    "javascript",
+    "application",
+    "cms",
+    "rest"
+  ],
+  "ignore": [
+    "**/.*",
+    "lib",
+    "chr.gemspec",
+    "Gemfile",
+    "Gemfile.lock",
+    "Gruntfile.coffee",
+    "package.json",
+    "Rakefile"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slate-studio/chr.git"
+  },
+  "dependencies": {
+    "bourbon": ">=4.0",
+    "normalize-scss": ">=3.0"
+  }
+}
