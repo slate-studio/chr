@@ -100,8 +100,8 @@ class @View
 
   onSave: (e) ->
     e.preventDefault()
-    serializedObj = @form.serialize()
-    if @object then @_updateObject(serializedObj) else @_createObject(serializedObj)
+    serializedFormObj = @form.serialize()
+    if @object then @_updateObject(serializedFormObj) else @_createObject(serializedFormObj)
 
   onDelete: (e) ->
     e.preventDefault()

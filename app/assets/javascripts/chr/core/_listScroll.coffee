@@ -15,7 +15,7 @@
       viewHeight           = $container.height()
 
       if listHeight < (viewHeight + e.target.scrollTop + 100)
-        listEl._loading -> arrayStore.fetchNextPage()
+        listEl._loading -> arrayStore.load()
 
 
 

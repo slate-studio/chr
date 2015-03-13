@@ -22,8 +22,9 @@
 #= require ./chr/form/_inputText
 #= require ./chr/form/_nestedForm
 
-#= require ./chr/store/_store
-#= require ./chr/store/_storeRails
+#= require ./chr/store/store
+#= require ./chr/store/store-rest
+#= require ./chr/store/store-mongosteen
 
 #= require ./chr/core/_utils
 #= require ./chr/core/_chr

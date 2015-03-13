@@ -76,8 +76,8 @@ class @Item
     @$el.remove()
 
   position: ->
-    fieldName = @config.arrayStore.sortBy
-    @object[fieldName]
+    positionFieldName = @config.arrayStore.sortBy
+    parseFloat(@object[positionFieldName])
 
 
 
