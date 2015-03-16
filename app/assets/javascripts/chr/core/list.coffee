@@ -116,6 +116,8 @@ class @List
     if @config.arrayStore  then @_bindConfigArrayStore()
     if @config.objectStore then @_bindConfigObjectStore()
 
+    @config.onListInit?(@)
+
   selectItem: (href) ->
     @$items.children("a[href='#{ href }']").addClass 'active'
 

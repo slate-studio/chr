@@ -9,31 +9,31 @@ module.exports = (grunt) ->
         files:
           'build/chr.js': [
             #
-            'app/assets/javascripts/chr/core/_item.coffee'
-            'app/assets/javascripts/chr/core/_list.coffee'
-            'app/assets/javascripts/chr/core/_listSearch.coffee'
-            'app/assets/javascripts/chr/core/_listScroll.coffee'
-            'app/assets/javascripts/chr/core/_listReorder.coffee'
-            'app/assets/javascripts/chr/core/_view.coffee'
-            'app/assets/javascripts/chr/core/_module.coffee'
+            'app/assets/javascripts/chr/core/item.coffee'
+            'app/assets/javascripts/chr/core/list.coffee'
+            'app/assets/javascripts/chr/core/list-search.coffee'
+            'app/assets/javascripts/chr/core/list-scroll.coffee'
+            'app/assets/javascripts/chr/core/list-reorder.coffee'
+            'app/assets/javascripts/chr/core/view.coffee'
+            'app/assets/javascripts/chr/core/module.coffee'
             #
-            'app/assets/javascripts/chr/form/_form.coffee'
-            'app/assets/javascripts/chr/form/_inputString.coffee'
-            'app/assets/javascripts/chr/form/_inputCheckbox.coffee'
-            'app/assets/javascripts/chr/form/_inputColor.coffee'
-            'app/assets/javascripts/chr/form/_inputFile.coffee'
-            'app/assets/javascripts/chr/form/_inputHidden.coffee'
-            'app/assets/javascripts/chr/form/_inputList.coffee'
-            'app/assets/javascripts/chr/form/_inputSelect.coffee'
-            'app/assets/javascripts/chr/form/_inputText.coffee'
-            'app/assets/javascripts/chr/form/_nestedForm.coffee'
+            'app/assets/javascripts/chr/form/form.coffee'
+            'app/assets/javascripts/chr/form/input-string.coffee'
+            'app/assets/javascripts/chr/form/input-checkbox.coffee'
+            'app/assets/javascripts/chr/form/input-color.coffee'
+            'app/assets/javascripts/chr/form/input-file.coffee'
+            'app/assets/javascripts/chr/form/input-hidden.coffee'
+            'app/assets/javascripts/chr/form/input-list.coffee'
+            'app/assets/javascripts/chr/form/input-select.coffee'
+            'app/assets/javascripts/chr/form/input-text.coffee'
+            'app/assets/javascripts/chr/form/nested-form.coffee'
             #
             'app/assets/javascripts/chr/store/store.coffee'
             'app/assets/javascripts/chr/store/store-rest.coffee'
             'app/assets/javascripts/chr/store/store-mongosteen.coffee'
             #
-            'app/assets/javascripts/chr/core/_utils.coffee'
-            'app/assets/javascripts/chr/core/_chr.coffee'
+            'app/assets/javascripts/chr/core/utils.coffee'
+            'app/assets/javascripts/chr/core/chr.coffee'
           ]
 
     concat:

@@ -43,7 +43,8 @@ class @ObjectStore
 #                          not sort when parameter is not provided, default: nil
 #   @config.sortReverse  — reverse objects sorting (descending order),
 #                          default: false
-#   @config.newItemOnTop — add new item to the top of the list, default: false
+#   @config.newItemOnTop — add new item to the top of the list, default: true,
+#                          if @config.sortBy is not set, otherwise: false
 #   @config.reorderable  — list items reordering configuration hash, should
 #                          have two fields:
 #                            { positionFieldName: '',
@@ -69,6 +70,11 @@ class @ArrayStore
     @sortBy      = @config.sortBy      ? false
     @sortReverse = @config.sortReverse ? false
     @reorderable = @config.reorderable ? false
+
+    if @sortBy == false
+      @newItemOnTop = @config.newItemOnTop ? true
+    else
+      @newItemOnTop = @config.newItemOnTop ? false
 
     @_initialize_reorderable()
     @_initialize_database()
@@ -237,7 +243,7 @@ class @ArrayStore
     object = @_parse_form_object(serializedFormObject)
     if ! object._id then object._id = Date.now()
 
-    if @config.newItemOnTop
+    if @newItemOnTop
       @_add_data_object_on_top(object, callbacks.onSuccess)
     else
       @_add_data_object(object, callbacks.onSuccess)

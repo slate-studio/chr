@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   s.summary     = 'A simple and lightweight library for building data management web apps'
   s.description = <<-DESC
 Character is a library written in CoffeeScript with a help of jQuery that allows to
-build data management web applications like CMS, news reader, email client etc. in a
-very fast and flexible way. It's responsive by default and is data source independent.
+build data management web applications in a fast and flexible way, e.g. CMS, news reader,
+email client etc. It's responsive by default and designed to be data source independent.
   DESC
 
   s.rubyforge_project = 'chr'

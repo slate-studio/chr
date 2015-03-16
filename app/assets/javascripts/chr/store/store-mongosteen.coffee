@@ -36,7 +36,6 @@ class @MongosteenArrayStore extends RestArrayStore
     if @config.urlParams
       extraParamsString = $.param(@config.urlParams)
       url = "#{ url }?#{ extraParamsString }"
-      console.log url
 
     return url
 

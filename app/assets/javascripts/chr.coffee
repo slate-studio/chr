@@ -3,28 +3,28 @@
 #= require ./chr/vendor/jquery.typeahead
 #= require ./chr/vendor/slip
 
-#= require ./chr/core/_item
-#= require ./chr/core/_list
-#= require ./chr/core/_listSearch
-#= require ./chr/core/_listScroll
-#= require ./chr/core/_listReorder
-#= require ./chr/core/_view
-#= require ./chr/core/_module
+#= require ./chr/core/item
+#= require ./chr/core/list
+#= require ./chr/core/list-search
+#= require ./chr/core/list-scroll
+#= require ./chr/core/list-reorder
+#= require ./chr/core/view
+#= require ./chr/core/module
 
-#= require ./chr/form/_form
-#= require ./chr/form/_inputString
-#= require ./chr/form/_inputCheckbox
-#= require ./chr/form/_inputColor
-#= require ./chr/form/_inputFile
-#= require ./chr/form/_inputHidden
-#= require ./chr/form/_inputList
-#= require ./chr/form/_inputSelect
-#= require ./chr/form/_inputText
-#= require ./chr/form/_nestedForm
+#= require ./chr/form/form
+#= require ./chr/form/input-string
+#= require ./chr/form/input-checkbox
+#= require ./chr/form/input-color
+#= require ./chr/form/input-file
+#= require ./chr/form/input-hidden
+#= require ./chr/form/input-list
+#= require ./chr/form/input-select
+#= require ./chr/form/input-text
+#= require ./chr/form/nested-form
 
 #= require ./chr/store/store
 #= require ./chr/store/store-rest
 #= require ./chr/store/store-mongosteen
 
-#= require ./chr/core/_utils
-#= require ./chr/core/_chr
+#= require ./chr/core/utils
+#= require ./chr/core/chr

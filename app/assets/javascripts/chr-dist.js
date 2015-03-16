@@ -2759,9 +2759,9 @@ this.Item = (function() {
   };
 
   Item.prototype.position = function() {
-    var fieldName;
-    fieldName = this.config.arrayStore.sortBy;
-    return this.object[fieldName];
+    var positionFieldName;
+    positionFieldName = this.config.arrayStore.sortBy;
+    return parseFloat(this.object[positionFieldName]);
   };
 
   return Item;
@@ -2865,7 +2865,7 @@ this.List = (function() {
   };
 
   function List(module, name, config1, parentList) {
-    var ref;
+    var base, ref;
     this.module = module;
     this.name = name;
     this.config = config1;
@@ -2916,6 +2916,9 @@ this.List = (function() {
     }
     if (this.config.objectStore) {
       this._bindConfigObjectStore();
+    }
+    if (typeof (base = this.config).onListInit === "function") {
+      base.onListInit(this);
     }
   }
 
@@ -3026,7 +3029,7 @@ this._listBindScroll = function(listEl) {
         viewHeight = $container.height();
         if (listHeight < (viewHeight + e.target.scrollTop + 100)) {
           return listEl._loading(function() {
-            return arrayStore.fetchNextPage();
+            return arrayStore.load();
           });
         }
       }
@@ -3081,7 +3084,7 @@ this._listBindReorder = function(listEl) {
       objectPositionValue = _getObjectNewPosition(e.target);
       objectId = $(e.target).attr('data-id');
       value = {};
-      value["[" + arrayStore.sortBy] = objectPositionValue;
+      value["[" + arrayStore.sortBy] = "" + objectPositionValue;
       arrayStore.update(objectId, value, {
         onSuccess: function(object) {},
         onError: function(errors) {}
@@ -3257,13 +3260,13 @@ this.View = (function() {
   };
 
   View.prototype.onSave = function(e) {
-    var serializedObj;
+    var serializedFormObj;
     e.preventDefault();
-    serializedObj = this.form.serialize();
+    serializedFormObj = this.form.serialize();
     if (this.object) {
-      return this._updateObject(serializedObj);
+      return this._updateObject(serializedFormObj);
     } else {
-      return this._createObject(serializedObj);
+      return this._createObject(serializedFormObj);
     }
   };
 
@@ -4610,27 +4613,27 @@ _chrFormInputs['form'] = NestedForm;
 this.ObjectStore = (function() {
   function ObjectStore(config) {
     this.config = config != null ? config : {};
-    this._initializeDatabase();
+    this._initialize_database();
   }
 
-  ObjectStore.prototype._fetchData = function() {
+  ObjectStore.prototype._update_data_object = function(value, callback) {
+    return typeof callback === "function" ? callback($.extend(this._data, value)) : void 0;
+  };
+
+  ObjectStore.prototype._fetch_data = function() {
     return this._data = this.config.data;
   };
 
-  ObjectStore.prototype._initializeDatabase = function() {
-    return this._fetchData();
+  ObjectStore.prototype._initialize_database = function() {
+    return this._fetch_data();
   };
 
   ObjectStore.prototype.get = function() {
     return this._data;
   };
 
-  ObjectStore.prototype._updateDataObject = function(value, callback) {
-    return typeof callback === "function" ? callback($.extend(this._data, value)) : void 0;
-  };
-
   ObjectStore.prototype.update = function(id, value, callback) {
-    return this._updateDataObject(value, callback);
+    return this._update_data_object(value, callback);
   };
 
   return ObjectStore;
@@ -4638,12 +4641,56 @@ this.ObjectStore = (function() {
 })();
 
 this.ArrayStore = (function() {
-  ArrayStore.prototype._sortData = function() {
-    var direction, fieldName, sortBy;
+  function ArrayStore(config) {
+    var ref, ref1, ref2, ref3, ref4;
+    this.config = config != null ? config : {};
+    this._map = {};
+    this._data = [];
+    this.sortBy = (ref = this.config.sortBy) != null ? ref : false;
+    this.sortReverse = (ref1 = this.config.sortReverse) != null ? ref1 : false;
+    this.reorderable = (ref2 = this.config.reorderable) != null ? ref2 : false;
+    if (this.sortBy === false) {
+      this.newItemOnTop = (ref3 = this.config.newItemOnTop) != null ? ref3 : true;
+    } else {
+      this.newItemOnTop = (ref4 = this.config.newItemOnTop) != null ? ref4 : false;
+    }
+    this._initialize_reorderable();
+    this._initialize_database();
+  }
+
+  ArrayStore.prototype._initialize_reorderable = function() {
+    var ref;
+    if (this.reorderable) {
+      if (this.reorderable.positionFieldName) {
+        this.sortBy = this.reorderable.positionFieldName;
+        return this.sortReverse = (ref = this.reorderable.sortReverse) != null ? ref : false;
+      } else {
+        console.log('Wrong reordering configuration, missing positionFieldName parameter.');
+        return this.reorderable = false;
+      }
+    }
+  };
+
+  ArrayStore.prototype._initialize_database = function() {};
+
+  ArrayStore.prototype._fetch_data = function() {
+    var i, len, o, ref;
+    if (this.config.data) {
+      ref = this.config.data;
+      for (i = 0, len = ref.length; i < len; i++) {
+        o = ref[i];
+        this._add_data_object(o);
+      }
+    }
+    return $(this).trigger('objects_added');
+  };
+
+  ArrayStore.prototype._sort_data = function() {
+    var direction, fieldName, sortByMethod;
     if (this.sortBy) {
       fieldName = this.sortBy;
       direction = this.sortReverse ? 1 : -1;
-      sortBy = function(key, a, b, dir) {
+      sortByMethod = function(key, a, b, dir) {
         if (a[key] > b[key]) {
           return -1 * dir;
         }
@@ -4653,73 +4700,12 @@ this.ArrayStore = (function() {
         return 0;
       };
       return this._data = this._data.sort(function(a, b) {
-        return sortBy(fieldName, a, b, direction);
+        return sortByMethod(fieldName, a, b, direction);
       });
     }
   };
 
-  ArrayStore.prototype._mapData = function() {
-    var i, len, o, ref, results;
-    ref = this._data;
-    results = [];
-    for (i = 0, len = ref.length; i < len; i++) {
-      o = ref[i];
-      results.push(this._map[o._id] = o);
-    }
-    return results;
-  };
-
-  ArrayStore.prototype._addDataObject = function(object, callback) {
-    var position;
-    this._map[object._id] = object;
-    this._data.push(object);
-    this._sortData();
-    position = this._getDataObjectPosition(object._id);
-    return $(this).trigger('object_added', {
-      object: object,
-      position: position,
-      callback: callback
-    });
-  };
-
-  ArrayStore.prototype._resetData = function() {
-    var id, o, ref;
-    ref = this._map;
-    for (id in ref) {
-      o = ref[id];
-      $(this).trigger('object_removed', {
-        object_id: id
-      });
-    }
-    this._map = {};
-    return this._data = [];
-  };
-
-  ArrayStore.prototype._removeDataObject = function(id) {
-    var position;
-    position = this._getDataObjectPosition(id);
-    if (position >= 0) {
-      delete this._data[position];
-    }
-    delete this._map[id];
-    return $(this).trigger('object_removed', {
-      object_id: id
-    });
-  };
-
-  ArrayStore.prototype._updateDataObject = function(id, value, callback) {
-    var object, position;
-    object = $.extend(this.get(id), value);
-    this._sortData();
-    position = this._getDataObjectPosition(id);
-    return $(this).trigger('object_changed', {
-      object: object,
-      position: position,
-      callback: callback
-    });
-  };
-
-  ArrayStore.prototype._getDataObjectPosition = function(id) {
+  ArrayStore.prototype._get_data_object_position = function(id) {
     var i, ids, len, o, ref;
     ids = [];
     ref = this._data;
@@ -4732,14 +4718,88 @@ this.ArrayStore = (function() {
     return $.inArray(id, ids);
   };
 
-  function ArrayStore(config) {
-    this.config = config != null ? config : {};
-    this._map = {};
-    this._data = [];
-    this._initializeDatabase();
-  }
+  ArrayStore.prototype._normalize_object_id = function(object) {
+    if (object.id) {
+      object._id = object.id;
+      delete object.id;
+    }
+    return object;
+  };
 
-  ArrayStore.prototype._initializeDatabase = function() {};
+  ArrayStore.prototype._add_data_object = function(object, callback) {
+    var position;
+    object = this._normalize_object_id(object);
+    this._map[object._id] = object;
+    this._data.push(object);
+    this._sort_data();
+    position = this._get_data_object_position(object._id);
+    return $(this).trigger('object_added', {
+      object: object,
+      position: position,
+      callback: callback
+    });
+  };
+
+  ArrayStore.prototype._add_data_object_on_top = function(object, callback) {
+    var position;
+    object = this._normalize_object_id(object);
+    this._map[object._id] = object;
+    this._data.unshift(object);
+    position = 0;
+    return $(this).trigger('object_added', {
+      object: object,
+      position: position,
+      callback: callback
+    });
+  };
+
+  ArrayStore.prototype._update_data_object = function(id, value, callback) {
+    var object, position;
+    object = $.extend(this.get(id), value);
+    this._sort_data();
+    position = this._get_data_object_position(id);
+    return $(this).trigger('object_changed', {
+      object: object,
+      position: position,
+      callback: callback
+    });
+  };
+
+  ArrayStore.prototype._remove_data_object = function(id) {
+    var position;
+    position = this._get_data_object_position(id);
+    if (position >= 0) {
+      delete this._data[position];
+    }
+    delete this._map[id];
+    return $(this).trigger('object_removed', {
+      object_id: id
+    });
+  };
+
+  ArrayStore.prototype._reset_data = function() {
+    var id, o, ref;
+    ref = this._map;
+    for (id in ref) {
+      o = ref[id];
+      $(this).trigger('object_removed', {
+        object_id: id
+      });
+    }
+    this._map = {};
+    return this._data = [];
+  };
+
+  ArrayStore.prototype._parse_form_object = function(serializedFormObject) {
+    var fieldName, key, object, value;
+    object = {};
+    for (key in serializedFormObject) {
+      value = serializedFormObject[key];
+      fieldName = key.replace('[', '').replace(']', '');
+      object[fieldName] = value;
+    }
+    return object;
+  };
 
   ArrayStore.prototype.off = function(eventType) {
     if (eventType) {
@@ -4754,20 +4814,7 @@ this.ArrayStore = (function() {
       return callback(e, data);
     });
     if (eventType === 'object_added') {
-      return this._fetchData();
-    }
-  };
-
-  ArrayStore.prototype._fetchData = function() {
-    var i, len, o, ref, results;
-    if (this.config.data) {
-      ref = this.config.data;
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        o = ref[i];
-        results.push(this._addDataObject(o));
-      }
-      return results;
+      return this._fetch_data();
     }
   };
 
@@ -4775,18 +4822,33 @@ this.ArrayStore = (function() {
     return this._map[id];
   };
 
-  ArrayStore.prototype.update = function(id, value, callback) {
-    return this._updateDataObject(id, value, callback);
+  ArrayStore.prototype.push = function(serializedFormObject, callbacks) {
+    var object;
+    object = this._parse_form_object(serializedFormObject);
+    if (!object._id) {
+      object._id = Date.now();
+    }
+    if (this.newItemOnTop) {
+      return this._add_data_object_on_top(object, callbacks.onSuccess);
+    } else {
+      return this._add_data_object(object, callbacks.onSuccess);
+    }
   };
 
-  ArrayStore.prototype.push = function(value, callback) {
-    return this._addDataObject($.extend({
-      _id: Date.now()
-    }, value), callback);
+  ArrayStore.prototype.update = function(id, serializedFormObject, callbacks) {
+    var object;
+    object = this._parse_form_object(serializedFormObject);
+    return this._update_data_object(id, object, callbacks.onSuccess);
   };
 
   ArrayStore.prototype.remove = function(id) {
-    return this._removeDataObject(id);
+    return this._remove_data_object(id);
+  };
+
+  ArrayStore.prototype.reset = function(callback) {
+    this._sort_data();
+    $(this).trigger('objects_added');
+    return typeof callback === "function" ? callback() : void 0;
   };
 
   return ArrayStore;
@@ -4796,111 +4858,30 @@ this.ArrayStore = (function() {
 var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-this.RailsObjectStore = (function(superClass) {
-  extend(RailsObjectStore, superClass);
+this.RestArrayStore = (function(superClass) {
+  extend(RestArrayStore, superClass);
 
-  function RailsObjectStore() {
-    return RailsObjectStore.__super__.constructor.apply(this, arguments);
+  function RestArrayStore() {
+    return RestArrayStore.__super__.constructor.apply(this, arguments);
   }
 
-  return RailsObjectStore;
-
-})(ObjectStore);
-
-this.RailsArrayStore = (function(superClass) {
-  extend(RailsArrayStore, superClass);
-
-  function RailsArrayStore() {
-    return RailsArrayStore.__super__.constructor.apply(this, arguments);
-  }
-
-  RailsArrayStore.prototype._initializeDatabase = function() {
-    var ref, ref1, ref2;
-    this.resetData = false;
-    this.searchable = (ref = this.config.searchable) != null ? ref : false;
-    this.pagination = (ref1 = this.config.pagination) != null ? ref1 : true;
-    this.reorderable = (ref2 = this.config.reorderable) != null ? ref2 : false;
+  RestArrayStore.prototype._initialize_database = function() {
     this.dataFetchLock = false;
-    this.pagesCounter = 0;
-    this.searchQuery = '';
-    if (this.reorderable) {
-      this.sortBy = this.reorderable.positionFieldName;
-      this.sortReverse = this.reorderable.sortReverse || false;
-    }
-    if (this.config.data) {
-      return this.pagesCounter = 1;
-    }
+    return this.ajaxConfig = {};
   };
 
-  RailsArrayStore.prototype._addDataObjectToTheTop = function(object, callback) {
-    var position;
-    this._map[object._id] = object;
-    this._data.unshift(object);
-    position = 0;
-    return $(this).trigger('object_added', {
-      object: object,
-      position: position,
-      callback: callback
-    });
+  RestArrayStore.prototype._resource_url = function(type, id) {
+    var objectPath;
+    objectPath = id ? "/" + id : '';
+    return "" + this.config.path + objectPath;
   };
 
-  RailsArrayStore.prototype._wrapRailsObject = function(object) {
-    var attr_name, attr_value, data, i, len, value, values;
-    data = new FormData();
-    for (attr_name in object) {
-      attr_value = object[attr_name];
-      if (attr_name.indexOf('[__LIST__') > -1) {
-        attr_name = attr_name.replace('__LIST__', '');
-        values = attr_value.split(',');
-        for (i = 0, len = values.length; i < len; i++) {
-          value = values[i];
-          data.append("" + this.config.resource + attr_name + "[]", value);
-        }
-      } else {
-        if (attr_name.startsWith('__FILE__')) {
-          attr_name = attr_name.replace('__FILE__', '');
-        }
-        data.append("" + this.config.resource + attr_name, attr_value);
-      }
-    }
-    return data;
-  };
-
-  RailsArrayStore.prototype._urlWithParams = function(url) {
-    var extraParamString;
-    if (this.config.urlParams) {
-      extraParamString = $.param(this.config.urlParams);
-      if (url.indexOf('?') > 0) {
-        url = url + "&" + extraParamString;
-      } else {
-        url = url + "?" + extraParamString;
-      }
-    }
-    return url;
-  };
-
-  RailsArrayStore.prototype._delete = function(id, success) {
-    this.dataFetchLock = true;
-    return $.ajax({
-      type: 'DELETE',
-      url: this._urlWithParams(this.config.path + "/" + id + ".json"),
-      success: (function(_this) {
-        return function(data, textStatus, jqXHR) {
-          _this.dataFetchLock = false;
-          return typeof success === "function" ? success(data) : void 0;
-        };
-      })(this)
-    });
-  };
-
-  RailsArrayStore.prototype._post = function(object, success, error) {
-    this.dataFetchLock = true;
-    return $.ajax({
-      type: 'POST',
-      url: this._urlWithParams(this.config.path + ".json"),
-      data: this._wrapRailsObject(object),
-      processData: false,
-      contentType: false,
+  RestArrayStore.prototype._ajax = function(type, id, data, success, error) {
+    var options;
+    options = $.extend(this.ajaxConfig, {
+      url: this._resource_url(type, id),
+      type: type,
+      data: data,
       success: (function(_this) {
         return function(data, textStatus, jqXHR) {
           _this.dataFetchLock = false;
@@ -4914,110 +4895,174 @@ this.RailsArrayStore = (function(superClass) {
         };
       })(this)
     });
+    this.dataFetchLock = true;
+    return $.ajax(options);
   };
 
-  RailsArrayStore.prototype._put = function(id, object, success, error) {
-    this.dataFetchLock = true;
-    return $.ajax({
-      type: 'PUT',
-      url: this._urlWithParams(this.config.path + "/" + id + ".json"),
-      data: this._wrapRailsObject(object),
-      processData: false,
-      contentType: false,
-      success: (function(_this) {
-        return function(data, textStatus, jqXHR) {
-          _this.dataFetchLock = false;
-          return typeof success === "function" ? success(data) : void 0;
-        };
-      })(this),
-      error: (function(_this) {
-        return function(jqXHR, textStatus, errorThrown) {
-          _this.dataFetchLock = false;
-          return typeof error === "function" ? error(jqXHR.responseJSON) : void 0;
-        };
-      })(this)
-    });
-  };
-
-  RailsArrayStore.prototype._get = function(params, success) {
-    this.dataFetchLock = true;
-    return $.get(this._urlWithParams(this.config.path + ".json"), params, (function(_this) {
-      return function(data) {
+  RestArrayStore.prototype.load = function(success) {
+    return this._ajax('GET', null, {}, ((function(_this) {
+      return function(dataObject) {
         var i, len, o;
-        if (data.length > 0) {
-          _this.pagesCounter = _this.pagesCounter + 1;
-          for (i = 0, len = data.length; i < len; i++) {
-            o = data[i];
-            _this._addDataObject(o);
+        if (dataObject.length > 0) {
+          for (i = 0, len = dataObject.length; i < len; i++) {
+            o = dataObject[i];
+            _this._add_data_object(o);
           }
         }
-        _this.dataFetchLock = false;
         if (typeof success === "function") {
           success();
         }
         return $(_this).trigger('objects_added');
       };
-    })(this));
+    })(this)));
   };
 
-  RailsArrayStore.prototype.fetchNextPage = function(callback) {
-    var params;
-    params = {};
-    if (this.pagination) {
-      params.page = this.pagesCounter + 1;
-      params.perPage = _itemsPerPageRequest;
-    }
-    if (this.searchQuery.length > 0) {
-      params.search = this.searchQuery;
-    }
-    return this._get(params);
-  };
-
-  RailsArrayStore.prototype.search = function(searchQuery, callback) {
-    this.searchQuery = searchQuery;
-    this.pagesCounter = 0;
-    this._resetData();
-    return this.fetchNextPage(callback);
-  };
-
-  RailsArrayStore.prototype.reset = function(callback) {
-    this.searchQuery = '';
-    this.pagesCounter = 0;
-    this._resetData();
-    return this.fetchNextPage(callback);
-  };
-
-  RailsArrayStore.prototype.update = function(id, object, callbacks) {
-    return this._put(id, object, ((function(_this) {
-      return function(data) {
-        return _this._updateDataObject(id, data, callbacks.onSuccess);
-      };
-    })(this)), callbacks.onError);
-  };
-
-  RailsArrayStore.prototype.push = function(object, callbacks) {
-    return this._post(object, ((function(_this) {
-      return function(data) {
-        if (_this.config.sortBy) {
-          return _this._addDataObject(data, callbacks.onSuccess);
+  RestArrayStore.prototype.push = function(serializedFormObject, callbacks) {
+    var obj;
+    obj = this._parse_form_object(serializedFormObject);
+    return this._ajax('POST', null, obj, ((function(_this) {
+      return function(dataObject) {
+        if (_this.newItemOnTop) {
+          return _this._add_data_object_on_top(dataObject, callbacks.onSuccess);
         } else {
-          return _this._addDataObjectToTheTop(data, callbacks.onSuccess);
+          return _this._add_data_object(dataObject, callbacks.onSuccess);
         }
       };
     })(this)), callbacks.onError);
   };
 
-  RailsArrayStore.prototype.remove = function(id) {
-    return this._delete(id, (function(_this) {
-      return function(data) {
-        return _this._removeDataObject(id);
+  RestArrayStore.prototype.update = function(id, serializedFormObject, callbacks) {
+    var obj;
+    obj = this._parse_form_object(serializedFormObject);
+    return this._ajax('PUT', id, obj, ((function(_this) {
+      return function(dataObject) {
+        return _this._update_data_object(id, dataObject, callbacks.onSuccess);
       };
-    })(this));
+    })(this)), callbacks.onError);
   };
 
-  return RailsArrayStore;
+  RestArrayStore.prototype.remove = function(id) {
+    return this._ajax('DELETE', id, {}, ((function(_this) {
+      return function() {
+        return _this._remove_data_object(id);
+      };
+    })(this)));
+  };
+
+  RestArrayStore.prototype.reset = function(callback) {
+    this._reset_data();
+    return this.load(callback);
+  };
+
+  return RestArrayStore;
 
 })(ArrayStore);
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.MongosteenArrayStore = (function(superClass) {
+  extend(MongosteenArrayStore, superClass);
+
+  function MongosteenArrayStore() {
+    return MongosteenArrayStore.__super__.constructor.apply(this, arguments);
+  }
+
+  MongosteenArrayStore.prototype._initialize_database = function() {
+    var ref, ref1;
+    this.dataFetchLock = false;
+    this.ajaxConfig = {
+      processData: false,
+      contentType: false
+    };
+    this.searchable = (ref = this.config.searchable) != null ? ref : false;
+    this.searchQuery = '';
+    this.pagination = (ref1 = this.config.pagination) != null ? ref1 : true;
+    this.pagesCounter = 0;
+    if (this.config.data) {
+      return this.pagination = false;
+    }
+  };
+
+  MongosteenArrayStore.prototype._resource_url = function(type, id) {
+    var extraParamsString, objectPath, url;
+    objectPath = id ? "/" + id : '';
+    url = "" + this.config.path + objectPath + ".json";
+    if (this.config.urlParams) {
+      extraParamsString = $.param(this.config.urlParams);
+      url = url + "?" + extraParamsString;
+    }
+    return url;
+  };
+
+  MongosteenArrayStore.prototype._parse_form_object = function(serializedFormObject) {
+    var attr_name, attr_value, formDataObject, i, len, value, values;
+    formDataObject = new FormData();
+    for (attr_name in serializedFormObject) {
+      attr_value = serializedFormObject[attr_name];
+      if (attr_name.indexOf('[__LIST__') > -1) {
+        attr_name = attr_name.replace('__LIST__', '');
+        values = attr_value.split(',');
+        for (i = 0, len = values.length; i < len; i++) {
+          value = values[i];
+          formDataObject.append("" + this.config.resource + attr_name + "[]", value);
+        }
+      } else {
+        if (attr_name.startsWith('__FILE__')) {
+          attr_name = attr_name.replace('__FILE__', '');
+        }
+        formDataObject.append("" + this.config.resource + attr_name, attr_value);
+      }
+    }
+    return formDataObject;
+  };
+
+  MongosteenArrayStore.prototype.load = function(success) {
+    var params;
+    params = {};
+    if (this.pagination) {
+      params.page = this.pagesCounter + 1;
+      params.perPage = typeof _itemsPerPageRequest !== "undefined" && _itemsPerPageRequest !== null ? _itemsPerPageRequest : 20;
+    }
+    if (this.searchable && this.searchQuery.length > 0) {
+      params.search = this.searchQuery;
+    }
+    params = $.param(params);
+    return this._ajax('GET', null, params, ((function(_this) {
+      return function(dataObject) {
+        var i, len, o;
+        if (dataObject.length > 0) {
+          _this.pagesCounter = _this.pagesCounter + 1;
+          for (i = 0, len = dataObject.length; i < len; i++) {
+            o = dataObject[i];
+            _this._add_data_object(o);
+          }
+        }
+        if (typeof success === "function") {
+          success();
+        }
+        return $(_this).trigger('objects_added');
+      };
+    })(this)));
+  };
+
+  MongosteenArrayStore.prototype.search = function(searchQuery, callback) {
+    this.searchQuery = searchQuery;
+    this.pagesCounter = 0;
+    this._reset_data();
+    return this.load(callback);
+  };
+
+  MongosteenArrayStore.prototype.reset = function(callback) {
+    this.searchQuery = '';
+    this.pagesCounter = 0;
+    this._reset_data();
+    return this.load(callback);
+  };
+
+  return MongosteenArrayStore;
+
+})(RestArrayStore);
 
 this._last = function(array) {
   return array[array.length - 1];

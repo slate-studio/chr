@@ -57,7 +57,7 @@ class @RestArrayStore extends ArrayStore
     obj = @_parse_form_object(serializedFormObject)
 
     @_ajax 'POST', null, obj, ((dataObject) =>
-      if @config.newItemOnTop
+      if @newItemOnTop
         @_add_data_object_on_top(dataObject, callbacks.onSuccess)
       else
         @_add_data_object(dataObject, callbacks.onSuccess)
