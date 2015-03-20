@@ -15,7 +15,7 @@ class @Chr
     @modules[name] = new Module(this, name, config) for name, config of @config.modules
 
     # NAVIGATION
-    # using class 'silent' for links when we don't want to trigger onhashchange event
+    # use class 'silent' for <a> when need to skip onhashchange event
     $(document).on 'click', 'a.silent', (e) -> window._skipHashchange = true
 
     window.onhashchange = =>
@@ -23,19 +23,25 @@ class @Chr
       window._skipHashchange = false
 
     # if not mobile navigate on first page load or page refresh
-    if not _isMobile()
-      window._skipHashchange = false
+    window._skipHashchange = false
+    if _isMobile()
+      if location.hash != '' then @_navigate(location.hash)
+    else
       @_navigate(if location.hash != '' then location.hash else '#/' + Object.keys(@modules)[0])
+
 
   addMenuItem: (moduleName, title) ->
     @$mainMenu.append "<a href='#/#{ moduleName }'>#{ title }</a>"
+
 
   selectMenuItem: (href) ->
     @$mainMenu.children().removeClass 'active'
     @$mainMenu.children("a[href='#/#{ href }']").addClass 'active'
 
+
   unselectMenuItem: ->
     @$mainMenu.children().removeClass 'active'
+
 
   # TODO: this piece of navigation code isn't clear, need to refactor to make
   #       it more readable

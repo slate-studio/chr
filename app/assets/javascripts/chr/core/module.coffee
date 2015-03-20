@@ -14,30 +14,49 @@ class @Module
 
     @activeList = @rootList = new List(this, @name, @config)
 
+    @config.onModuleInit?(this)
 
-  _updateActiveListItems: ->
-    # NOTE: update list data if it's not visible, e.g. for update action we do not
-    #       update whole list, this function should be called before active list got shown.
+
+  # update list data if it's not visible, e.g. for update action we do not
+  # update whole list, this method is called before active list is shown.
+  _update_active_list_items: ->
     if not @activeList.isVisible()
       @activeList.updateItems()
 
+
+  # returns visible nested list that acts as view
+  _visible_nested_list_shown_with_parent: ->
+    for key, list of @nestedLists
+      if list.isVisible() && list.showWithParent then return list
+
+
+  # returns path for the current list
+  _view_path: ->
+    currentList = @_visible_nested_list_shown_with_parent() ? @activeList
+    currentList.path
+
+
   addNestedList: (listName, config, parentList) ->
     @nestedLists[listName] = new List(this, listName, config, parentList)
+
 
   selectActiveListItem: (href) ->
     @unselectActiveListItem()
     @activeList.selectItem(href)
 
+
   unselectActiveListItem: ->
     @activeList?.unselectItems()
+
 
   hideActiveList: (animate=false)->
     if animate then @activeList.$el.fadeOut() else @activeList.$el.hide()
     @activeList = @activeList.parentList
     @unselectActiveListItem()
 
+
   showView: (object, config, title, animate=false) ->
-    newView = new View(this, config, @activeList.path, object, title)
+    newView = new View(this, config, @_view_path(), object, title)
     @chr.$el.append(newView.$el)
 
     @selectActiveListItem(location.hash)
@@ -46,16 +65,19 @@ class @Module
       @destroyView()
       @view = newView
 
+
   destroyView: ->
     @view?.destroy()
+
 
   show: ->
     @chr.selectMenuItem(@name)
     @unselectActiveListItem()
 
-    @_updateActiveListItems()
+    @_update_active_list_items()
     @$el.show()
     @activeList.show(false)
+
 
   hide: (animate=false) ->
     @unselectActiveListItem()
@@ -69,18 +91,31 @@ class @Module
       @destroyView()
       @$el.hide()
 
+
+  # shows one of nested lists, with or without animation
   showNestedList: (listName, animate=false) ->
+    listToShow = @nestedLists[listName]
+
     @selectActiveListItem(location.hash)
-    @activeList = @nestedLists[listName]
 
-    @_updateActiveListItems()
+    if listToShow.showWithParent
+      # list works as view, it never becomes active
+      listToShow.updateItems()
+      listToShow.show animate, => @hideNestedLists(exceptList=listName)
 
-    @activeList.show(animate)
+    else
+      @activeList = listToShow
+      @_update_active_list_items()
+      @activeList.show(animate)
+
+    # hide view
     if animate and @view then @view.$el.fadeOut $.fx.speeds._default, => @destroyView()
 
-  hideNestedLists: ->
+
+  hideNestedLists: (exceptList)->
     @activeList = @rootList
-    list.hide() for key, list of @nestedLists
+    list.hide() for key, list of @nestedLists when key isnt exceptList
+
 
   showViewWhenObjectsAreReady: (objectId, config) ->
     object = config.arrayStore.get(objectId)

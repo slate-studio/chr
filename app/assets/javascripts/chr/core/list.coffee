@@ -21,7 +21,7 @@ class @List
       $(@$items.children()[position - 1]).after(item.$el.show())
 
   _addItem: (path, object, position, config) ->
-    item = new Item(@module, path, object, config)
+    item = new @itemClass(@module, path, object, config)
     @items[object._id] = item
     @_updateItemPosition(item, position)
 
@@ -71,9 +71,11 @@ class @List
 
   constructor: (@module, @name, @config, @parentList) ->
     @configItemsCount = 0
-    @path  = @_path()
-    @items = {}
-    @title = @config.title ? @name.titleize()
+    @path           = @_path()
+    @items          = {}
+    @title          = @config.title      ? @name.titleize()
+    @itemClass      = @config.itemClass  ? Item
+    @showWithParent = @config.showListWithParent ? false
 
     @$el =$ "<div class='list #{ @name }'>"
     @module.$el.append @$el
@@ -124,20 +126,26 @@ class @List
   unselectItems: ->
     @$items.children().removeClass 'active'
 
-  hide: ->
+  hide: (animate) ->
     @unselectItems()
-    @$el.hide()
+    if animate then @$el.fadeOut() else @$el.hide()
 
-  show: (animate=false) ->
+  show: (animate=false, callback) ->
     if animate
-      @$el.fadeIn()
+      @$el.css('z-index', 1)
+      @$el.fadeIn $.fx.speeds._default, => @$el.css('z-index', '') ; callback?()
     else
       @$el.show()
 
   onBack: (e) ->
     @unselectItems()
-    @module.hideActiveList(true)
     @module.destroyView()
+
+    if @showWithParent
+      @hide(true)
+      @module.unselectActiveListItem()
+    else
+      @module.hideActiveList(true)
 
   onNew: (e) ->
     window._skipHashchange = true

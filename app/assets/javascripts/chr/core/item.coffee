@@ -28,7 +28,7 @@ class @Item
   _renderThumbnail: ->
     if @config.itemThumbnail
       imageUrl = @config.itemThumbnail(@object)
-      if imageUrl != '' and not imageUrl.endsWith('_old_') # NOTE: carrierwave fix
+      if imageUrl != '' and not imageUrl.endsWith('_old_') # NOTE: carrierwave fix, check if still required
         @$thumbnail =$ "<div class='item-thumbnail'><img src='#{imageUrl}' /></div>"
         @$el.append(@$thumbnail)
         @$el.addClass 'has-thumbnail'
@@ -49,11 +49,13 @@ class @Item
         @$el.append $("<div class='icon-reorder'></div>")
 
   constructor: (@module, @path, @object, @config) ->
-    @$el =$ """<a class='item silent' href='#{ @path }' data-id='#{ @object._id }' data-title=''></a>"""
+    @$el =$ """<a class='item' href='#{ @path }' data-id='#{ @object._id }' data-title=''></a>"""
     @$el.on 'click', (e) => @onClick(e)
     @render()
 
   onClick: (e) ->
+    if @.$el.hasClass('active') then e.preventDefault() ; return
+
     window._skipHashchange = true
     location.hash = $(e.currentTarget).attr('href')
 

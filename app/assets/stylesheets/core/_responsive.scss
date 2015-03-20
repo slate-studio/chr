@@ -14,6 +14,7 @@ $desktop: "screen and (min-width:1150px)";
   .module  { right: inherit; left: 9em; width: 20em; }
   .view    { left: 29em; }
   .list    { font-size: .9em; }
+  .list header { line-height: 2.9em; }
   .items .item:active { background: $neutralColor; }
   .module .list:first-child .back { display: none; }
   .view header .close { @include absolutePosition(0 inherit inherit 1em); color: $positiveColor; &:before { display: none; } }
