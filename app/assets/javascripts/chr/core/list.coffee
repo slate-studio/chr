@@ -54,7 +54,7 @@ class @List
       data.callback?(data.object)
 
     @config.arrayStore.on 'object_removed', (e, data) =>
-      @items[data.object_id].destroy()
+      @items[data.object_id]?.destroy()
       delete @items[data.object_id]
 
     @config.arrayStore.on 'objects_added', (e, data) =>

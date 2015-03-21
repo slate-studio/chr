@@ -256,8 +256,10 @@ class @ArrayStore
 
 
   # delete object
-  remove: (id) ->
+  remove: (id, callbacks={}) ->
+    callbacks.onSuccess ?= $.noop
     @_remove_data_object(id)
+    callbacks.onSuccess()
 
 
   # reset all data and load it again

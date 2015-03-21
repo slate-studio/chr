@@ -74,10 +74,14 @@ class @RestArrayStore extends ArrayStore
 
 
   # delete object
-  remove: (id) ->
+  remove: (id, callbacks={}) ->
+    callbacks.onSuccess ?= $.noop
+    callbacks.onError   ?= $.noop
+
     @_ajax 'DELETE', id, {}, ( =>
       @_remove_data_object(id)
-    ), # callbacks.onError
+      callbacks.onSuccess()
+    ), callbacks.onError
 
 
   # reset all data and load it again
