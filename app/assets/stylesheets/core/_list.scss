@@ -27,18 +27,12 @@
     }
     .item-folder { display: none; }
   }
-
-  .items:after {
-    content: 'Loading...';
-    font-size: .8em; text-align: center; width: 100%; color: $stableColor; display: block; margin-top: 1.5em;
-    opacity: 0; @include transition(opacity .25s);
-  }
-
-  &.list-loading .items:after {
-    opacity: 1;
-  }
 }
 
-
+.list header .spinner { @include spinner; display: none; margin-top: .5em; }
+.list.list-loading header {
+  .title { display: none; }
+  .spinner { display: inline-block; }
+}
 
 

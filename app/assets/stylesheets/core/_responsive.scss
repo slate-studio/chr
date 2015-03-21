@@ -18,7 +18,6 @@ $desktop: "screen and (min-width:1150px)";
   .items .item:active { background: $neutralColor; }
   .module .list:first-child .back { display: none; }
   .view header .close { @include absolutePosition(0 inherit inherit 1em); color: $positiveColor; &:before { display: none; } }
-  .view header .title { padding-left: 64px; }
   .module, .view { box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); }
   .module {
     &:after {

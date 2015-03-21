@@ -98,6 +98,7 @@ class @List
       @$header.prepend @$backBtn
 
 
+    @$header.append "<div class='spinner'></div>"
     @$header.append "<span class='title'>#{ @title }</span>"
 
     if not @config.disableNewItems and @config.formSchema
