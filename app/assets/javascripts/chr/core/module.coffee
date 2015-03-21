@@ -24,15 +24,9 @@ class @Module
       @activeList.updateItems()
 
 
-  # returns visible nested list that acts as view
-  _visible_nested_list_shown_with_parent: ->
-    for key, list of @nestedLists
-      if list.isVisible() && list.showWithParent then return list
-
-
   # returns path for the current list
   _view_path: ->
-    currentList = @_visible_nested_list_shown_with_parent() ? @activeList
+    currentList = @visibleNestedListShownWithParent() ? @activeList
     currentList.path
 
 
@@ -127,6 +121,11 @@ class @Module
 
       console.log "object #{objectId} is not in the list"
 
+
+  # returns visible nested list that acts as view
+  visibleNestedListShownWithParent: ->
+    for key, list of @nestedLists
+      if list.isVisible() && list.showWithParent then return list
 
 
 

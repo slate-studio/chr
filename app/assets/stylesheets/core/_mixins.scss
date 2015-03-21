@@ -22,3 +22,24 @@
 }
 
 @mixin scrollable { overflow: hidden; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+
+@mixin loader {
+  border:      .25em solid rgba( 74, 135, 238, 0.2);
+  border-left: .25em solid $positiveColor;
+  -webkit-animation: loader-spin 1.1s infinite linear; animation: loader-spin 1.1s infinite linear;
+  &, &:after { border-radius: 50%; width: 1.75em; height: 1.75em; }
+}
+
+@-webkit-keyframes loader-spin {
+  0%   { -webkit-transform: rotate(0deg);   transform: rotate(0deg);   }
+  100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@keyframes loader-spin {
+  0%   { -webkit-transform: rotate(0deg);   transform: rotate(0deg);   }
+  100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+
+
+
