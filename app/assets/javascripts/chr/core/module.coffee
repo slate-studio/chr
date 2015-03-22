@@ -126,8 +126,13 @@ class @Module
       object = config.arrayStore.get(objectId)
       if object then return @showView(object, config)
 
-      # get an individual object from store and show view for it
-      console.log "object #{objectId} is not in the list"
+      # load an object from store and show view for it
+      config.arrayStore.loadObject objectId,
+        onSuccess: (object) =>
+          console.log object
+          @showView(object, config)
+        onError: ->
+          console.log 'can\'t show view for requested object'
 
 
   # returns visible nested list that acts as view

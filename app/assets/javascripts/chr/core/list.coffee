@@ -66,19 +66,24 @@ class @List
     if @config.arrayStore  then @_bind_config_array_store()
     if @config.objectStore then @_bind_config_object_store()
 
-    @_update_active_item_on_hashchange()
+    @_bind_hashchange()
 
     @config.onListInit?(@)
 
 
-  _update_active_item_on_hashchange: ->
-    $(chr).on 'hashchange', =>
-      hash = window.location.hash
-      @$items.children().removeClass('active')
-      if hash.startsWith "#/#{ @module.name }"
-        for a in @$items.children()
-          if hash.startsWith($(a).attr('href'))
-            return $(a).addClass('active')
+  _bind_hashchange: ->
+    $(chr).on 'hashchange', => @_update_active_item()
+
+
+  _update_active_item: ->
+    hash = window.location.hash
+    @$items.children().removeClass('active')
+
+    if hash.startsWith "#/#{ @module.name }"
+      for a in @$items.children()
+        itemPath = $(a).attr('href')
+        if hash.startsWith(itemPath)
+          return $(a).addClass('active')
 
 
   _path: ->
@@ -106,15 +111,9 @@ class @List
 
 
   _bind_config_array_store: ->
-    # callbacks here should be refactored into list events
-
     # item added
     @config.arrayStore.on 'object_added', (e, data) =>
       @_add_item("#/#{ @path }/view/#{ data.object._id }", data.object, data.position, @config)
-
-      data.callback?(data.object)
-      $(this).trigger 'item_added'
-      # ^^^ this one
 
     # item updated
     @config.arrayStore.on 'object_changed', (e, data) =>
@@ -122,20 +121,15 @@ class @List
       item.render()
       @_update_item_position(item, data.position)
 
-      data.callback?(data.object)
-      $(this).trigger 'item_changed'
-      # ^^^ this one
-
     # item removed
     @config.arrayStore.on 'object_removed', (e, data) =>
       @items[data.object_id]?.destroy()
       delete @items[data.object_id]
 
-      $(this).trigger 'item_removed'
-
     # items loaded
     @config.arrayStore.on 'objects_added', (e, data) =>
       @$el.removeClass 'list-loading'
+      @_update_active_item()
 
     if @config.arrayStore.pagination
       _listBindScroll(this)

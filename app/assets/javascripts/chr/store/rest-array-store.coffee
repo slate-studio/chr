@@ -45,6 +45,17 @@ class @RestArrayStore extends ArrayStore
     @load()
 
 
+  # load a single object, this is used in view when
+  # store has not required item
+  loadObject: (id, callbacks={}) ->
+    callbacks.onSuccess ?= $.noop
+    callbacks.onError   ?= $.noop
+
+    @_ajax 'GET', id, {}, ((data) =>
+      callbacks.onSuccess(data)
+    ), callbacks.onError
+
+
   # load objects from database, when finished
   # trigger 'objects_added' event
   load: (callbacks={}) ->
