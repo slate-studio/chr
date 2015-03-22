@@ -15,7 +15,8 @@
       viewHeight           = $container.height()
 
       if listHeight < (viewHeight + e.target.scrollTop + 100)
-        listEl._loading -> arrayStore.load()
+        listEl._show_spinner()
+        arrayStore.load()
 
 
 

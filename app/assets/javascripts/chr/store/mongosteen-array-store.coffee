@@ -69,6 +69,17 @@ class @MongosteenArrayStore extends RestArrayStore
     return formDataObject
 
 
+  # ---------------------------------------------------------
+  # work arounds to have consistency between arrayStore and
+  # database while loading next page:
+  #  - add new item
+  #  - remove item
+  #  - update item
+  # ---------------------------------------------------------
+  _bind_pagination_sync: ->
+    ;
+
+
   # load next page objects from database, when finished
   # trigger 'objects_added' event
   load: (callbacks={}) ->
@@ -113,15 +124,6 @@ class @MongosteenArrayStore extends RestArrayStore
     @_reset_data()
     @load()
 
-
-  # ---------------------------------------------------------
-  # work arounds to have consistency between arrayStore and
-  # database while loading next page:
-  #  - add new item
-  #  - remove item
-  #  - update item
-  # ---------------------------------------------------------
-  _bind_pagination_sync: ->
 
 
 

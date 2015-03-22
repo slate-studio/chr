@@ -10,7 +10,8 @@
   $input.on 'keydown', 'input', (e) =>
     if e.keyCode == 13
       query = $(e.target).val()
-      listEl._loading -> arrayStore.search(query)
+      listEl._show_spinner()
+      arrayStore.search(query)
 
   $input.on 'click', '.icon', (e) =>
     e.preventDefault()
@@ -21,7 +22,8 @@
     e.preventDefault()
     listEl.$el.removeClass 'list-search'
     $input.find('input').val('')
-    listEl._loading -> arrayStore.reset()
+    listEl._show_spinner()
+    arrayStore.reset()
 
 
 

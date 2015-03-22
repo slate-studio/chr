@@ -128,7 +128,7 @@ class @List
 
     # items loaded
     @config.arrayStore.on 'objects_added', (e, data) =>
-      @$el.removeClass 'list-loading'
+      @_hide_spinner()
       @_update_active_item()
 
     if @config.arrayStore.pagination
@@ -156,9 +156,12 @@ class @List
       $(@$items.children()[position - 1]).after(item.$el.show())
 
 
-  _loading: (callback) ->
-    @$el.addClass 'list-loading'
-    callback?()
+  _show_spinner: ->
+    @$el.addClass 'show-spinner'
+
+
+  _hide_spinner: ->
+    @$el.removeClass 'show-spinner'
 
 
   hide: (animate) ->
@@ -188,10 +191,11 @@ class @List
     @module.showView(null, @config, 'New', true)
 
 
-  updateItems: (callback) ->
+  updateItems: ->
     if not @config.disableReset
       if @config.arrayStore
-        @_loading => @config.arrayStore.reset(callback)
+        @_show_spinner()
+        @config.arrayStore.reset()
 
 
   isVisible: ->
