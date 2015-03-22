@@ -19,8 +19,8 @@ $desktop: "screen and (min-width:1150px)";
   .list .items { font-size: .9em; }
   .list header { line-height: 2.9em; }
   .module .list:first-child .back { display: none; }
-  .view header .close { @include absolutePosition(0 inherit inherit 1em); color: $positiveColor; &:before { display: none; } }
-  .module, .view { box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); }
+  .view header .close { @include absolutePosition(0 inherit inherit 1em); @include headerButton; width: auto; &:before { display: none; } }
+  .module, .view { @include shadow; }
   .module {
     &:after {
       display: block; content: ''; width: 4px; @include position(absolute, 0px -3px 0px null);
@@ -28,24 +28,18 @@ $desktop: "screen and (min-width:1150px)";
     }
   }
 
-  // custom scrollbar
-  .redactor-editor, textarea.redactor, .view .input-stacked textarea, .view > form, .list .items { @include customScrollbar(); }
+  // scrollbars
+  .view .input-stacked textarea, .view > form, .list .items { @include customScrollbar(); }
 
-  // first list stays aside
-  .module.first-list-aside {
-    width: auto; right: 0;
-
-    .list:first-child       { width: 20em; }
-    .list:not(:first-child) { left:  20em; }
-
-    .list:first-child {
-      .items { overflow-y: hidden; }
-      .items .item .icon-folder { display: none; }
-    }
-
-    .list:not(:first-child) {
-      box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-      header .back { display: none; }
+  // layout when first list always shown
+  .module.first-list-aside { width: auto; right: 0;
+    .list {
+      &:first-child        { width: 20em; }
+      &:not(:first-child)  { left:  20em; }
+      &:first-child .items { overflow-y: hidden; }
+      &:first-child .icon-folder { display: none; }
+      &:not(:first-child)        { @include shadow; }
+      &:not(:first-child) header .back { display: none; }
     }
   }
 }

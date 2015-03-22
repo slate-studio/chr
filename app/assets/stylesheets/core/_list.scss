@@ -2,36 +2,38 @@
   header {
     .search {
       @include absolutePosition(0 0 inherit inherit);
-      height: 40px; overflow: hidden; width: 40px;
+      width: 40px; height: 40px; overflow: hidden;
 
-      .icon   { @include absolutePosition(0 inherit inherit 0); z-index: 0; @extend .icon-search; }
-      input   { display: none; height: 42px; width: 100%; padding: 0 5em 0 2.5em; outline-style: none; border: none; }
-      .cancel { display: none; @include absolutePosition(0 1em initial initial); z-index: 0; color: $positiveColor;  }
+      .icon   { @extend .icon-search; @include absolutePosition(0 inherit inherit 0); }
+      input   { height: 40px; width: 100%; padding: 0 5em 0 2.5em; outline: none; border: none; }
+      input   { display: none; }
+      .cancel { @include headerButton; @include absolutePosition(0 1em initial initial); }
+      .cancel { display: none; }
     }
     .new + .search { @include absolutePosition(0 40px inherit inherit); }
+
+    .spinner { @include spinner; position: absolute; margin: .5em 0 0 -2.25em; }
+    .spinner { display: none; }
   }
 
   &.list-search {
     header {
-      .search { @include absolutePosition(0 0 inherit 0);
-                  width: 100%; z-index: 1; background-color: $white;
-        input   { display: block; }
-        .cancel { display: inline; &:hover { opacity: .5; } }
-        .icon   {
-          &:hover   { cursor: pointer; opacity: 1; }
-          &:before  { border-color: $stableColor;     }
-          &:after   { background-color: $stableColor; }
-        }
+      .search {
+        @include absolutePosition(0 0 inherit 0);
+        width: 100%; background-color: $white;
+
+        input { display: block; }
+        .cancel { display: inline; }
+        .icon:hover { opacity: 1; }
+        .icon:before { border-color: $stableColor; }
+        .icon:after { background-color: $stableColor; }
       }
       .new + .search { @include absolutePosition(0 0 inherit 0); }
     }
     .item-folder { display: none; }
   }
+
+  &.show-spinner {
+    header .spinner { display: inline-block; }
+  }
 }
-
-.list header .spinner { @include spinner; display: none; position: absolute; margin-left: -2.25em; margin-top: .5em; }
-.list.show-spinner header {
-  .spinner { display: inline-block; }
-}
-
-
