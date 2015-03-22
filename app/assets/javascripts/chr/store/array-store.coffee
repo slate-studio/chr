@@ -1,35 +1,4 @@
 # -----------------------------------------------------------------------------
-# Author: Alexander Kravets <alex@slatestudio.com>,
-#         Slate Studio (http://www.slatestudio.com)
-#
-# Coding Guide:
-#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
-# -----------------------------------------------------------------------------
-
-# -----------------------------------------------------------------------------
-# OBJECT STORE
-# -----------------------------------------------------------------------------
-class @ObjectStore
-  constructor: (@config={}) ->
-    @_initialize_database()
-
-  _update_data_object: (value, callback) ->
-    callback?($.extend(@_data, value))
-
-  _fetch_data: ->
-    @_data = @config.data
-
-  _initialize_database: ->
-    @_fetch_data()
-
-  get: ->
-    @_data
-
-  update: (id, value, callback) ->
-    @_update_data_object(value, callback)
-
-
-# -----------------------------------------------------------------------------
 # ARRAY STORE
 # javascript object storage implementation that stores/loads objects in memory,
 # no backend database support here, supported features are:
@@ -43,8 +12,6 @@ class @ObjectStore
 #                          not sort when parameter is not provided, default: nil
 #   @config.sortReverse  — reverse objects sorting (descending order),
 #                          default: false
-#   @config.newItemOnTop — add new item to the top of the list, default: true,
-#                          if @config.sortBy is not set, otherwise: false
 #   @config.reorderable  — list items reordering configuration hash, should
 #                          have two fields:
 #                            { positionFieldName: '',
@@ -70,11 +37,6 @@ class @ArrayStore
     @sortBy      = @config.sortBy      ? false
     @sortReverse = @config.sortReverse ? false
     @reorderable = @config.reorderable ? false
-
-    if @sortBy == false
-      @newItemOnTop = @config.newItemOnTop ? true
-    else
-      @newItemOnTop = @config.newItemOnTop ? false
 
     @_initialize_reorderable()
     @_initialize_database()
@@ -141,7 +103,7 @@ class @ArrayStore
 
   # normalize objects id, add object to _data and _map, sort objects,
   # trigger 'object_added' event
-  _add_data_object: (object, callback)->
+  _add_data_object: (object, callback)-> # remove callback attr
     object = @_normalize_object_id(object)
 
     @_map[object._id] = object
@@ -153,22 +115,9 @@ class @ArrayStore
     $(this).trigger('object_added', { object: object, position: position, callback: callback })
 
 
-  # add object to the top of the _data neglecting ordering,
-  # trigger 'object_added' event
-  _add_data_object_on_top: (object, callback) ->
-    object = @_normalize_object_id(object)
-
-    @_map[object._id] = object
-    @_data.unshift(object)
-
-    position = 0
-
-    $(this).trigger('object_added', { object: object, position: position, callback: callback })
-
-
   # get object by id, update it's attributes, sort objects,
   # trigger 'object_changed' event
-  _update_data_object: (id, value, callback) ->
+  _update_data_object: (id, value, callback) -> # remove callback attr
     object = $.extend(@get(id), value)
 
     @_sort_data()
@@ -219,18 +168,13 @@ class @ArrayStore
     if eventType then $(this).off(eventType) else $(this).off()
 
 
-  # subsribe to store event, subscribing to 'object_added' fetches data,
-  # available event types:
+  # subsribe to store event, available event types:
   #  - object_added
   #  - object_changed
   #  - object_removed
   #  - objects_added
   on: (eventType, callback) ->
     $(this).on eventType, (e, data) -> callback(e, data)
-
-    #! make sure this run only for first subscribe
-    if eventType == 'object_added'
-      @_fetch_data()
 
 
   # get object by id
@@ -241,12 +185,11 @@ class @ArrayStore
   # add new object
   push: (serializedFormObject, callbacks) ->
     object = @_parse_form_object(serializedFormObject)
+
+    # generate id for new object
     if ! object._id then object._id = Date.now()
 
-    if @newItemOnTop
-      @_add_data_object_on_top(object, callbacks.onSuccess)
-    else
-      @_add_data_object(object, callbacks.onSuccess)
+    @_add_data_object(object, callbacks.onSuccess)
 
 
   # update objects attributes

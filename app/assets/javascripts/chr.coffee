@@ -22,9 +22,10 @@
 #= require ./chr/form/input-text
 #= require ./chr/form/nested-form
 
-#= require ./chr/store/store
-#= require ./chr/store/store-rest
-#= require ./chr/store/store-mongosteen
+#= require ./chr/store/object-store
+#= require ./chr/store/array-store
+#= require ./chr/store/rest-array-store
+#= require ./chr/store/mongosteen-array-store
 
 #= require ./chr/core/utils
 #= require ./chr/core/chr

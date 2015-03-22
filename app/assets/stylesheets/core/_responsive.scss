@@ -2,20 +2,22 @@
 $tablet:  "screen and (min-width:768px)";
 $desktop: "screen and (min-width:1150px)";
 
+
 /* Mobile Layout */
 .sidebar { @include absolutePosition(0 0 0 0); z-index: 1; }
 .module  { @include absolutePosition(0 0 0 0); z-index: 2; }
 .view    { @include absolutePosition(0 0 0 0); z-index: 3; background-color: #fff; }
 .list    { @include absolutePosition(0 0 0 0); z-index: 0; overflow: hidden; background-color: #fff; }
 
+
 /* Tablet Layout */
 @media #{$tablet} {
   .sidebar { right: inherit; width: 9em; }
   .module  { right: inherit; left: 9em; width: 20em; }
-  .view    { left: 29em; }
-  .list    { font-size: .9em; }
+  .view    { left: 29em; &.fullsize { left: 9em; } }
+  .list header,
+  .list .items { font-size: .9em; }
   .list header { line-height: 2.9em; }
-  .items .item:active { background: $neutralColor; }
   .module .list:first-child .back { display: none; }
   .view header .close { @include absolutePosition(0 inherit inherit 1em); color: $positiveColor; &:before { display: none; } }
   .module, .view { box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); }
@@ -25,15 +27,40 @@ $desktop: "screen and (min-width:1150px)";
       background-color: $white; border-left: 1px solid $neutralColor;
     }
   }
+
   // custom scrollbar
   .redactor-editor, textarea.redactor, .view .input-stacked textarea, .view > form, .list .items { @include customScrollbar(); }
+
+  // first list stays aside
+  .module.first-list-aside {
+    width: auto; right: 0;
+
+    .list:first-child       { width: 20em; }
+    .list:not(:first-child) { left:  20em; }
+
+    .list:first-child {
+      .items { overflow-y: hidden; }
+      .items .item .icon-folder { display: none; }
+    }
+
+    .list:not(:first-child) {
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+      header .back { display: none; }
+    }
+  }
 }
+
 
 /* Desktop Layout */
 @media #{$desktop} {
   .sidebar { width: 10em; }
   .module  { left: 10em; width: 22em; }
-  .view    { left: 32em;  }
+  .view    { left: 32em; &.fullsize { left: 10em; } }
+
+  .module.first-list-aside {
+    .list:first-child       { width: 22em; }
+    .list:not(:first-child) { left:  22em; }
+  }
 }
 
 

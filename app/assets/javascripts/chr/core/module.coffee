@@ -1,5 +1,18 @@
 # -----------------------------------------------------------------------------
+# Author: Alexander Kravets <alex@slatestudio.com>,
+#         Slate Studio (http://www.slatestudio.com)
+#
+# Coding Guide:
+#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # MODULE
+#
+# configuration options:
+#   @config.title                - title used for menu and root list header
+#   @config.showNestedListsAside - show module root list on the left and all
+#                                  nested lists on the right side for desktop
 # -----------------------------------------------------------------------------
 class @Module
   constructor: (@chr, @name, @config) ->
@@ -8,11 +21,23 @@ class @Module
     @$el = $("<section class='module #{ @name }' style='display: none;'>")
     @chr.$el.append @$el
 
+    # root list
+    @activeList = @rootList = new List(this, @name, @config)
+
+    # menu item + layout
     menuTitle  = @config.menuTitle ? @config.title
     menuTitle ?= @name.titleize()
-    @chr.addMenuItem(@name, menuTitle)
+    menuPath   = @name
 
-    @activeList = @rootList = new List(this, @name, @config)
+    # do not hide root list layout, nested lists are shown on aside
+    if @config.showNestedListsAside
+      @$el.addClass 'first-list-aside'
+      # jump to first nested list on menu click
+      firstNestedList = _firstNonEmptyValue(@nestedLists)
+      if ! _isMobile() && firstNestedList
+        menuPath += "/#{ firstNestedList.name }"
+
+    @chr.addMenuItem(menuPath, menuTitle)
 
     @config.onModuleInit?(this)
 
@@ -34,26 +59,14 @@ class @Module
     @nestedLists[listName] = new List(this, listName, config, parentList)
 
 
-  selectActiveListItem: (href) ->
-    @unselectActiveListItem()
-    @activeList.selectItem(href)
-
-
-  unselectActiveListItem: ->
-    @activeList?.unselectItems()
-
-
   hideActiveList: (animate=false)->
     if animate then @activeList.$el.fadeOut() else @activeList.$el.hide()
     @activeList = @activeList.parentList
-    @unselectActiveListItem()
 
 
   showView: (object, config, title, animate=false) ->
     newView = new View(this, config, @_view_path(), object, title)
     @chr.$el.append(newView.$el)
-
-    @selectActiveListItem(location.hash)
 
     newView.show animate, =>
       @destroyView()
@@ -65,16 +78,12 @@ class @Module
 
 
   show: ->
-    @chr.selectMenuItem(@name)
-    @unselectActiveListItem()
-
     @_update_active_list_items()
     @$el.show()
     @activeList.show(false)
 
 
   hide: (animate=false) ->
-    @unselectActiveListItem()
     @hideNestedLists()
 
     if animate
@@ -89,8 +98,6 @@ class @Module
   # shows one of nested lists, with or without animation
   showNestedList: (listName, animate=false) ->
     listToShow = @nestedLists[listName]
-
-    @selectActiveListItem(location.hash)
 
     if listToShow.showWithParent
       # list works as view, it never becomes active
@@ -119,6 +126,7 @@ class @Module
       object = config.arrayStore.get(objectId)
       if object then return @showView(object, config)
 
+      # get an individual object from store and show view for it
       console.log "object #{objectId} is not in the list"
 
 

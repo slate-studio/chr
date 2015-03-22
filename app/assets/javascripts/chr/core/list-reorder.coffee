@@ -12,7 +12,7 @@
 
   config = arrayStore.reorderable
 
-  # NOTE: this is optimistic scenario when assumes that all positions are different
+  # this is optimistic scenario when assumes that all positions are different
   _getObjectNewPosition = (el) ->
     $el =$ el
 
@@ -47,7 +47,7 @@
   ), false
 
   list.addEventListener 'slip:reorder', ((e) =>
-    # NOTE: when `e.detail.insertBefore` is null, item put to the end of the list.
+    # when `e.detail.insertBefore` is null, item put to the end of the list.
     e.target.parentNode.insertBefore(e.target, e.detail.insertBefore)
 
     objectPositionValue = _getObjectNewPosition(e.target)
@@ -56,7 +56,7 @@
     value["[#{arrayStore.sortBy}"] = "#{ objectPositionValue }"
 
     arrayStore.update objectId, value,
-      # NOTE: error handling
+      # error handling
       onSuccess: (object) => ;
       onError: (errors) => ;
 

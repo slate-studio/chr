@@ -1,10 +1,20 @@
 # -----------------------------------------------------------------------------
-# Character
+# Author: Alexander Kravets <alex@slatestudio.com>,
+#         Slate Studio (http://www.slatestudio.com)
+#
+# Coding Guide:
+#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# CHARACTER
 # -----------------------------------------------------------------------------
 class @Chr
-  constructor: (@config) ->
+  constructor: ->
     @modules = {}
 
+
+  start: (@config) ->
     @$el       =$ (@config.selector ? 'body')
     @$navBar   =$ "<nav class='sidebar'>"
     @$mainMenu =$ "<div class='menu'>"
@@ -14,13 +24,20 @@ class @Chr
 
     @modules[name] = new Module(this, name, config) for name, config of @config.modules
 
-    # NAVIGATION
-    # use class 'silent' for <a> when need to skip onhashchange event
-    $(document).on 'click', 'a.silent', (e) -> window._skipHashchange = true
+    @_update_active_menu_item_on_hashchange()
 
     window.onhashchange = =>
+      # this workaround allows to skip chr _navigate method
+      # for silent hashchanges, e.g close view event
       if not window._skipHashchange then @_navigate(location.hash)
       window._skipHashchange = false
+
+      # triggers hashchange event which is used for navigation
+      # related code, e.g. list active item selection
+      $(chr).trigger 'hashchange'
+
+    # use class 'silent' for <a> when need to skip onhashchange event
+    $(document).on 'click', 'a.silent', (e) -> window._skipHashchange = true
 
     # if not mobile navigate on first page load or page refresh
     window._skipHashchange = false
@@ -29,27 +46,24 @@ class @Chr
     else
       @_navigate(if location.hash != '' then location.hash else '#/' + Object.keys(@modules)[0])
 
-
-  addMenuItem: (moduleName, title) ->
-    @$mainMenu.append "<a href='#/#{ moduleName }'>#{ title }</a>"
+    $(chr).trigger 'hashchange'
 
 
-  selectMenuItem: (href) ->
-    @$mainMenu.children().removeClass 'active'
-    @$mainMenu.children("a[href='#/#{ href }']").addClass 'active'
+  _update_active_menu_item_on_hashchange: ->
+    $(this).on 'hashchange', =>
+      currentModuleName = window.location.hash.split('/')[1]
+      @$mainMenu.children().removeClass('active')
 
-
-  unselectMenuItem: ->
-    @$mainMenu.children().removeClass 'active'
+      for a in @$mainMenu.children()
+        moduleName = $(a).attr('href').split('/')[1]
+        if currentModuleName == moduleName
+          return $(a).addClass('active')
 
 
   # TODO: this piece of navigation code isn't clear, need to refactor to make
   #       it more readable
-  _navigate: (path) ->
-    # #/<module>[/<list>][/new]OR[/view/<objectId>]
+  _navigate: (path) -> #/<module>[/<list>][/new]OR[/view/<objectId>]
     crumbs = path.split('/')
-
-    @unselectMenuItem()
 
     # if module changed, hide previous module
     if @module != @modules[crumbs[1]]
@@ -89,6 +103,19 @@ class @Chr
           @module.hideActiveList(false)
 
 
+  addMenuItem: (moduleName, title) ->
+    @$mainMenu.append "<a href='#/#{ moduleName }'>#{ title }</a>"
+
+
+  showAlert: (message) ->
+    console.log 'Alert: ' + message
+
+
+  showError: (message) ->
+    console.log 'Error:' + message
+
+
+window.chr = new Chr()
 
 
 

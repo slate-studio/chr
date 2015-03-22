@@ -27,6 +27,9 @@ class @MongosteenArrayStore extends RestArrayStore
     if @config.data
       @pagination = false
 
+    if @pagination
+      @_bind_pagination_sync()
+
 
   # generate resource api url
   _resource_url: (type, id) ->
@@ -106,6 +109,15 @@ class @MongosteenArrayStore extends RestArrayStore
     @_reset_data()
     @load(callback)
 
+
+  # ---------------------------------------------------------
+  # work arounds to have consistency between arrayStore and
+  # database while loading next page:
+  #  - add new item
+  #  - remove item
+  #  - update item
+  # ---------------------------------------------------------
+  _bind_pagination_sync: ->
 
 
 

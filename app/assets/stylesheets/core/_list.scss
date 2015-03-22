@@ -29,9 +29,8 @@
   }
 }
 
-.list header .spinner { @include spinner; display: none; margin-top: .5em; }
+.list header .spinner { @include spinner; display: none; position: absolute; margin-left: -2.25em; margin-top: .5em; }
 .list.list-loading header {
-  .title { display: none; }
   .spinner { display: inline-block; }
 }
 
