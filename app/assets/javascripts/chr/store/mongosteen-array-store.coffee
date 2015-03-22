@@ -71,7 +71,10 @@ class @MongosteenArrayStore extends RestArrayStore
 
   # load next page objects from database, when finished
   # trigger 'objects_added' event
-  load: (success) ->
+  load: (callbacks={}) ->
+    callbacks.onSuccess ?= $.noop
+    callbacks.onError   ?= $.noop
+
     params = {}
 
     if @pagination
@@ -83,31 +86,32 @@ class @MongosteenArrayStore extends RestArrayStore
 
     params = $.param(params)
 
-    @_ajax 'GET', null, params, ((dataObject) =>
-      if dataObject.length > 0
+    @_ajax 'GET', null, params, ((data) =>
+      if data.length > 0
         @pagesCounter = @pagesCounter + 1
 
-        for o in dataObject
+        for o in data
           @_add_data_object(o)
 
-      success?()
-      $(this).trigger('objects_added')
-    ) #, callbacks.onError
+      callbacks.onSuccess(data)
+
+      $(this).trigger('objects_added', { objects: data })
+    ), callbacks.onError
 
 
   # load results for search query
-  search: (@searchQuery, callback) ->
+  search: (@searchQuery) ->
     @pagesCounter = 0
     @_reset_data()
-    @load(callback)
+    @load()
 
 
   # reset data and load first page
-  reset: (callback) ->
+  reset: ->
     @searchQuery  = ''
     @pagesCounter = 0
     @_reset_data()
-    @load(callback)
+    @load()
 
 
   # ---------------------------------------------------------

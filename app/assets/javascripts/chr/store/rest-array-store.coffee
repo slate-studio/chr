@@ -39,34 +39,52 @@ class @RestArrayStore extends ArrayStore
     $.ajax options
 
 
+  # reset all data and load it again
+  reset: ->
+    @_reset_data()
+    @load()
+
+
   # load objects from database, when finished
   # trigger 'objects_added' event
-  load: (success) ->
-    @_ajax 'GET', null, {}, ((dataObject) =>
-      if dataObject.length > 0
-        for o in dataObject
+  load: (callbacks={}) ->
+    callbacks.onSuccess ?= $.noop
+    callbacks.onError   ?= $.noop
+
+    @_ajax 'GET', null, {}, ((data) =>
+      if data.length > 0
+        for o in data
           @_add_data_object(o)
 
-      success?()
-      $(this).trigger('objects_added')
-    ) #, callbacks.onError
+      callbacks.onSuccess(data)
+
+      $(this).trigger('objects_added', { objects: data })
+    ) callbacks.onError
 
 
   # add new object
-  push: (serializedFormObject, callbacks) ->
+  push: (serializedFormObject, callbacks={}) ->
+    callbacks.onSuccess ?= $.noop
+    callbacks.onError   ?= $.noop
+
     obj = @_parse_form_object(serializedFormObject)
 
-    @_ajax 'POST', null, obj, ((dataObject) =>
-      @_add_data_object(dataObject, callbacks.onSuccess)
+    @_ajax 'POST', null, obj, ((data) =>
+      @_add_data_object(data)
+      callbacks.onSuccess(data)
     ), callbacks.onError
 
 
   # update objects attributes
-  update: (id, serializedFormObject, callbacks) ->
+  update: (id, serializedFormObject, callbacks={}) ->
+    callbacks.onSuccess ?= $.noop
+    callbacks.onError   ?= $.noop
+
     obj = @_parse_form_object(serializedFormObject)
 
-    @_ajax 'PUT', id, obj, ((dataObject) =>
-      @_update_data_object(id, dataObject, callbacks.onSuccess)
+    @_ajax 'PUT', id, obj, ((data) =>
+      @_update_data_object(id, data)
+      callbacks.onSuccess(data)
     ), callbacks.onError
 
 
@@ -79,12 +97,6 @@ class @RestArrayStore extends ArrayStore
       @_remove_data_object(id)
       callbacks.onSuccess()
     ), callbacks.onError
-
-
-  # reset all data and load it again
-  reset: (callback) ->
-    @_reset_data()
-    @load(callback)
 
 
 

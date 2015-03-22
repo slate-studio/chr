@@ -103,7 +103,7 @@ class @ArrayStore
 
   # normalize objects id, add object to _data and _map, sort objects,
   # trigger 'object_added' event
-  _add_data_object: (object, callback)-> # remove callback attr
+  _add_data_object: (object) ->
     object = @_normalize_object_id(object)
 
     @_map[object._id] = object
@@ -112,18 +112,18 @@ class @ArrayStore
     @_sort_data()
     position = @_get_data_object_position(object._id)
 
-    $(this).trigger('object_added', { object: object, position: position, callback: callback })
+    $(this).trigger('object_added', { object: object, position: position })
 
 
   # get object by id, update it's attributes, sort objects,
   # trigger 'object_changed' event
-  _update_data_object: (id, value, callback) -> # remove callback attr
+  _update_data_object: (id, value) ->
     object = $.extend(@get(id), value)
 
     @_sort_data()
     position = @_get_data_object_position(id)
 
-    $(this).trigger('object_changed', { object: object, position: position, callback: callback })
+    $(this).trigger('object_changed', { object: object, position: position })
 
 
   # delete object by id from _data and _map,
@@ -183,36 +183,36 @@ class @ArrayStore
 
 
   # add new object
-  push: (serializedFormObject, callbacks) ->
+  push: (serializedFormObject, callbacks={}) ->
     object = @_parse_form_object(serializedFormObject)
 
     # generate id for new object
     if ! object._id then object._id = Date.now()
 
-    @_add_data_object(object, callbacks.onSuccess)
+    @_add_data_object(object)
+    callbacks.onSuccess?()
 
 
   # update objects attributes
-  update: (id, serializedFormObject, callbacks) ->
+  update: (id, serializedFormObject, callbacks={}) ->
     object = @_parse_form_object(serializedFormObject)
-    @_update_data_object(id, object, callbacks.onSuccess)
+    @_update_data_object(id, object)
+    callbacks.onSuccess?()
 
 
   # delete object
   remove: (id, callbacks={}) ->
-    callbacks.onSuccess ?= $.noop
     @_remove_data_object(id)
-    callbacks.onSuccess()
+    callbacks.onSuccess?()
 
 
   # reset all data and load it again
-  reset: (callback) ->
+  reset: ->
     # do nothing here as data is stored in memory, this method
     # resets database data, syncing latest changes
     @_sort_data()
 
     $(this).trigger('objects_added')
-    callback?()
 
 
 
