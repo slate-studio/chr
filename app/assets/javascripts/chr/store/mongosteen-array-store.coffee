@@ -20,15 +20,24 @@ class @MongosteenArrayStore extends RestArrayStore
     @searchable   = @config.searchable ? false
     @searchQuery  = ''
 
-    @pagination   = @config.pagination ? true
-    @pagesCounter = 0
+    @pagination     = @config.pagination ? true
+    @pagesCounter   = 0
+    @objectsPerPage = _itemsPerPageRequest ? 20
 
     # disable pagination when bootstraped data provided
     if @config.data
       @pagination = false
 
-    if @pagination
-      @_bind_pagination_sync()
+
+  # ---------------------------------------------------------
+  # workarounds to have consistency between arrayStore and
+  # database while loading next page:
+  #  - add new item: don't add if added to the bottom of the
+  #                  store, otherwise remove last object in store
+  #  - remove item:  load one object based on offset
+  #  - update item:  if item is last in the store after update,
+  #                  remove it and load last object again
+  # ---------------------------------------------------------
 
 
   # generate resource api url
@@ -69,15 +78,29 @@ class @MongosteenArrayStore extends RestArrayStore
     return formDataObject
 
 
-  # ---------------------------------------------------------
-  # work arounds to have consistency between arrayStore and
-  # database while loading next page:
-  #  - add new item
-  #  - remove item
-  #  - update item
-  # ---------------------------------------------------------
-  _bind_pagination_sync: ->
-    ;
+  # check how this works with sorting enabled
+  _sync_data_objects: (objects) ->
+    if objects.length == 0 then return @_reset_data()
+    if @_data.length  == 0 then return ( @_add_data_object(o) for o in objects )
+
+    objectsMap = {}
+    (o = @_normalize_object_id(o) ; objectsMap[o._id] = o) for o in objects
+
+    objectIds     = $.map objects, (o) -> o._id
+    dataObjectIds = $.map @_data,  (o) -> o._id
+
+    addObjectIds        = $(objectIds).not(dataObjectIds).get()
+    updateDataObjectIds = $(objectIds).not(addObjectIds).get()
+    removeDataObjectIds = $(dataObjectIds).not(objectIds).get()
+
+    for id in removeDataObjectIds
+      @_remove_data_object(id)
+
+    for id in addObjectIds
+      @_add_data_object(objectsMap[id])
+
+    for id in updateDataObjectIds
+      @_update_data_object(id, objectsMap[id])
 
 
   # load next page objects from database, when finished
@@ -90,7 +113,7 @@ class @MongosteenArrayStore extends RestArrayStore
 
     if @pagination
       params.page    = @pagesCounter + 1
-      params.perPage = _itemsPerPageRequest ? 20
+      params.perPage = @objectsPerPage
 
     if @searchable && @searchQuery.length > 0
       params.search = @searchQuery
@@ -100,9 +123,7 @@ class @MongosteenArrayStore extends RestArrayStore
     @_ajax 'GET', null, params, ((data) =>
       if data.length > 0
         @pagesCounter = @pagesCounter + 1
-
-        for o in data
-          @_add_data_object(o)
+        @_add_data_object(o) for o in data
 
       callbacks.onSuccess(data)
 
@@ -118,11 +139,28 @@ class @MongosteenArrayStore extends RestArrayStore
 
 
   # reset data and load first page
-  reset: ->
+  reset: (force=false) ->
     @searchQuery  = ''
     @pagesCounter = 0
-    @_reset_data()
-    @load()
+
+    if force
+      @_reset_data()
+      @load()
+    else
+      params = {}
+
+      if @pagination
+        params.page    = @pagesCounter + 1
+        params.perPage = @objectsPerPage
+
+      params = $.param(params)
+
+      @_ajax 'GET', null, params, ((data) =>
+        if data.length > 0
+          @pagesCounter = @pagesCounter + 1
+        @_sync_data_objects(data)
+        $(this).trigger('objects_added', { objects: data })
+      ), -> chr.showError('Error while loading data.')
 
 
 

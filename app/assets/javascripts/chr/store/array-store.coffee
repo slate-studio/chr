@@ -108,8 +108,8 @@ class @ArrayStore
 
     @_map[object._id] = object
     @_data.push(object)
-
     @_sort_data()
+
     position = @_get_data_object_position(object._id)
 
     $(this).trigger('object_added', { object: object, position: position })
@@ -121,6 +121,7 @@ class @ArrayStore
     object = $.extend(@get(id), value)
 
     @_sort_data()
+
     position = @_get_data_object_position(id)
 
     $(this).trigger('object_changed', { object: object, position: position })
@@ -131,7 +132,7 @@ class @ArrayStore
   _remove_data_object: (id) ->
     position = @_get_data_object_position(id)
     if position >= 0
-      delete @_data[position]
+      @_data.splice(position, 1)
 
     delete @_map[id]
 
@@ -206,12 +207,8 @@ class @ArrayStore
     callbacks.onSuccess?()
 
 
-  # reset all data and load it again
+  # do nothing for in memory data store
   reset: ->
-    # do nothing here as data is stored in memory, this method
-    # resets database data, syncing latest changes
-    @_sort_data()
-
     $(this).trigger('objects_added')
 
 

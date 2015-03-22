@@ -29,11 +29,11 @@ class @RestArrayStore extends ArrayStore
       type: type
       data: data
       success: (data, textStatus, jqXHR) =>
-        @dataFetchLock = false
         success?(data)
+        setTimeout ( => @dataFetchLock = false ), 50
       error: (jqXHR, textStatus, errorThrown ) =>
-        @dataFetchLock = false
         error?(jqXHR.responseJSON)
+        @dataFetchLock = false
 
     @dataFetchLock = true
     $.ajax options

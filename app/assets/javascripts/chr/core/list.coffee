@@ -72,13 +72,11 @@ class @List
 
 
   _bind_hashchange: ->
-    $(chr).on 'hashchange', => @_update_active_item()
+    $(chr).on 'hashchange', => @_set_active_item()
 
 
-  _update_active_item: ->
+  _set_active_item: ->
     hash = window.location.hash
-    @$items.children().removeClass('active')
-
     if hash.startsWith "#/#{ @module.name }"
       for a in @$items.children()
         itemPath = $(a).attr('href')
@@ -129,7 +127,7 @@ class @List
     # items loaded
     @config.arrayStore.on 'objects_added', (e, data) =>
       @_hide_spinner()
-      @_update_active_item()
+      @_set_active_item()
 
     if @config.arrayStore.pagination
       _listBindScroll(this)
@@ -171,12 +169,17 @@ class @List
   show: (animate=false, callback) ->
     if animate
       @$el.css('z-index', 1)
-      @$el.fadeIn $.fx.speeds._default, => @$el.css('z-index', '') ; callback?()
+      @$el.fadeIn $.fx.speeds._default, =>
+        @$el.css('z-index', '')
+        @$items.scrollTop(0)
+        callback?()
     else
       @$el.show()
+      #@$items.scrollTop(0)
 
 
   onBack: (e) ->
+    @module.chr.unsetActiveListItems()
     @module.destroyView()
 
     if @showWithParent

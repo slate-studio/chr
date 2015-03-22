@@ -2,11 +2,12 @@
 # ITEM
 # -----------------------------------------------------------------------------
 class @Item
-  _isFolder: ->
+  _is_folder: ->
     # TODO: update this logic as it's not reliable
     if @object._title then true else false
 
-  _renderTitle: ->
+
+  _render_title: ->
     title  = @object._title # nested list title predefined in config (or slug based)
     title ?= @object[@config.itemTitleField] # based on config
     title ?= _firstNonEmptyValue(@object) # auto-generated: first non empty value
@@ -17,7 +18,8 @@ class @Item
     @$el.append(@$title)
     @$el.attr  'data-title', title
 
-  _renderSubtitle: ->
+
+  _render_subtitle: ->
     if @config.itemSubtitleField
       subtitle   = @object[@config.itemSubtitleField]
       if subtitle != ''
@@ -25,7 +27,8 @@ class @Item
         @$el.append(@$subtitle)
         @$el.addClass 'has-subtitle'
 
-  _renderThumbnail: ->
+
+  _render_thumbnail: ->
     if @config.itemThumbnail
       imageUrl = @config.itemThumbnail(@object)
       if imageUrl != '' and not imageUrl.endsWith('_old_') # NOTE: carrierwave fix, check if still required
@@ -33,25 +36,28 @@ class @Item
         @$el.append(@$thumbnail)
         @$el.addClass 'has-thumbnail'
 
+
   render: ->
     @$el.html('').removeClass('item-folder has-subtitle has-thumbnail')
-    @_renderTitle()
+    @_render_title()
 
-    if @_isFolder()
+    if @_is_folder()
       @$el.addClass('item-folder')
       @$el.append $("<div class='icon-folder'></div>")
     else
-      @_renderSubtitle()
-      @_renderThumbnail()
+      @_render_subtitle()
+      @_render_thumbnail()
 
       if @config.arrayStore and @config.arrayStore.reorderable
         @$el.addClass('reorderable')
         @$el.append $("<div class='icon-reorder'></div>")
 
+
   constructor: (@module, @path, @object, @config) ->
     @$el =$ """<a class='item' href='#{ @path }' data-id='#{ @object._id }' data-title=''></a>"""
     @$el.on 'click', (e) => @onClick(e)
     @render()
+
 
   onClick: (e) ->
     if @.$el.hasClass('active') then e.preventDefault() ; return
@@ -74,8 +80,10 @@ class @Item
 
     @module.showNestedList(_last(crumbs), true)
 
+
   destroy: ->
     @$el.remove()
+
 
   position: ->
     positionFieldName = @config.arrayStore.sortBy

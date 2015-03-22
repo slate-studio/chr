@@ -14,50 +14,20 @@ class @Chr
     @modules = {}
 
 
-  start: (@config) ->
-    @$el       =$ (@config.selector ? 'body')
-    @$navBar   =$ "<nav class='sidebar'>"
-    @$mainMenu =$ "<div class='menu'>"
-
-    @$navBar.append @$mainMenu
-    @$el.append @$navBar
-
-    @modules[name] = new Module(this, name, config) for name, config of @config.modules
-
-    @_update_active_menu_item_on_hashchange()
-
-    window.onhashchange = =>
-      # this workaround allows to skip chr _navigate method
-      # for silent hashchanges, e.g close view event
-      if not window._skipHashchange then @_navigate(location.hash)
-      window._skipHashchange = false
-
-      # triggers hashchange event which is used for navigation
-      # related code, e.g. list active item selection
-      $(chr).trigger 'hashchange'
-
-    # use class 'silent' for <a> when need to skip onhashchange event
-    $(document).on 'click', 'a.silent', (e) -> window._skipHashchange = true
-
-    # if not mobile navigate on first page load or page refresh
-    window._skipHashchange = false
-    if _isMobile()
-      if location.hash != '' then @_navigate(location.hash)
-    else
-      @_navigate(if location.hash != '' then location.hash else '#/' + Object.keys(@modules)[0])
-
-    $(chr).trigger 'hashchange'
+  _unset_active_menu_items: ->
+    $('.sidebar .menu a.active').removeClass('active')
 
 
-  _update_active_menu_item_on_hashchange: ->
-    $(this).on 'hashchange', =>
-      currentModuleName = window.location.hash.split('/')[1]
-      @$mainMenu.children().removeClass('active')
+  unsetActiveListItems: ->
+    $('.list .items .item.active').removeClass('active')
 
-      for a in @$mainMenu.children()
-        moduleName = $(a).attr('href').split('/')[1]
-        if currentModuleName == moduleName
-          return $(a).addClass('active')
+
+  _set_active_menu_item: ->
+    currentModuleName = window.location.hash.split('/')[1]
+    for a in @$mainMenu.children()
+      moduleName = $(a).attr('href').split('/')[1]
+      if currentModuleName == moduleName
+        return $(a).addClass('active')
 
 
   # TODO: this piece of navigation code isn't clear, need to refactor to make
@@ -101,6 +71,44 @@ class @Chr
         @module.destroyView()
         while @module.activeList != @module.rootList
           @module.hideActiveList(false)
+
+
+  start: (@config) ->
+    @$el       =$ (@config.selector ? 'body')
+    @$navBar   =$ "<nav class='sidebar'>"
+    @$mainMenu =$ "<div class='menu'>"
+
+    @$navBar.append @$mainMenu
+    @$el.append @$navBar
+
+    @modules[name] = new Module(this, name, config) for name, config of @config.modules
+
+    $(this).on 'hashchange', => @_set_active_menu_item()
+
+    window.onhashchange = =>
+      @_unset_active_menu_items()
+      @unsetActiveListItems()
+
+      # this workaround allows to skip chr _navigate method
+      # for silent hashchanges, e.g close view event
+      if not window._skipHashchange then @_navigate(location.hash)
+      window._skipHashchange = false
+
+      # triggers hashchange event which is used for navigation
+      # related code, e.g. list active item selection
+      $(this).trigger 'hashchange'
+
+    # use class 'silent' for <a> when need to skip onhashchange event
+    $(document).on 'click', 'a.silent', (e) -> window._skipHashchange = true
+
+    # if not mobile navigate on first page load or page refresh
+    window._skipHashchange = false
+    if _isMobile()
+      if location.hash != '' then @_navigate(location.hash)
+    else
+      @_navigate(if location.hash != '' then location.hash else '#/' + Object.keys(@modules)[0])
+
+    $(this).trigger 'hashchange'
 
 
   addMenuItem: (moduleName, title) ->

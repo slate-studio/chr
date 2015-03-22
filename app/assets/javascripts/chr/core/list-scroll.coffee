@@ -7,7 +7,7 @@
   arrayStore = listEl.config.arrayStore
 
   $list.scroll (e) =>
-    if not arrayStore.dataFetchLock
+    if ! arrayStore.dataFetchLock
       $listChildren        = $list.children()
       listChildrenCount    = $listChildren.length
       listFirstChildHeight = $listChildren.first().outerHeight()
