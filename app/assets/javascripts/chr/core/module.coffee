@@ -100,7 +100,7 @@ class @Module
     listToShow = @nestedLists[listName]
 
     if listToShow.showWithParent
-      # list works as view, it never becomes active
+      # list works as view, never becomes active
       listToShow.updateItems()
       listToShow.show animate, => @hideNestedLists(exceptList=listName)
 
@@ -118,21 +118,13 @@ class @Module
     list.hide() for key, list of @nestedLists when key isnt exceptList
 
 
-  showViewWhenObjectsAreReady: (objectId, config) ->
+  showObjectView: (objectId, config) ->
     object = config.arrayStore.get(objectId)
     if object then return @showView(object, config)
 
-    $(config.arrayStore).one 'objects_added', (e, data) =>
-      object = config.arrayStore.get(objectId)
-      if object then return @showView(object, config)
-
-      # load an object from store and show view for it
-      config.arrayStore.loadObject objectId,
-        onSuccess: (object) =>
-          console.log object
-          @showView(object, config)
-        onError: ->
-          console.log 'can\'t show view for requested object'
+    config.arrayStore.loadObject objectId,
+      onSuccess: (object) => @showView(object, config)
+      onError: -> chr.showError("can\'t show view for requested object")
 
 
   # returns visible nested list that acts as view

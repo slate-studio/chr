@@ -85,7 +85,7 @@ class @Chr
 
           if crumb == 'view'
             objectId = _last(crumbs)
-            return @module.showViewWhenObjectsAreReady(objectId, config)
+            return @module.showObjectView(objectId, config)
 
           config = config.items[crumb]
 
