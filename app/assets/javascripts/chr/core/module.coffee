@@ -73,6 +73,16 @@ class @Module
       @view = newView
 
 
+  showViewByObjectId: (objectId, config, title, animate=false) ->
+    onSuccess = (object) => @showView(object, config, title, animate)
+    onError   = chr.showError("can\'t show view for requested object")
+
+    if objectId == ''
+      config.objectStore.loadObject({ onSuccess: onSuccess, onError: onError })
+    else
+      config.arrayStore.loadObject(objectId, { onSuccess: onSuccess, onError: onError })
+
+
   destroyView: ->
     @view?.destroy()
 
@@ -113,18 +123,9 @@ class @Module
     if animate and @view then @view.$el.fadeOut $.fx.speeds._default, => @destroyView()
 
 
-  hideNestedLists: (exceptList)->
+  hideNestedLists: (exceptList) ->
     @activeList = @rootList
     list.hide() for key, list of @nestedLists when key isnt exceptList
-
-
-  showObjectView: (objectId, config) ->
-    object = config.arrayStore.get(objectId)
-    if object then return @showView(object, config)
-
-    config.arrayStore.loadObject objectId,
-      onSuccess: (object) => @showView(object, config)
-      onError: -> chr.showError("can\'t show view for requested object")
 
 
   # returns visible nested list that acts as view

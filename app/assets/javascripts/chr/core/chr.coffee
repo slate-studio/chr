@@ -55,7 +55,7 @@ class @Chr
 
           if crumb == 'view'
             objectId = _last(crumbs)
-            return @module.showObjectView(objectId, config)
+            return @module.showViewByObjectId(objectId, config)
 
           config = config.items[crumb]
 
@@ -123,6 +123,9 @@ class @Chr
     console.log 'Error:' + message
 
 
+# -----------------------------------------------------------------------------
+# INIT
+# -----------------------------------------------------------------------------
 window.chr = new Chr()
 
 

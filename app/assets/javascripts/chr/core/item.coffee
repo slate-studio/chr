@@ -69,14 +69,12 @@ class @Item
     id     = $(e.currentTarget).attr('data-id')
     crumbs = location.href.split('/')
 
-    if @config.arrayStore and crumbs[crumbs.length - 2] == 'view'
-      object = @config.arrayStore.get(id)
+    # view for a arrayStore item
+    if crumbs[crumbs.length - 2] == 'view'
+      return @module.showViewByObjectId(id, @config, title, true)
 
     if @config.objectStore
-      object = @config.objectStore.get()
-
-    if object
-      return @module.showView(object, @config, title, true)
+      return @module.showViewByObjectId('', @config, title, true)
 
     @module.showNestedList(_last(crumbs), true)
 
