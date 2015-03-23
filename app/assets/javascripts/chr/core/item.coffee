@@ -2,8 +2,14 @@
 # ITEM
 # -----------------------------------------------------------------------------
 class @Item
+  constructor: (@module, @path, @object, @config) ->
+    @$el =$ """<a class='item' href='#{ @path }' data-id='#{ @object._id }' data-title=''></a>"""
+    @$el.on 'click', (e) => @onClick(e)
+    @render()
+
+
   _is_folder: ->
-    # TODO: update this logic as it's not reliable
+    # update this logic as it's not reliable
     if @object._title then true else false
 
 
@@ -31,7 +37,8 @@ class @Item
   _render_thumbnail: ->
     if @config.itemThumbnail
       imageUrl = @config.itemThumbnail(@object)
-      if imageUrl != '' and not imageUrl.endsWith('_old_') # NOTE: carrierwave fix, check if still required
+      # carrierwave fix, check if still required
+      if imageUrl != '' and not imageUrl.endsWith('_old_')
         @$thumbnail =$ "<div class='item-thumbnail'><img src='#{imageUrl}' /></div>"
         @$el.append(@$thumbnail)
         @$el.addClass 'has-thumbnail'
@@ -51,12 +58,6 @@ class @Item
       if @config.arrayStore and @config.arrayStore.reorderable
         @$el.addClass('reorderable')
         @$el.append $("<div class='icon-reorder'></div>")
-
-
-  constructor: (@module, @path, @object, @config) ->
-    @$el =$ """<a class='item' href='#{ @path }' data-id='#{ @object._id }' data-title=''></a>"""
-    @$el.on 'click', (e) => @onClick(e)
-    @render()
 
 
   onClick: (e) ->
@@ -86,7 +87,6 @@ class @Item
   position: ->
     positionFieldName = @config.arrayStore.sortBy
     parseFloat(@object[positionFieldName])
-
 
 
 
