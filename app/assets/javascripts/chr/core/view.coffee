@@ -81,7 +81,7 @@ class @View
   _update_object: (value) ->
     @_start_saving()
     @store.update @object._id, value,
-      onSuccess: (object) =>
+      onSuccess: (@object) =>
         # add a note here for this line, it's not obvious why it's here,
         # looks like some logic related to title update
         if @config.arrayStore then @title = null
