@@ -30,8 +30,8 @@ class @RestArrayStore extends ArrayStore
       data: data
       success: (data, textStatus, jqXHR) =>
         success?(data)
-        #setTimeout ( => @dataFetchLock = false ), 350
-        @dataFetchLock = false
+        setTimeout ( => @dataFetchLock = false ), 350
+        #@dataFetchLock = false
       error: (jqXHR, textStatus, errorThrown ) =>
         error?(jqXHR.responseJSON)
         @dataFetchLock = false

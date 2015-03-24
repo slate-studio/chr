@@ -168,6 +168,7 @@ class @List
 
   show: (animate=false, callback) ->
     if animate
+      # why play here with z-index?
       @$el.css('z-index', 1)
       @$el.fadeIn $.fx.speeds._default, =>
         @$el.css('z-index', '')

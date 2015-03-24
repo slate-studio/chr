@@ -75,7 +75,7 @@ class @Module
 
   showViewByObjectId: (objectId, config, title, animate=false) ->
     onSuccess = (object) => @showView(object, config, title, animate)
-    onError   = chr.showError("can\'t show view for requested object")
+    onError   = -> chr.showError("can\'t show view for requested object")
 
     if objectId == ''
       config.objectStore.loadObject({ onSuccess: onSuccess, onError: onError })

@@ -120,7 +120,7 @@ class @Chr
 
 
   showError: (message) ->
-    console.log 'Error:' + message
+    console.log 'Error: ' + message
 
 
 # -----------------------------------------------------------------------------
