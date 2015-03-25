@@ -8,6 +8,8 @@
 
 # -----------------------------------------------------------------------------
 # LIST
+#  - onListInit
+#  - onListShow
 # -----------------------------------------------------------------------------
 class @List
   constructor: (@module, @name, @config, @parentList) ->
@@ -167,16 +169,17 @@ class @List
 
 
   show: (animate=false, callback) ->
+    onShow = =>
+      @$items.scrollTop(0)
+      @config.onListShow?(@)
+      callback?()
+
     if animate
-      # why play here with z-index?
+      # z-index workaround to remove blink effect
       @$el.css('z-index', 1)
-      @$el.fadeIn $.fx.speeds._default, =>
-        @$el.css('z-index', '')
-        @$items.scrollTop(0)
-        callback?()
+      @$el.fadeIn $.fx.speeds._default, => @$el.css('z-index', '') ; onShow()
     else
-      @$el.show()
-      #@$items.scrollTop(0)
+      @$el.show() ; onShow()
 
 
   onBack: (e) ->
