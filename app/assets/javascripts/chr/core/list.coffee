@@ -97,8 +97,8 @@ class @List
     for slug, config of @config.items
       object = { _id: slug, _title: config.title ? slug.titleize() }
 
-      if config.objectStore
-        $.extend(object, config.objectStore.get())
+      #if config.objectStore
+      #  $.extend(object, config.objectStore.get())
 
       if config.items or config.arrayStore
         @module.addNestedList(slug, config, this)

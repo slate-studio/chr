@@ -13,20 +13,15 @@ class @ObjectStore
   constructor: (@config={}) ->
     @_initialize_database()
 
-  _update_data_object: (value, callback) ->
-    callback?($.extend(@_data, value))
-
-  _fetch_data: ->
+  _initialize_database: ->
     @_data = @config.data
 
-  _initialize_database: ->
-    @_fetch_data()
-
-  get: ->
+  loadObject: ->
     @_data
 
   update: (id, value, callback) ->
-    @_update_data_object(value, callback)
+    $.extend(@_data, value)
+    callback?(@_data)
 
 
 

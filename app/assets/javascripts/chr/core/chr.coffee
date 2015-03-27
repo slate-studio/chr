@@ -50,7 +50,7 @@ class @Chr
       if crumbs.length > 0
         for crumb in crumbs
           if crumb == 'new'
-            # TODO: reset list data
+            # TODO: reset list data — why?
             return @module.showView(null, config, 'New')
 
           if crumb == 'view'
@@ -60,14 +60,12 @@ class @Chr
           config = config.items[crumb]
 
           if config.objectStore
-            # TODO: check if object is loaded and if it's not load it first
-            object = $.extend({ _id: crumb }, config.objectStore.get())
-            return @module.showView(object, config, crumb.titleize())
+            return @module.showViewByObjectId('', config, crumb.titleize())
 
           else
             @module.showNestedList(crumb)
       else
-        # NOTE: show module root list for the case when same module picked
+        # show module root list for the case when same module picked
         @module.destroyView()
         while @module.activeList != @module.rootList
           @module.hideActiveList(false)

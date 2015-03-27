@@ -23,6 +23,8 @@
 #= require ./chr/form/nested-form
 
 #= require ./chr/store/object-store
+#= require ./chr/store/rest-object-store
+#= require ./chr/store/mongosteen-object-store
 #= require ./chr/store/array-store
 #= require ./chr/store/rest-array-store
 #= require ./chr/store/mongosteen-array-store

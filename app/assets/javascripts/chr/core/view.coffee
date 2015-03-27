@@ -85,11 +85,14 @@ class @View
         # add a note here for this line, it's not obvious why it's here,
         # looks like some logic related to title update
         if @config.arrayStore then @title = null
+
         formScrollPosition = @form.$el.scrollTop()
         @_render()
         @_initialize_form_plugins()
         @form.$el.scrollTop(formScrollPosition)
+
         @_stop_saving()
+
       onError: (errors) =>
         @_validation_errors('Changes were not saved.', errors)
         @_stop_saving()
@@ -147,6 +150,7 @@ class @View
   onSave: (e) ->
     e.preventDefault()
     serializedFormObj = @form.serialize()
+
     if @object
       @_update_object(serializedFormObj)
     else
