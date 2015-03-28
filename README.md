@@ -78,7 +78,7 @@ Notes on code above:
   2. Need to setup ```index``` view and ```admin``` layout to render admin app;
   3. ```bootstrap_data``` is a placeholder for objects that might be required to be loaded when app starts.
 
-Devise would require a custom ```SessionController``` implementation, ```app/controllers/admin/devise_overrides/session_controller.rb```:
+Devise would require a custom ```SessionController``` implementation in ```app/controllers/admin/devise_overrides/session_controller.rb```. ```SessionController``` sets ```admin``` layout to be used to render devise views. Enables login by email (*looks like workaround*).
 
 ```ruby
 class Admin::DeviseOverrides::SessionsController < Devise::SessionsController
@@ -91,8 +91,6 @@ class Admin::DeviseOverrides::SessionsController < Devise::SessionsController
     end
 end
 ```
-
-```SessionController``` sets ```admin``` layout to be used to render devise views, and enables login by email (*looks like workaround*).
 
 Admin app layout ```app/views/layouts/admin.html.erb```:
 
