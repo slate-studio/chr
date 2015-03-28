@@ -29,7 +29,7 @@ Setup ```Admin``` model with devise generator:
 
     rails generate devise admin
 
-Or here is an example of basic ```app/models/admin.rb``` model that provides email/password authentication:
+Here is an example of basic ```app/models/admin.rb``` model that provides email/password authentication:
 
 ```ruby
 class Admin
@@ -50,7 +50,7 @@ class Admin
 end
 ```
 
-When models is there let's setup controllers, views and configure routes.
+When models are ready, setup controllers, views and configure routes.
 
 Base admin controller ```app/controllers/admin/base_controller.rb``` looks like this:
 
