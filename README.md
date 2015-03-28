@@ -1,6 +1,6 @@
 # Character
 
-**Powerful javascript CMS for apps.**
+*Powerful javascript CMS for apps.*
 
 
 ## Rails Setup
