@@ -1,12 +1,14 @@
 # Character
 
-## Javascript based CMS for apps
+**Powerful javascript CMS for apps.**
+
 
 ## Rails Setup
 
-*An example of admin implementation setup for **Rails** app that uses **Mongoid** stack.*
+An example of admin implementation setup for **Rails** app that uses **Mongoid** stack.
 
-#### Gemfile setup
+
+#### Gems
 
 Add to following gems to ```Gemfile```:
 
@@ -15,6 +17,7 @@ Add to following gems to ```Gemfile```:
     gem "chr"
 
 This example uses ```devise``` for admins authentication.
+
 
 #### Admin authentication
 
@@ -79,19 +82,19 @@ Devise would require a custom ```SessionController``` implementation, ```app/con
 
 ```ruby
 class Admin::DeviseOverrides::SessionsController < Devise::SessionsController
-layout 'admin'
+  layout 'admin'
 
-protected
+  protected
 
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.for(:sign_in) << :email
-  end
+    def configure_permitted_parameters
+      devise_parameter_sanitizer.for(:sign_in) << :email
+    end
 end
 ```
 
 ```SessionController``` sets ```admin``` layout to be used to render devise views, and enables login by email (*looks like workaround*).
 
-Admin app layout ```app/views/layouts/admin.html```:
+Admin app layout ```app/views/layouts/admin.html.erb```:
 
 ```erb
 <!doctype html>
@@ -112,11 +115,150 @@ Admin app layout ```app/views/layouts/admin.html```:
 </html>
 ```
 
+Admin index view ```app/views/admin/index.html.erb```:
+
+```erb
+<body class='loading'>
+  <%= link_to 'Sign Out', destroy_admin_session_path, method: :delete, style: 'display:none;' %>
+</body>
+```
+
+New session view for devise ```app/views/admin/devise_overrides/sessions/new.html.erb```:
+
+```erb
+<body class='sign-in'>
+  <h2>Sign In</h2>
+
+  <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <% if alert %>
+      <p class="error"><%= alert.gsub('username', 'email').gsub('or sign up', '') %></p>
+    <% end %>
+
+    <div class="form-inputs">
+      <%= f.input :email,    required: true, autofocus: true %>
+      <%= f.input :password, required: true %>
+
+      <%= f.input :remember_me, as: :boolean if devise_mapping.rememberable? %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.button :submit, "Sign In" %>
+    </div>
+  <% end %>
+</body>
+```
+
+Now connect admin with devise in ```config/routes.rb``` with:
+
+```ruby
+devise_for :admins, path: "admin", controllers: { sessions: "admin/devise_overrides/sessions" }
+namespace :admin do
+  get '/'               => 'base#index'
+  get '/bootstrap.json' => 'base#bootstrap_data'
+end
+```
+
+
+#### Character setup
+
+Three pieces to be configured here. First let's create ```app/assets/javascripts/admin.coffee``` with empty ```modules``` configuration:
+
+```coffee
+#= require jquery
+#= require jquery_ujs
+#= require chr
+
+$ ->
+  $.get '/admin/bootstrap.json', (response) ->
+    config =
+      modules: {}
+
+    $('body').removeClass('loading')
+    chr.start(config)
+
+    # append signout button to the end of sidebar menu
+    $('a[data-method=delete]').appendTo(".sidebar .menu").show()
+```
+
+Second piece is foundation for styles customizations ```app/assets/stylesheets/admin.scss```:
+
+```scss
+@charset "utf-8";
+
+@import "normalize-rails";
+@import "chr";
+@import "admin/signin";
+```
+
+The last import in the code above is optional. But here is a default source for it as well ```app/assets/stylesheets/admin/chr/_signin.scss```:
+
+```scss
+.sign-in {
+  font-size: 14px;
+  color: #555;
+  margin: 3em 0 0 3em;
+
+  h2 {
+    text-transform: uppercase;
+    font-size: 1em;
+    font-size: 16px;
+    color: $black;
+    margin-bottom: 1.5em;
+  }
+
+  p {
+    margin: -1.5em 0 2em;
+    color: $positiveColor;
+  }
+
+  .form-actions, .form-inputs {
+    max-width: 280px;
+  }
+
+  .input {
+    margin-bottom: 1.5em;
+  }
+
+  input.string, input.password {
+    float: right;
+    margin-top: -.45em;
+    padding: .25em .5em;
+    width: 13.5em;
+  }
+
+  label.boolean input {
+    margin-right: .25em;
+  }
+
+  .form-actions input {
+    width: 100%;
+    padding: 1em 2em;
+    background-color: $positiveColor;
+    border: 0;
+    color: $white;
+  }
+}
+```
+
+The third piece is to make sure admin assets are precompiled on production, include them in ```config/initializers/assets.rb```:
+
+```ruby
+Rails.application.config.assets.precompile += %w( admin.js admin.css )
+```
+
+At this point initial setup for admin app is finished and it could be accessed via: ```localhost:3000/admin```.
+
+
+#### Add models
+
+To be continued...
 
 
 ## The Character family
 
-- [Mongosteen](https://github.com/slate-studio/mongosteen): An easy way to add restful actions for mongoid models
+- [Mongosteen](https://github.com/slate-studio/mongosteen): An easy way to add restful actions for Mongoid models
+- [Inverter](https://github.com/slate-studio/inverter): An easy way to connect Rails templates content to Character CMS
+- [Loft](https://github.com/slate-studio/loft): Media assets manager for Character CMS
 
 ## Credits
 
