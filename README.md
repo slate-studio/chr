@@ -3,9 +3,9 @@
 *Powerful javascript CMS for apps.*
 
 
-## Rails Setup
+## Rails
 
-An example of admin implementation setup for **Rails** app that uses **Mongoid** stack.
+An example of admin implementation setup for [Rails](https://github.com/rails/rails) app that uses [Mongoid](https://github.com/mongoid/mongoid) stack.
 
 
 #### Gems
