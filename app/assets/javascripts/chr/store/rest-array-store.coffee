@@ -40,10 +40,29 @@ class @RestArrayStore extends ArrayStore
     $.ajax options
 
 
-  # reset all data and load it again
-  reset: ->
-    @_reset_data()
-    @load()
+  # check how this works with sorting enabled
+  _sync_with_data_objects: (objects) ->
+    if objects.length == 0 then return @_reset_data()
+    if @_data.length  == 0 then return ( @_add_data_object(o) for o in objects )
+
+    objectsMap = {}
+    (o = @_normalize_object_id(o) ; objectsMap[o._id] = o) for o in objects
+
+    objectIds     = $.map objects, (o) -> o._id
+    dataObjectIds = $.map @_data,  (o) -> o._id
+
+    addObjectIds        = $(objectIds).not(dataObjectIds).get()
+    updateDataObjectIds = $(objectIds).not(addObjectIds).get()
+    removeDataObjectIds = $(dataObjectIds).not(objectIds).get()
+
+    for id in removeDataObjectIds
+      @_remove_data_object(id)
+
+    for id in addObjectIds
+      @_add_data_object(objectsMap[id])
+
+    for id in updateDataObjectIds
+      @_update_data_object(id, objectsMap[id])
 
 
   # load a single object, this is used in view when
@@ -109,6 +128,14 @@ class @RestArrayStore extends ArrayStore
       @_remove_data_object(id)
       callbacks.onSuccess()
     ), callbacks.onError
+
+
+  # reset data and load it again
+  reset: ->
+    @_ajax 'GET', null, {}, ((data) =>
+      @_sync_with_data_objects(data)
+      $(this).trigger('objects_added', { objects: data })
+    ), -> chr.showError('Error while loading data.')
 
 
 

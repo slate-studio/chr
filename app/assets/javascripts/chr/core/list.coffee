@@ -118,13 +118,12 @@ class @List
     # item updated
     @config.arrayStore.on 'object_changed', (e, data) =>
       item = @items[data.object._id]
-      item.render()
-      @_update_item_position(item, data.position)
+      if item then item.render() ; @_update_item_position(item, data.position)
 
     # item removed
     @config.arrayStore.on 'object_removed', (e, data) =>
-      @items[data.object_id]?.destroy()
-      delete @items[data.object_id]
+      item = @items[data.object_id]
+      if item then item.destroy() ; delete @items[data.object_id]
 
     # items loaded
     @config.arrayStore.on 'objects_added', (e, data) =>

@@ -106,13 +106,18 @@ class @ArrayStore
   _add_data_object: (object) ->
     object = @_normalize_object_id(object)
 
-    @_map[object._id] = object
-    @_data.push(object)
-    @_sort_data()
+    # if object with same id already in the store, update it's parameters,
+    # otherwise add new object (this is used while pagination sync)
+    if ! @_map[object._id]
+      @_map[object._id] = object
+      @_data.push(object)
+      @_sort_data()
 
-    position = @_get_data_object_position(object._id)
+      position = @_get_data_object_position(object._id)
 
-    $(this).trigger('object_added', { object: object, position: position })
+      $(this).trigger('object_added', { object: object, position: position })
+    else
+      @_update_data_object(object.id, object)
 
 
   # get object by id, update it's attributes, sort objects,

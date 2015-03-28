@@ -8,11 +8,22 @@
 
 # -----------------------------------------------------------------------------
 # MONGOSTEEN (RAILS) ARRAY/COLLECTION STORE IMPLEMENTATION
+# this store implementation talks to Mongosteen powered Rails api, supports
+# features:
+#
+#  - pagination
+#    `sortBy` & `sortReverse` options should be set same as on
+#    backend model with `default_scope` method (default), e.g:
+#     - frontend: `{ sortBy: 'created_at', sortReverse: true }`
+#     - backend:  `default_scope -> { desc(:created_at) }`
+#
+#  - search
+#    backend model configuration required, e.g: `search_in :title`
 # -----------------------------------------------------------------------------
 class @MongosteenArrayStore extends RestArrayStore
   # initial store configuration
   _initialize_database: ->
-    @dataFetchLock = false
+    @dataFetchLock  = false
     @ajaxConfig =
       processData: false
       contentType: false
@@ -21,23 +32,69 @@ class @MongosteenArrayStore extends RestArrayStore
     @searchQuery  = ''
 
     @pagination     = @config.pagination ? true
-    @pagesCounter   = 0
+    @nextPage       = 1
     @objectsPerPage = _itemsPerPageRequest ? 20
 
-    # disable pagination when bootstraped data provided
-    if @config.data
-      @pagination = false
+    if @pagination
+      @_bind_pagination_sync()
 
 
   # ---------------------------------------------------------
   # workarounds to have consistency between arrayStore and
-  # database while loading next page:
-  #  - add new item: don't add if added to the bottom of the
-  #                  store, otherwise remove last object in store
-  #  - remove item:  load one object based on offset
-  #  - update item:  if item is last in the store after update,
-  #                  remove it and load last object again
+  # database while loading next page
   # ---------------------------------------------------------
+  _bind_pagination_sync: ->
+    @lastPageLoaded = false
+
+    # when object's added to the end of the list & not on the last page,
+    # we don't know it's position on the backend, so remove it from store
+    $(this).on 'object_added', (e, data) =>
+      if ! @lastPageLoaded
+        new_object          = data.object
+        new_object_position = data.position
+
+        # check if object added to the end of the list
+        if new_object_position >= @objectsNumberForLoadedPages
+          e.stopImmediatePropagation()
+
+          @_remove_data_object(new_object._id)
+
+    # when object's added to the end of the list & not on the last page,
+    # we don't know it's position on the backend, so remove it from store
+    $(this).on 'object_changed', (e, data) =>
+      if ! @lastPageLoaded
+        new_object          = data.object
+        new_object_position = data.position
+
+        # check if object added to the end of the list
+        if new_object_position >= @objectsNumberForLoadedPages - 1
+          e.stopImmediatePropagation()
+
+          @_remove_data_object(new_object._id)
+
+    # load current page again after item delete to sync, last item on the page
+    $(this).on 'object_removed', (e, data) =>
+      if ! @lastPageLoaded
+        @_reload_current_page()
+
+
+  _reload_current_page: ->
+    @nextPage -= 1 ; @load()
+
+
+  _udpate_next_page: (data) ->
+    if @pagination
+      if data.length > 0
+        @lastPageLoaded = true
+
+        if data.length == @objectsPerPage
+          @nextPage += 1
+          @lastPageLoaded = false
+
+      else
+        @lastPageLoaded = true
+
+    @objectsNumberForLoadedPages = (@nextPage - 1) * @objectsPerPage
 
 
   # generate resource api url
@@ -78,29 +135,11 @@ class @MongosteenArrayStore extends RestArrayStore
     return formDataObject
 
 
-  # check how this works with sorting enabled
-  _sync_data_objects: (objects) ->
-    if objects.length == 0 then return @_reset_data()
-    if @_data.length  == 0 then return ( @_add_data_object(o) for o in objects )
-
-    objectsMap = {}
-    (o = @_normalize_object_id(o) ; objectsMap[o._id] = o) for o in objects
-
-    objectIds     = $.map objects, (o) -> o._id
-    dataObjectIds = $.map @_data,  (o) -> o._id
-
-    addObjectIds        = $(objectIds).not(dataObjectIds).get()
-    updateDataObjectIds = $(objectIds).not(addObjectIds).get()
-    removeDataObjectIds = $(dataObjectIds).not(objectIds).get()
-
-    for id in removeDataObjectIds
-      @_remove_data_object(id)
-
-    for id in addObjectIds
-      @_add_data_object(objectsMap[id])
-
-    for id in updateDataObjectIds
-      @_update_data_object(id, objectsMap[id])
+  # load results for search query
+  search: (@searchQuery) ->
+    @nextPage = 1
+    @_reset_data()
+    @load()
 
 
   # load next page objects from database, when finished
@@ -112,7 +151,7 @@ class @MongosteenArrayStore extends RestArrayStore
     params = {}
 
     if @pagination
-      params.page    = @pagesCounter + 1
+      params.page    = @nextPage
       params.perPage = @objectsPerPage
 
     if @searchable && @searchQuery.length > 0
@@ -121,9 +160,8 @@ class @MongosteenArrayStore extends RestArrayStore
     params = $.param(params)
 
     @_ajax 'GET', null, params, ((data) =>
-      if data.length > 0
-        @pagesCounter = @pagesCounter + 1
-        @_add_data_object(o) for o in data
+      @_udpate_next_page(data)
+      @_add_data_object(o) for o in data
 
       callbacks.onSuccess(data)
 
@@ -131,36 +169,25 @@ class @MongosteenArrayStore extends RestArrayStore
     ), callbacks.onError
 
 
-  # load results for search query
-  search: (@searchQuery) ->
-    @pagesCounter = 0
-    @_reset_data()
-    @load()
-
-
   # reset data and load first page
-  reset: (force=false) ->
-    @searchQuery  = ''
-    @pagesCounter = 0
+  reset: ->
+    @searchQuery = ''
+    @nextPage    = 1
+    params       = {}
 
-    if force
-      @_reset_data()
-      @load()
-    else
-      params = {}
+    if @pagination
+      @lastPageLoaded = false
+      params.page     = @nextPage
+      params.perPage  = @objectsPerPage
 
-      if @pagination
-        params.page    = @pagesCounter + 1
-        params.perPage = @objectsPerPage
+    params = $.param(params)
 
-      params = $.param(params)
+    @_ajax 'GET', null, params, ((data) =>
+      @_udpate_next_page(data)
+      @_sync_with_data_objects(data)
 
-      @_ajax 'GET', null, params, ((data) =>
-        if data.length > 0
-          @pagesCounter = @pagesCounter + 1
-        @_sync_data_objects(data)
-        $(this).trigger('objects_added', { objects: data })
-      ), -> chr.showError('Error while loading data.')
+      $(this).trigger('objects_added', { objects: data })
+    ), -> chr.showError('Error while loading data.')
 
 
 

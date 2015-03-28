@@ -1,5 +1,7 @@
 # -----------------------------------------------------------------------------
 # LIST SCROLL
+# todo:
+#  - trigger onScroll event only when scrolling down
 # -----------------------------------------------------------------------------
 @_listBindScroll = (listEl) ->
   $container = listEl.$el
