@@ -78,7 +78,7 @@ Notes on code above:
   2. Need to setup ```index``` view and ```admin``` layout to render admin app;
   3. ```bootstrap_data``` is a placeholder for objects that might be required to be loaded when app starts.
 
-Devise would require a custom ```SessionController``` implementation in ```app/controllers/admin/devise_overrides/session_controller.rb```. ```SessionController``` sets ```admin``` layout to be used to render devise views. Enables login by email (*looks like workaround*).
+Devise would require a custom ```SessionController``` implementation in ```app/controllers/admin/devise_overrides/session_controller.rb```. ```SessionController``` sets ```admin``` layout to be used for devise views rendering and enables login by email (*looks like workaround*).
 
 ```ruby
 class Admin::DeviseOverrides::SessionsController < Devise::SessionsController
@@ -146,7 +146,7 @@ New session view for devise ```app/views/admin/devise_overrides/sessions/new.htm
 </body>
 ```
 
-Now connect admin with devise in ```config/routes.rb``` with:
+Now connect admin and devise in ```config/routes.rb``` with:
 
 ```ruby
 devise_for :admins, path: "admin", controllers: { sessions: "admin/devise_overrides/sessions" }
@@ -159,7 +159,9 @@ end
 
 #### Character setup
 
-Three pieces to be configured here. First let's create ```app/assets/javascripts/admin.coffee``` with empty ```modules``` configuration:
+Three pieces to be configured here.
+
+**First**: create ```app/assets/javascripts/admin.coffee``` with empty ```modules``` configuration:
 
 ```coffee
 #= require jquery
@@ -178,7 +180,7 @@ $ ->
     $('a[data-method=delete]').appendTo(".sidebar .menu").show()
 ```
 
-Second piece is foundation for styles customizations ```app/assets/stylesheets/admin.scss```:
+**Second**: create foundation for style customization in ```app/assets/stylesheets/admin.scss```:
 
 ```scss
 @charset "utf-8";
@@ -188,7 +190,7 @@ Second piece is foundation for styles customizations ```app/assets/stylesheets/a
 @import "admin/signin";
 ```
 
-The last import in the code above is optional. But here is a default source for it as well ```app/assets/stylesheets/admin/chr/_signin.scss```:
+Last import in the code above is optional. But here is a default source for it as well ```app/assets/stylesheets/admin/chr/_signin.scss```:
 
 ```scss
 .sign-in {
@@ -238,7 +240,7 @@ The last import in the code above is optional. But here is a default source for 
 }
 ```
 
-The third piece is to make sure admin assets are precompiled on production, include them in ```config/initializers/assets.rb```:
+**Third**: make sure admin assets are precompiled on production, include ```admin.js``` and ```admin.css``` in ```config/initializers/assets.rb```:
 
 ```ruby
 Rails.application.config.assets.precompile += %w( admin.js admin.css )
