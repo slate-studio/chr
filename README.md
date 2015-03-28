@@ -254,18 +254,20 @@ At this point initial setup for admin app is finished and it could be accessed v
 To be continued...
 
 
-## The Character family
+## Character tastes better with:
 
 - [Mongosteen](https://github.com/slate-studio/mongosteen): An easy way to add restful actions for Mongoid models
 - [Inverter](https://github.com/slate-studio/inverter): An easy way to connect Rails templates content to Character CMS
 - [Loft](https://github.com/slate-studio/loft): Media assets manager for Character CMS
 
-## Credits
-
-[![Slate Studio](https://slate-git-images.s3-us-west-1.amazonaws.com/slate.png)](http://slatestudio.com)
-
-Character is maintained and funded by [Slate Studio, LLC](http://slatestudio.com). Tweet your questions or suggestions to [@slatestudio](https://twitter.com/slatestudio) and while you’re at it follow us too.
 
 ## License
 
 Copyright © 2015 [Slate Studio, LLC](http://slatestudio.com). Character is free software, and may be redistributed under the terms specified in the [license](LICENSE.md).
+
+
+## About Slate Studio
+
+[![Slate Studio](https://slate-git-images.s3-us-west-1.amazonaws.com/slate.png)](http://slatestudio.com)
+
+Character is maintained and funded by [Slate Studio, LLC](http://slatestudio.com). Tweet your questions or suggestions to [@slatestudio](https://twitter.com/slatestudio) and while you’re at it follow us too.
