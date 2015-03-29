@@ -175,8 +175,8 @@ class @List
 
     if animate
       # z-index workaround to remove blink effect
-      @$el.css('z-index', 1)
-      @$el.fadeIn $.fx.speeds._default, => @$el.css('z-index', '') ; onShow()
+      @$el.css({ 'z-index': 1, 'box-shadow': 'none' })
+      @$el.fadeIn $.fx.speeds._default, => @$el.css({ 'z-index': '', 'box-shadow': '' }) ; onShow()
     else
       @$el.show() ; onShow()
 

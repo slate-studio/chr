@@ -1,17 +1,4 @@
-/* Checkbox ---------------------------------------------------------------- */
-.view .input-checkbox {
-  padding: .8em 1em 1em;
-
-  input  { display: inline; width: auto; margin-right: .5em; }
-  .label { display: inline; }
-}
-
-/* Switch ------------------------------------------------------------------ */
-.view .input-switch { padding-top: .75em; }
-.view .input-switch .switch {
-  float: right;
-  margin-top: -1.8em;
-
+@mixin switchControl() {
   $switch-width: 52px;
   $switch-padding: 2px;
   $switch-height: 32px;
@@ -84,4 +71,21 @@
       }
     }
   }
+}
+
+/* Checkbox ---------------------------------------------------------------- */
+.view .input-checkbox {
+  padding: .8em 1em 1em;
+
+  input  { display: inline; width: auto; margin-right: .5em; }
+  .label { display: inline; }
+}
+
+/* Switch ------------------------------------------------------------------ */
+.view .input-switch { padding-top: .75em; }
+.view .input-switch .switch {
+  float: right;
+  margin-top: -1.8em;
+
+  @include switchControl();
 }
