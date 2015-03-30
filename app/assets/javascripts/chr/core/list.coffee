@@ -10,14 +10,14 @@
 # LIST
 #
 # configuration options:
-#   itemClass         - item class to be used instead of default one
-#   itemTitleField    - object attributes name for list item title
-#   itemSubtitleField - object attributes name for list item subtitle
-#   disableNewItems   - do not show new item button in list header
-#   disableListUpdate - do not update list items
-#   onListInit        - callback on list is initialized
-#   onListShow        - callback on list is shown
-#   objects           - objects array to be added to the store on start
+#   itemClass          - item class to be used instead of default one
+#   itemTitleField     - object attributes name for list item title
+#   itemSubtitleField  - object attributes name for list item subtitle
+#   disableNewItems    - do not show new item button in list header
+#   disableUpdateItems - do not update list items
+#   onListInit         - callback on list is initialized
+#   onListShow         - callback on list is shown
+#   objects            - objects array to be added to the store on start
 #
 # public methods:
 #   hide()        - hide list
@@ -216,7 +216,7 @@ class @List
 
 
   updateItems: ->
-    if not @config.disableListUpdate
+    if not @config.disableUpdateItems
       if @config.arrayStore
         @_show_spinner()
         @config.arrayStore.reset()
