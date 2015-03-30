@@ -19,6 +19,11 @@
 #
 #  - search
 #    backend model configuration required, e.g: `search_in :title`
+#
+# configuration options:
+#   @config.pagination - enable pagination, default `true`
+#   @config.searchable - enable search, default `false`
+#
 # -----------------------------------------------------------------------------
 class @MongosteenArrayStore extends RestArrayStore
   # initial store configuration

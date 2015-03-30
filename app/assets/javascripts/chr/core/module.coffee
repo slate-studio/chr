@@ -10,9 +10,9 @@
 # MODULE
 #
 # configuration options:
-#   @config.title                - title used for menu and root list header
-#   @config.showNestedListsAside - show module root list on the left and all
-#                                  nested lists on the right side for desktop
+#   title                - title used for menu and root list header
+#   showNestedListsAside - show module root list on the left and all nested
+#                          lists on the right side for desktop
 # -----------------------------------------------------------------------------
 class @Module
   constructor: (@chr, @name, @config) ->

@@ -3,7 +3,7 @@
 # todo:
 #  - trigger onScroll event only when scrolling down
 # -----------------------------------------------------------------------------
-@_listBindScroll = (listEl) ->
+@_listBindPagination = (listEl) ->
   $container = listEl.$el
   $list      = listEl.$items
   arrayStore = listEl.config.arrayStore

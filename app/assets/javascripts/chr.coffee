@@ -6,7 +6,7 @@
 #= require ./chr/core/item
 #= require ./chr/core/list
 #= require ./chr/core/list-search
-#= require ./chr/core/list-scroll
+#= require ./chr/core/list-pagination
 #= require ./chr/core/list-reorder
 #= require ./chr/core/view
 #= require ./chr/core/module

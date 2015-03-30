@@ -8,8 +8,23 @@
 
 # -----------------------------------------------------------------------------
 # LIST
-#  - onListInit
-#  - onListShow
+#
+# configuration options:
+#   itemClass         - item class to be used instead of default one
+#   itemTitleField    - object attributes name for list item title
+#   itemSubtitleField - object attributes name for list item subtitle
+#   disableNewItems   - do not show new item button in list header
+#   disableListUpdate - do not update list items
+#   onListInit        - callback on list is initialized
+#   onListShow        - callback on list is shown
+#   objects           - objects array to be added to the store on start
+#
+# public methods:
+#   hide()        - hide list
+#   show()        - show list
+#   updateItems() - update list items (sync through store with backend)
+#   isVisible()   - check if list is visible
+#
 # -----------------------------------------------------------------------------
 class @List
   constructor: (@module, @name, @config, @parentList) ->
@@ -41,7 +56,7 @@ class @List
     # back button
     if @parentList
       @$backBtn =$ "<a href='#/#{ @parentList.path }' class='back silent'></a>"
-      @$backBtn.on 'click', (e) => @onBack(e)
+      @$backBtn.on 'click', (e) => @_on_back(e)
     else
       @$backBtn =$ "<a href='#/' class='back'></a>"
     @$header.prepend @$backBtn
@@ -53,7 +68,7 @@ class @List
     # new item button
     if not @config.disableNewItems and @config.formSchema
       @$newBtn =$ "<a href='#/#{ @path }/new' class='new silent'></a>"
-      @$newBtn.on 'click', (e) => @onNew(e)
+      @$newBtn.on 'click', (e) => @_on_new(e)
       @$header.append @$newBtn
 
     # search
@@ -115,6 +130,9 @@ class @List
     @config.arrayStore.on 'object_added', (e, data) =>
       @_add_item("#/#{ @path }/view/#{ data.object._id }", data.object, data.position, @config)
 
+    if @config.objects
+      @config.arrayStore.addObjects(@config.objects)
+
     # item updated
     @config.arrayStore.on 'object_changed', (e, data) =>
       item = @items[data.object._id]
@@ -131,7 +149,7 @@ class @List
       @_set_active_item()
 
     if @config.arrayStore.pagination
-      _listBindScroll(this)
+      _listBindPagination(this)
 
     if @config.arrayStore.searchable
       _listBindSearch(this)
@@ -163,6 +181,22 @@ class @List
     @$el.removeClass 'show-spinner'
 
 
+  _on_back: (e) ->
+    @module.chr.unsetActiveListItems()
+    @module.destroyView()
+
+    if @showWithParent
+      @hide(true)
+    else
+      @module.hideActiveList(true)
+
+
+  _on_new: (e) ->
+    window._skipHashchange = true
+    location.hash = $(e.currentTarget).attr('href')
+    @module.showView(null, @config, 'New', true)
+
+
   hide: (animate) ->
     if animate then @$el.fadeOut() else @$el.hide()
 
@@ -181,24 +215,8 @@ class @List
       @$el.show() ; onShow()
 
 
-  onBack: (e) ->
-    @module.chr.unsetActiveListItems()
-    @module.destroyView()
-
-    if @showWithParent
-      @hide(true)
-    else
-      @module.hideActiveList(true)
-
-
-  onNew: (e) ->
-    window._skipHashchange = true
-    location.hash = $(e.currentTarget).attr('href')
-    @module.showView(null, @config, 'New', true)
-
-
   updateItems: ->
-    if not @config.disableReset
+    if not @config.disableListUpdate
       if @config.arrayStore
         @_show_spinner()
         @config.arrayStore.reset()

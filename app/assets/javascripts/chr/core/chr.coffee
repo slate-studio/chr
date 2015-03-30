@@ -8,6 +8,13 @@
 
 # -----------------------------------------------------------------------------
 # CHARACTER
+#
+# public methods:
+#   start(@config)                 - start the character app with configuration
+#   addMenuItem(moduleName, title) - add item to main menu
+#   showAlert(message)             - show alert notification
+#   showError(message)             - show error message
+#
 # -----------------------------------------------------------------------------
 class @Chr
   constructor: ->
@@ -101,12 +108,14 @@ class @Chr
 
     # if not mobile navigate on first page load or page refresh
     window._skipHashchange = false
-    if _isMobile()
-      if location.hash != '' then @_navigate(location.hash)
-    else
-      @_navigate(if location.hash != '' then location.hash else '#/' + Object.keys(@modules)[0])
 
-    $(this).trigger 'hashchange'
+    # if hash is not empty go to hash path module
+    if location.hash != ''
+      @_navigate(location.hash)
+      $(this).trigger 'hashchange'
+    else if ! _isMobile()
+      # if on desktop/tablet while hash is empty go to first module in the list
+      location.hash = '#/' + Object.keys(@modules)[0]
 
 
   addMenuItem: (moduleName, title) ->

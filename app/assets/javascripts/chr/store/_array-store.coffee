@@ -7,24 +7,27 @@
 #   - reordering
 #
 # configuration options:
-#   @config.data         — initial array of objects, default: []
-#   @config.sortBy       — objects field name which is used for sorting, does
-#                          not sort when parameter is not provided, default: nil
-#   @config.sortReverse  — reverse objects sorting (descending order),
-#                          default: false
-#   @config.reorderable  — list items reordering configuration hash, should
-#                          have two fields:
-#                            { positionFieldName: '',
-#                              sortReverse:       false }
+#   data         — initial array of objects, default: []
+#   sortBy       — objects field name which is used for sorting, does not sort
+#                  when parameter is not provided, default: nil
+#   sortReverse  — reverse objects sorting (descending order), default: false
+#   reorderable  — list items reordering configuration hash, should have two
+#                  fields: { positionFieldName: '', sortReverse: false }
 #
 # public methods:
 #   - on(eventType, callback)
+#        object_added
+#        object_changed
+#        object_removed
+#        objects_added
 #   - off(eventType)
 #   - get(id)
 #   - push(serializedFormObject, callbacks)
 #   - update(serializedFormObject, callbacks)
 #   - remove(id)
 #   - reset(callback)
+#   - addObjects(objects)
+#   - data()
 #
 # todo:
 #   - support for lists, files, nested objects
@@ -57,15 +60,6 @@ class @ArrayStore
   # and config processing when implementing custom store
   _initialize_database: ->
     ;
-
-
-  # add objects from @config.data,
-  # trigger 'objects_added' event
-  _fetch_data: ->
-    if @config.data
-      @_add_data_object(o) for o in @config.data
-
-    $(this).trigger('objects_added')
 
 
   # sort object in _data array based on sortBy and sortReverse parameters
@@ -169,18 +163,14 @@ class @ArrayStore
     return object
 
 
+  # subsribe to store event
+  on: (eventType, callback) ->
+    $(this).on eventType, (e, data) -> callback(e, data)
+
+
   # unsubscribe from store event, simple jQuery wrapper
   off: (eventType) ->
     if eventType then $(this).off(eventType) else $(this).off()
-
-
-  # subsribe to store event, available event types:
-  #  - object_added
-  #  - object_changed
-  #  - object_removed
-  #  - objects_added
-  on: (eventType, callback) ->
-    $(this).on eventType, (e, data) -> callback(e, data)
 
 
   # get object by id
@@ -217,5 +207,15 @@ class @ArrayStore
     $(this).trigger('objects_added')
 
 
+  # add objects, this is a kind of workaround that helps to initialize
+  # store data without request
+  addObjects: (objects) ->
+    @_add_data_object(o) for o in objects
+    $(this).trigger('objects_added')
+
+
+  # returns stored objects array
+  data: ->
+    return @_data
 
 
