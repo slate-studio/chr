@@ -15,7 +15,7 @@ html, body, .view { overflow: hidden; }
 /* Headers ----------------------------------------------------------------- */
 .view header,
 .list header    { text-align: center; position: relative; z-index: 1; line-height: 2.6; max-height: 42px; background-color: $white;
-  .title        { font-weight: 500; color: $black; display: inline-block; width: 70%; @include truncate; }
+  .title        { font-weight: 500; color: $black; display: inline-block; max-width: 70%; @include truncate; }
   .back, .close { @include absolutePosition(0 inherit inherit 0); @extend .icon-back; overflow: hidden; height: 41px; }
   .new   { @include absolutePosition(0 0 inherit inherit); @extend .icon-plus; }
   .save  { @include absolutePosition(0 1em inherit inherit); @include headerButton; }
