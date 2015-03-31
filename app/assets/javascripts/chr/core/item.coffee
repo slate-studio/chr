@@ -8,12 +8,38 @@
 
 # -----------------------------------------------------------------------------
 # LIST ITEM
+#
+# public methods:
+#   render()
+#   destroy()
+#   position()
+#
 # -----------------------------------------------------------------------------
 class @Item
   constructor: (@module, @path, @object, @config) ->
     @$el =$ """<a class='item' href='#{ @path }' data-id='#{ @object._id }' data-title=''></a>"""
-    @$el.on 'click', (e) => @onClick(e)
+    @$el.on 'click', (e) => @_on_click(e)
     @render()
+
+
+  _on_click: (e) ->
+    if @.$el.hasClass('active') then e.preventDefault() ; return
+
+    window._skipHashchange = true
+    location.hash = $(e.currentTarget).attr('href')
+
+    title  = $(e.currentTarget).attr('data-title')
+    id     = $(e.currentTarget).attr('data-id')
+    crumbs = location.href.split('/')
+
+    # view for a arrayStore item
+    if crumbs[crumbs.length - 2] == 'view'
+      return @module.showViewByObjectId(id, @config, title, true)
+
+    if @config.objectStore
+      return @module.showViewByObjectId('', @config, title, true)
+
+    @module.showNestedList(_last(crumbs), true)
 
 
   _is_folder: ->
@@ -66,26 +92,6 @@ class @Item
       if @config.arrayStore and @config.arrayStore.reorderable
         @$el.addClass('reorderable')
         @$el.append $("<div class='icon-reorder'></div>")
-
-
-  onClick: (e) ->
-    if @.$el.hasClass('active') then e.preventDefault() ; return
-
-    window._skipHashchange = true
-    location.hash = $(e.currentTarget).attr('href')
-
-    title  = $(e.currentTarget).attr('data-title')
-    id     = $(e.currentTarget).attr('data-id')
-    crumbs = location.href.split('/')
-
-    # view for a arrayStore item
-    if crumbs[crumbs.length - 2] == 'view'
-      return @module.showViewByObjectId(id, @config, title, true)
-
-    if @config.objectStore
-      return @module.showViewByObjectId('', @config, title, true)
-
-    @module.showNestedList(_last(crumbs), true)
 
 
   destroy: ->

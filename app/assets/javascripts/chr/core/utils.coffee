@@ -39,7 +39,6 @@ if typeof String.prototype.endsWith != 'function'
 # Helps to figure out how many list items fits screen height
 @_itemsPerScreen      = -> itemHeight = 60 ; return Math.ceil($(window).height() / itemHeight)
 @_itemsPerPageRequest = _itemsPerScreen() * 2
-#@_itemsPerPageRequest = 5
 
 # Check if running on mobile
 @_isMobile = -> $(window).width() < 760
