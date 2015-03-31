@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = 'alex@slatestudio.com'
   s.license     = 'MIT'
   s.homepage    = 'http://slatestudio.com'
-  s.summary     = 'A simple and lightweight library for building data management web apps'
+  s.summary     = 'Powerful responsive javascript CMS for apps'
   s.description = <<-DESC
 Character is a library written in CoffeeScript with a help of jQuery that allows to
 build data management web applications in a fast and flexible way, e.g. CMS, news reader,

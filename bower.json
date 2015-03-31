@@ -1,12 +1,12 @@
 {
   "name": "chr",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "homepage": "https://github.com/slate-studio/chr",
   "authors": [
     "Slate Studio (http://www.slatestudio.com)"
   ],
   "license": "MIT",
-  "description": "A simple and lightweight library for building data management web apps",
+  "description": "Powerful responsive javascript CMS for apps.",
   "main": "app/assets/stylesheets/_chr.scss, app/assets/javascripts/chr-dist.js",
   "keywords": [
     "library",
@@ -18,6 +18,7 @@
   "ignore": [
     "**/.*",
     "lib",
+    "docs",
     "chr.gemspec",
     "Gemfile",
     "Gemfile.lock",

@@ -28,9 +28,12 @@ module.exports = (grunt) ->
             'app/assets/javascripts/chr/form/input-text.coffee'
             'app/assets/javascripts/chr/form/nested-form.coffee'
             #
-            'app/assets/javascripts/chr/store/store.coffee'
-            'app/assets/javascripts/chr/store/store-rest.coffee'
-            'app/assets/javascripts/chr/store/store-mongosteen.coffee'
+            'app/assets/javascripts/chr/store/_array-store.coffee'
+            'app/assets/javascripts/chr/store/_object-store.coffee'
+            'app/assets/javascripts/chr/store/rest-array-store.coffee'
+            'app/assets/javascripts/chr/store/rest-object-store.coffee'
+            'app/assets/javascripts/chr/store/mongosteen-array-store.coffee'
+            'app/assets/javascripts/chr/store/mongosteen-object-store.coffee'
             #
             'app/assets/javascripts/chr/core/utils.coffee'
             'app/assets/javascripts/chr/core/chr.coffee'

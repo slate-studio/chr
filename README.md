@@ -1,6 +1,6 @@
 # Character
 
-*Powerful javascript CMS for apps.*
+*Powerful responsive javascript CMS for apps.*
 
 
 ## Rails
