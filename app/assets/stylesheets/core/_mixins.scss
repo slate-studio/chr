@@ -16,6 +16,8 @@
 
 @mixin noBorder { &:after { display: none; } }
 
+@mixin noFocus { &:focus { outline: none; } }
+
 @mixin customScrollbar {
   &::-webkit-scrollbar { width: 6px; background-color: $neutralColor; }
   &::-webkit-scrollbar-thumb { background-color: $contrastColor; border-radius: 3px; }
