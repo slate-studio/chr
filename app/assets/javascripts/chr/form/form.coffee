@@ -17,9 +17,8 @@ class @Form
     @_buildSchema(@schema, @$el)
     @_addNestedFormRemoveButton()
 
-  #
+
   # SCHEMA
-  #
 
   _getSchema: ->
     schema = @config.formSchema
@@ -27,11 +26,13 @@ class @Form
       schema ?= @_generateDefaultSchema()
     return schema
 
+
   _generateDefaultSchema: ->
     schema = {}
     for key, value of @object
       schema[key] = @_generateDefaultInputConfig(key, value)
     return schema
+
 
   _generateDefaultInputConfig: (fieldName, value) ->
     config = {}
@@ -52,6 +53,7 @@ class @Form
 
     return config
 
+
   #
   # INPUTS
   #
@@ -65,6 +67,7 @@ class @Form
         input = @_generateInput(fieldName, config)
         $el.append input.$el
 
+
   _generateInputsGroup: (klassName, groupConfig) ->
     $group =$ """<div class='group #{ klassName }' />"""
     if groupConfig.inputs
@@ -72,6 +75,7 @@ class @Form
     group = { $el: $group, klassName: klassName, onInitialize: groupConfig.onInitialize }
     @groups.push group
     return group
+
 
   _generateInput: (fieldName, inputConfig) ->
     if @object
@@ -85,6 +89,7 @@ class @Form
     input     = @_renderInput(inputName, inputConfig, value)
     @inputs[fieldName] = input
     return input
+
 
   _renderInput: (name, config, value) ->
     inputConfig = $.extend {}, config
@@ -110,6 +115,7 @@ class @Form
   _titleizeLabel: (value) ->
     value.titleize().replace('Id', 'ID')
 
+
   #
   # NESTED
   #
@@ -133,6 +139,7 @@ class @Form
           @isRemoved = true
           @config.onRemove?(this)
 
+
   _forms: ->
     forms = [ @ ]
     addNestedForms = (form) ->
@@ -144,38 +151,43 @@ class @Form
 
     return forms
 
-  #
-  # PUBLIC
-  #
+
+  # PUBLIC ================================================
 
   destroy: ->
+    group.destroy?() for group in @groups
+    input.destroy?() for name, input of @inputs
     @$el.remove()
 
+
   serialize: (obj={}) ->
-    # NOTE: this serializes everything except file inputs
+    # serialize everything except file inputs
     obj[input.name] = input.value for input in @$el.serializeArray()
 
     for form in @_forms()
-      # NOTE: serialize file inputs for all forms (root and nested)
+      # serialize file inputs for all forms (including nested)
       for name, input of form.inputs
         if input.config.type == 'file' or input.config.type == 'image'
           file = input.$input.get()[0].files[0]
           obj["__FILE__#{ input.name }"] = file
+
           # NOTE: when no file uploaded and no file selected, send
           #       remove flag so carrierwave does not catch _old_ value
           if not file and not input.filename then obj[input.removeName()] = 'true'
 
-      # NOTE: remove fields with ignoreOnSubmission
+      # remove fields with ignoreOnSubmission
       for name, input of form.inputs
         if input.config.ignoreOnSubmission
           delete obj[name]
 
     return obj
 
+
   hash: (hash={}) ->
     for name, input of @inputs
       input.hash(hash)
     return hash
+
 
   initializePlugins: ->
     for group in @groups
@@ -184,6 +196,7 @@ class @Form
     for name, input of @inputs
       input.initialize()
 
+
   showValidationErrors: (errors) ->
     @hideValidationErrors()
     for inputName, messages of errors
@@ -191,9 +204,11 @@ class @Form
       firstMessage = messages[0]
       input.showErrorMessage(firstMessage)
 
+
   hideValidationErrors: ->
     for inputName, input of @inputs
       input.hideErrorMessage()
+
 
   updateValues: (object) ->
     for name, value of object

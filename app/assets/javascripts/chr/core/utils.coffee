@@ -33,6 +33,11 @@ if typeof String.prototype.startsWith != 'function'
 if typeof String.prototype.endsWith != 'function'
   String.prototype.endsWith = (str) -> return this.slice(this.length - str.length, this.length) == str
 
+# String.plainText
+if typeof String.prototype.plainText != 'function'
+  String.prototype.plainText = () -> return $("<div>#{ this }</div>").text()
+
+
 # -----------------------------------------------------------------------------
 # HELPERS
 

@@ -14,6 +14,7 @@
 #   addMenuItem(moduleName, title) - add item to main menu
 #   showAlert(message)             - show alert notification
 #   showError(message)             - show error message
+#   updateHash(hash, skipHashChange=false)
 #
 # -----------------------------------------------------------------------------
 class @Chr
@@ -76,6 +77,11 @@ class @Chr
         @module.destroyView()
         while @module.activeList != @module.rootList
           @module.hideActiveList(false)
+
+
+  updateHash: (hash, skipHashChange=false) ->
+    window._skipHashchange = skipHashChange
+    location.hash = hash
 
 
   start: (@config) ->

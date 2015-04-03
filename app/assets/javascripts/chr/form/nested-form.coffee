@@ -157,6 +157,7 @@ class @NestedForm
       hash[@config.klassName].push form.hash()
     return hash
 
+
 _chrFormInputs['form'] = NestedForm
 
 
