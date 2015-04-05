@@ -102,8 +102,7 @@ Admin app layout ```app/views/layouts/admin.html.erb```:
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Admin</title>
     <%= csrf_meta_tags %>
-    <%= stylesheet_link_tag    :admin, media: "all" %>
-    <%= javascript_include_tag :admin %>
+    <%= stylesheet_link_tag :admin, media: "all" %>
   </head>
 
   <%= yield %>
@@ -116,6 +115,7 @@ Admin index view ```app/views/admin/index.html.erb```:
 <body class='loading'>
   <%= link_to 'Sign Out', destroy_admin_session_path, method: :delete, style: 'display:none;' %>
 </body>
+<%= javascript_include_tag :admin %>
 ```
 
 New session view for devise ```app/views/admin/devise_overrides/sessions/new.html.erb```:
