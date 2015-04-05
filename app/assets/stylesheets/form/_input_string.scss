@@ -1,8 +1,0 @@
-.view .input-string {
-  .twitter-typeahead  { width: 100%; }
-  .tt-suggestions     { padding: .1em .5em; margin: 0 0 0 -.5em; background: rgba(255,255,255, .95); }
-  .tt-suggestion      { cursor: pointer; opacity: .5;
-    p           { line-height: 1.5; margin: 0; }
-    &.tt-cursor { opacity: 1; }
-  }
-}

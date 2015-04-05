@@ -1,0 +1,34 @@
+@import "redactor";
+
+
+// input
+.input-inverter,
+.input-redactor {
+  .redactor-box     { margin-bottom: 0; }
+  .redactor-toolbar { box-shadow: none; border-bottom: 2px solid $contrastColor; }
+  .redactor-editor  { border: 1px solid $contrastColor; border-top: 0; }
+}
+
+
+// fullscreen
+.redactor-box-fullscreen {
+  .redactor-toolbar           { box-shadow: none; border-bottom: 2px solid $contrastColor; }
+  .redactor-placeholder:after { content: ''; }
+  .redactor-editor            { padding-bottom: 5em; border: none; }
+}
+
+
+// placeholder
+.redactor-placeholder:after { color: $lightColor!important; }
+
+
+// scrollbars
+.redactor-editor, textarea.redactor { @include customScrollbar(); }
+
+
+// line-height issue fix
+.redactor-editor { line-height: inherit !important; }
+
+
+
+

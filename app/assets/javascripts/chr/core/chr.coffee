@@ -8,26 +8,34 @@
 
 # -----------------------------------------------------------------------------
 # CHARACTER
+# -----------------------------------------------------------------------------
+# Public attributes:
+#   modules
+#   formInputs
+#   itemsPerPageRequest
 #
-# public methods:
+# Public methods:
 #   start(@config)                 - start the character app with configuration
 #   addMenuItem(moduleName, title) - add item to main menu
 #   showAlert(message)             - show alert notification
 #   showError(message)             - show error message
+#   isMobile()                     - check if running on mobile
+#   unsetActiveListItems()         - clear selection from all list items
 #   updateHash(hash, skipHashChange=false)
 #
 # -----------------------------------------------------------------------------
 class @Chr
   constructor: ->
-    @modules = {}
+    @formInputs = {}
+    @modules    = {}
 
+    @itemsPerPageRequest = Math.ceil($(window).height() / 60) * 2
+
+
+  # PRIVATE ===============================================
 
   _unset_active_menu_items: ->
     $('.sidebar .menu a.active').removeClass('active')
-
-
-  unsetActiveListItems: ->
-    $('.list .items .item.active').removeClass('active')
 
 
   _set_active_menu_item: ->
@@ -38,8 +46,6 @@ class @Chr
         return $(a).addClass('active')
 
 
-  # TODO: this piece of navigation code isn't clear, need to refactor to make
-  #       it more readable
   _navigate: (path) -> #/<module>[/<list>][/new]OR[/view/<objectId>]
     crumbs = path.split('/')
 
@@ -58,7 +64,6 @@ class @Chr
       if crumbs.length > 0
         for crumb in crumbs
           if crumb == 'new'
-            # TODO: reset list data — why?
             return @module.showView(null, config, 'New')
 
           if crumb == 'view'
@@ -73,10 +78,17 @@ class @Chr
           else
             @module.showNestedList(crumb)
       else
-        # show module root list for the case when same module picked
-        @module.destroyView()
-        while @module.activeList != @module.rootList
-          @module.hideActiveList(false)
+        @module.showRootList()
+
+
+  # PUBLIC ================================================
+
+  unsetActiveListItems: ->
+    $('.list .items .item.active').removeClass('active')
+
+
+  isMobile: ->
+    $(window).width() < 760
 
 
   updateHash: (hash, skipHashChange=false) ->
@@ -100,8 +112,8 @@ class @Chr
       @_unset_active_menu_items()
       @unsetActiveListItems()
 
-      # this workaround allows to skip chr _navigate method
-      # for silent hashchanges, e.g close view event
+      # this allows to skip chr _navigate method for silent hashchanges,
+      # e.g. close view event
       if not window._skipHashchange then @_navigate(location.hash)
       window._skipHashchange = false
 
@@ -115,11 +127,11 @@ class @Chr
     # if not mobile navigate on first page load or page refresh
     window._skipHashchange = false
 
-    # if hash is not empty go to hash path module
+    # if hash is not empty go to module
     if location.hash != ''
       @_navigate(location.hash)
-      $(this).trigger 'hashchange'
-    else if ! _isMobile()
+      $(this).trigger('hashchange')
+    else if ! @isMobile()
       # if on desktop/tablet while hash is empty go to first module in the list
       location.hash = '#/' + Object.keys(@modules)[0]
 
@@ -133,7 +145,7 @@ class @Chr
 
 
   showError: (message) ->
-    console.log 'Error: ' + message
+    alert 'Error: ' + message
 
 
 # -----------------------------------------------------------------------------

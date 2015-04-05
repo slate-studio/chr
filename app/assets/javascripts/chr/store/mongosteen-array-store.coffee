@@ -38,7 +38,7 @@ class @MongosteenArrayStore extends RestArrayStore
 
     @pagination     = @config.pagination ? true
     @nextPage       = 1
-    @objectsPerPage = _itemsPerPageRequest ? 20
+    @objectsPerPage = chr.itemsPerPageRequest ? 20
 
     if @pagination
       @_bind_pagination_sync()

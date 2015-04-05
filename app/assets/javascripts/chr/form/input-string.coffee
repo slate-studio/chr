@@ -1,28 +1,60 @@
 # -----------------------------------------------------------------------------
+# Author: Alexander Kravets <alex@slatestudio.com>,
+#         Slate Studio (http://www.slatestudio.com)
+#
+# Coding Guide:
+#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # INPUT STRING
+# -----------------------------------------------------------------------------
+# Basic string input implementation, this is base class for many chr inputs.
+# This input also serves as a demo for implementing other input types.
+#
+# Public methods:
+#   initialize()              - run input plugin initializations if any
+#   hash(hash)                - update hash with inputs: hash[name] = value
+#   updateValue(@value)       - update inputs value
+#   showErrorMessage(message) - show error (validation) message for input
+#   hideErrorMessage()        - hide error message
+#
+# Dependencies:
+#= require ../vendor/jquery.typeahead
+#
 # -----------------------------------------------------------------------------
 class @InputString
   constructor: (@name, @value, @config, @object) ->
-    @_createEl()
-    @_addLabel()
-    @_addInput()
-    @_addPlaceholder()
+    @_create_el()
+    @_add_label()
+    @_add_input()
+    @_add_placeholder()
 
     return this
 
-  _createEl: ->
+
+  # PRIVATE ===============================================
+
+  _safe_value: ->
+    if typeof(@value) == 'object'
+      return JSON.stringify(@value)
+    else
+      return _escapeHtml(@value)
+
+
+  _create_el: ->
     @$el =$ "<label for='#{ @name }' class='input-#{ @config.type } input-#{ @config.klass } #{ @config.klassName }'>"
 
-  _addLabel: ->
-    if @config.klass in [ 'inline', 'stacked' ]
-      @$label =$ "<span class='label'>#{ @config.label }</span>"
-      @$el.append @$label
 
-      @$errorMessage =$ "<span class='error-message'></span>"
-      @$label.append @$errorMessage
+  _add_label: ->
+    @$label        =$ "<span class='label'>#{ @config.label }</span>"
+    @$errorMessage =$ "<span class='error-message'></span>"
+    @$label.append(@$errorMessage)
+    @$el.append(@$label)
 
-  _addInput: ->
-    @$input =$ "<input type='text' name='#{ @name }' value='#{ @_valueSafe() }' id='#{ @name }' />"
+
+  _add_input: ->
+    @$input =$ "<input type='text' name='#{ @name }' value='#{ @_safe_value() }' />"
     @$el.append @$input
 
     if @config.options and $.isArray(@config.options)
@@ -44,43 +76,41 @@ class @InputString
         source:     data.ttAdapter()
       })
 
-  _valueSafe: ->
-    if typeof(@value) == 'object'
-      JSON.stringify(@value)
-    else
-      _escapeHtml(@value)
 
-  _addPlaceholder: ->
+  _add_placeholder: ->
     if @config.klass in [ 'placeholder', 'stacked' ]
       @$input.attr 'placeholder', @config.label
 
     if @config.placeholder
       @$input.attr 'placeholder', @config.placeholder
 
-  #
-  # PUBLIC
-  #
+
+  # PUBLIC ================================================
 
   initialize: ->
     @config.onInitialize?(this)
+
 
   hash: (hash={}) ->
     hash[@config.klassName] = @$input.val()
     return hash
 
+
   updateValue: (@value) ->
     @$input.val(@value)
 
+
   showErrorMessage: (message) ->
-    @$el.addClass 'error'
+    @$el.addClass('error')
     @$errorMessage.html(message)
 
+
   hideErrorMessage: ->
-    @$el.removeClass 'error'
+    @$el.removeClass('error')
     @$errorMessage.html('')
 
 
-_chrFormInputs['string'] = InputString
+chr.formInputs['string'] = InputString
 
 
 

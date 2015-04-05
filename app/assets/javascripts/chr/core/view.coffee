@@ -28,8 +28,7 @@ class @View
   constructor: (@module, @config, @closePath, @object, @title) ->
     @store = @config.arrayStore ? @config.objectStore
 
-    @$el =$ "<section class='view #{ @module.name }'>"
-    @$el.hide()
+    @$el =$ "<section class='view #{ @module.name }' style='display:none;'>"
 
     # fullsize
     if @config.fullsizeView

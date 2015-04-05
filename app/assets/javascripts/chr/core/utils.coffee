@@ -1,5 +1,26 @@
 # -----------------------------------------------------------------------------
+# Author: Alexander Kravets <alex@slatestudio.com>,
+#         Slate Studio (http://www.slatestudio.com)
+#
+# Coding Guide:
+#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # UTILS
+# -----------------------------------------------------------------------------
+# Public methods:
+#   _last(array)
+#   _first(array)
+#   _firstNonEmptyValue(hash)
+#   _escapeHtml(string)
+#   String.titleize()
+#   String.reverse()
+#   String.startsWith(str)
+#   String.endsWith(str)
+#   String.plainText()
+#   include(class, hash)
+# -----------------------------------------------------------------------------
 
 # _last(array)
 @_last = (array) -> array[array.length - 1]
@@ -10,20 +31,17 @@
 # _firstNonEmptyValue(hash)
 @_firstNonEmptyValue = (o) -> ((return v if k[0] != '_' and v and v != '') for k, v of o) ; return null
 
-# _stripHtml(string)
-@_stripHtml = (string) -> String(string).replace(/<\/?[^>]+(>|$)/g, "")
-
 # _escapeHtml(string)
 @_entityMap  = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': '&quot;', "'": '&#39;', "/": '&#x2F;' }
 @_escapeHtml = (string) -> String(string).replace /[&<>"'\/]/g, (s) -> _entityMap[s]
 
 # String.titleize
 if typeof String.prototype.titleize != 'function'
-  String.prototype.titleize = () -> return this.replace(/_/g, ' ').replace(/\b./g, ((m) -> m.toUpperCase()))
+  String.prototype.titleize = -> return this.replace(/_/g, ' ').replace(/\b./g, ((m) -> m.toUpperCase()))
 
 # String.reverse
 if typeof String.prototype.reverse != 'function'
-  String.prototype.reverse = (str) -> return this.split("").reverse().join("")
+  String.prototype.reverse = -> return this.split("").reverse().join("")
 
 # String.startsWith
 if typeof String.prototype.startsWith != 'function'
@@ -39,16 +57,15 @@ if typeof String.prototype.plainText != 'function'
 
 
 # -----------------------------------------------------------------------------
-# HELPERS
-
-# Helps to figure out how many list items fits screen height
-@_itemsPerScreen      = -> itemHeight = 60 ; return Math.ceil($(window).height() / itemHeight)
-@_itemsPerPageRequest = _itemsPerScreen() * 2
-
-# Check if running on mobile
-@_isMobile = -> $(window).width() < 760
-
+# Mixins
+#  - http://arcturo.github.io/library/coffeescript/03_classes.html
 # -----------------------------------------------------------------------------
+@extend = (obj, mixin) ->
+  obj[name] = method for name, method of mixin
+  obj
+
+@include = (klass, mixin) ->
+  extend klass.prototype, mixin
 
 
 

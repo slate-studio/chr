@@ -1,81 +1,116 @@
 # -----------------------------------------------------------------------------
+# Author: Alexander Kravets <alex@slatestudio.com>,
+#         Slate Studio (http://www.slatestudio.com)
+#
+# Coding Guide:
+#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # INPUT FILE
 # -----------------------------------------------------------------------------
 class @InputFile extends InputString
-  _addInput: ->
-    @$el.addClass 'empty'
-    if @filename
-      @$link =$ "<a href='#{ @value.url }' target='_blank' title='#{ @filename }'>#{ @filename }</a>"
-      @$el.append @$link
-      @$el.removeClass 'empty'
-
-    @$input =$ "<input type='file' name='#{ @name }' id='#{ @name }' />"
-    @$el.append @$input
-
-  _addRemoveCheckbox: ->
-    # NOTE: this is Rails (CarrierWave) approach to remove files, might not be
-    #       generic, so we should consider to move it to store.
-    if @filename
-      removeInputName = @removeName()
-
-      @$removeLabel =$ "<label for='#{ removeInputName }'>Remove</label>"
-      @$link.after @$removeLabel
-
-      @$hiddenRemoveInput =$ "<input type='hidden' name='#{ removeInputName }' value='false'>"
-      @$removeInput       =$ "<input type='checkbox' name='#{ removeInputName }' id='#{ removeInputName }' value='true'>"
-
-      @$link.after @$removeInput
-      @$link.after @$hiddenRemoveInput
-
   constructor: (@name, @value, @config, @object) ->
-    @$el =$ "<div class='input-#{ @config.type } input-#{ @config.klass } #{ @config.klassName }'>"
+    @_create_el()
 
-    # NOTE: carrierwave filename workaround
-    @filename = null
-    if @value.url
-      @filename = _last(@value.url.split('/'))
-      if @filename == '_old_' then @filename = null
-
-    @_addLabel()
-    @_addInput()
-    @_addRemoveCheckbox()
+    @_add_label()
+    @_add_input()
+    @_update_state()
 
     return this
 
-  removeName: -> @name.reverse().replace('[', '[remove_'.reverse()).reverse()
 
-  updateValue: (@value) ->
-    # TODO: this method required to enable version switch for objects history
+  # PRIVATE ===============================================
+
+  _create_el: ->
+    @$el =$ "<div class='input-#{ @config.type } input-#{ @config.klass } #{ @config.klassName }'>"
 
 
-_chrFormInputs['file'] = InputFile
+  _add_input: ->
+    @$link =$ "<a href='#' target='_blank' title=''></a>"
+    @$el.append(@$link)
+
+    @$input =$ "<input type='file' name='#{ @name }' id='#{ @name }'>"
+    @$el.append @$input
+
+    @_add_remove_checkbox()
+
+
+  _add_remove_checkbox: ->
+    removeInputName     = @removeName()
+    @$removeLabel       =$ "<label for='#{ removeInputName }'>Remove</label>"
+    @$hiddenRemoveInput =$ "<input type='hidden' name='#{ removeInputName }' value='false'>"
+    @$removeInput       =$ "<input type='checkbox' name='#{ removeInputName }' id='#{ removeInputName }' value='true'>"
+    @$link.after(@$removeLabel)
+    @$link.after(@$removeInput)
+    @$link.after(@$hiddenRemoveInput)
+
+
+  _update_inputs: ->
+    @$link.html(@filename).attr('title', @filename).attr('href', @value.url)
+
+
+  _update_state: (@filename=null) ->
+    @$input.val('')
+    @$removeInput.prop('checked', false)
+
+    if @value.url
+      @filename = _last(@value.url.split('/'))
+      if @filename == '_old_' then @filename = null # carrierwave filename workaround
+
+    if @filename
+      @$el.removeClass('empty')
+      @_update_inputs()
+    else
+      @$el.addClass('empty')
+
+
+  # PUBLIC ================================================
+
+  # when no file uploaded and no file selected, send remove flag so
+  # carrierwave does not catch _old_ value
+  isEmpty: ->
+    ( ! @$input.get()[0].files[0] && ! @filename )
+
+
+  removeName: ->
+    @name.reverse().replace('[', '[remove_'.reverse()).reverse()
+
+
+  updateValue: (@value, @object) ->
+    @_update_state()
+
+
+chr.formInputs['file'] = InputFile
+
 
 # -----------------------------------------------------------------------------
 # INPUT FILE IMAGE
 # -----------------------------------------------------------------------------
+# Config options:
+#   thumbnail(object) - method that returns thumbnail for input
+# -----------------------------------------------------------------------------
 class @InputFileImage extends InputFile
-  _addInput: ->
-    @$el.addClass 'empty'
-    if @filename
-      @$link =$ "<a href='#{ @value.url }' target='_blank' title='#{ @filename }'>#{ @filename }</a>"
-      @$el.append @$link
+  _add_input: ->
+    @$link =$ "<a href='#' target='_blank' title=''></a>"
+    @$el.append @$link
 
-      thumbnailImageUrl = @value.url
-      thumbnailImage = @value[@config.thumbnailFieldName]
-
-      if thumbnailImage
-        thumbnailImageUrl = thumbnailImage.url
-
-      @$thumb =$ "<img src='#{ thumbnailImageUrl }' />"
-      @$el.append @$thumb
-
-      @$el.removeClass 'empty'
+    @$thumb =$ "<img src='' />"
+    @$el.append @$thumb
 
     @$input =$ "<input type='file' name='#{ @name }' id='#{ @name }' />"
     @$el.append @$input
 
+    @_add_remove_checkbox()
 
-_chrFormInputs['image'] = InputFileImage
+
+  _update_inputs: ->
+    @$link.html(@filename).attr('title', @filename).attr('href', @value.url)
+    image_thumb_url = if @config.thumbnail then @config.thumbnail(@object) else @value.url
+    @$thumb.attr('src', image_thumb_url).attr('alt', @filename)
+
+
+chr.formInputs['image'] = InputFileImage
 
 
 

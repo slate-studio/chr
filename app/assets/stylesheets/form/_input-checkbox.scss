@@ -1,0 +1,18 @@
+
+// Checkbox -----------------------------------------------
+
+.view .input-checkbox { padding: .8em 1em 1em;
+  input  { display: inline; width: auto; margin-right: .5em; }
+  .label { display: inline; cursor: pointer; }
+}
+
+
+// Switch -------------------------------------------------
+
+.view .input-switch { padding-top: .75em;
+  .label  { cursor: pointer; }
+  .switch { @include switchControl(); float: right; }
+}
+
+
+

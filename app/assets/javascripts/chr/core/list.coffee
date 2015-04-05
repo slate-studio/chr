@@ -8,8 +8,9 @@
 
 # -----------------------------------------------------------------------------
 # LIST
+# -----------------------------------------------------------------------------
 #
-# configuration options:
+# Configuration options:
 #   itemClass          - item class to be used instead of default one
 #   itemTitleField     - object attributes name for list item title
 #   itemSubtitleField  - object attributes name for list item subtitle
@@ -19,13 +20,20 @@
 #   onListShow         - callback on list is shown
 #   objects            - objects array to be added to the store on start
 #
-# public methods:
+# Public methods:
 #   hide()        - hide list
 #   show()        - show list
 #   updateItems() - update list items (sync through store with backend)
 #   isVisible()   - check if list is visible
 #
+# Dependencies:
+#= require ./list_config
+#= require ./list_pagination
+#= require ./list_reorder
+#= require ./list_search
+#
 # -----------------------------------------------------------------------------
+
 class @List
   constructor: (@module, @name, @config, @parentList) ->
     @configItemsCount = 0
@@ -33,6 +41,7 @@ class @List
     @items          = {}
     @title          = @config.title      ? @name.titleize()
     @itemClass      = @config.itemClass  ? Item
+
     @showWithParent = false
     if @parentList
       @showWithParent = @parentList.config.showNestedListsAside || false
@@ -56,7 +65,7 @@ class @List
     # back button
     if @parentList
       @$backBtn =$ "<a href='#/#{ @parentList.path }' class='back silent'></a>"
-      @$backBtn.on 'click', (e) => @_on_back(e)
+      @$backBtn.on 'click', (e) => @_back(e)
     else
       @$backBtn =$ "<a href='#/' class='back'></a>"
     @$header.prepend @$backBtn
@@ -68,7 +77,7 @@ class @List
     # new item button
     if not @config.disableNewItems and @config.formSchema
       @$newBtn =$ "<a href='#/#{ @path }/new' class='new silent'></a>"
-      @$newBtn.on 'click', (e) => @_on_new(e)
+      @$newBtn.on 'click', (e) => @_new(e)
       @$header.append @$newBtn
 
     # search
@@ -87,6 +96,8 @@ class @List
 
     @config.onListInit?(@)
 
+
+  # PRIVATE ===============================================
 
   _bind_hashchange: ->
     $(chr).on 'hashchange', => @_set_active_item()
@@ -108,56 +119,6 @@ class @List
     @module.name + ( if crumbs.length > 0 then '/' + crumbs.reverse().join('/') else '' )
 
 
-  _process_config_items: ->
-    for slug, config of @config.items
-      object = { _id: slug, _title: config.title ? slug.titleize() }
-
-      #if config.objectStore
-      #  $.extend(object, config.objectStore.get())
-
-      if config.items or config.arrayStore
-        @module.addNestedList(slug, config, this)
-
-      @_add_item("#/#{ @path }/#{ slug }", object, 0, config)
-      @configItemsCount += 1
-
-
-  _bind_config_object_store: ->
-
-
-  _bind_config_array_store: ->
-    # item added
-    @config.arrayStore.on 'object_added', (e, data) =>
-      @_add_item("#/#{ @path }/view/#{ data.object._id }", data.object, data.position, @config)
-
-    if @config.objects
-      @config.arrayStore.addObjects(@config.objects)
-
-    # item updated
-    @config.arrayStore.on 'object_changed', (e, data) =>
-      item = @items[data.object._id]
-      if item then item.render() ; @_update_item_position(item, data.position)
-
-    # item removed
-    @config.arrayStore.on 'object_removed', (e, data) =>
-      item = @items[data.object_id]
-      if item then item.destroy() ; delete @items[data.object_id]
-
-    # items loaded
-    @config.arrayStore.on 'objects_added', (e, data) =>
-      @_hide_spinner()
-      @_set_active_item()
-
-    if @config.arrayStore.pagination
-      _listBindPagination(this)
-
-    if @config.arrayStore.searchable
-      _listBindSearch(this)
-
-    if @config.arrayStore.reorderable
-      _listBindReorder(this)
-
-
   _add_item: (path, object, position, config) ->
     item = new @itemClass(@module, path, object, config)
     @items[object._id] = item
@@ -174,14 +135,16 @@ class @List
 
 
   _show_spinner: ->
-    @$el.addClass 'show-spinner'
+    @$el.addClass('show-spinner')
 
 
   _hide_spinner: ->
-    @$el.removeClass 'show-spinner'
+    @$el.removeClass('show-spinner')
 
 
-  _on_back: (e) ->
+  # EVENTS ================================================
+
+  _back: (e) ->
     @module.chr.unsetActiveListItems()
     @module.destroyView()
 
@@ -191,11 +154,12 @@ class @List
       @module.hideActiveList(true)
 
 
-  _on_new: (e) ->
-    window._skipHashchange = true
-    location.hash = $(e.currentTarget).attr('href')
+  _new: (e) ->
+    chr.updateHash($(e.currentTarget).attr('href'), true)
     @module.showView(null, @config, 'New', true)
 
+
+  # PUBLIC ================================================
 
   hide: (animate) ->
     if animate then @$el.fadeOut() else @$el.hide()
@@ -224,6 +188,12 @@ class @List
 
   isVisible: ->
     @$el.is(':visible')
+
+
+include(List, listConfig)
+include(List, listPagination)
+include(List, listReorder)
+include(List, listSearch)
 
 
 

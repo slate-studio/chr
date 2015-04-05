@@ -1,44 +1,28 @@
 # -----------------------------------------------------------------------------
+# Author: Alexander Kravets <alex@slatestudio.com>,
+#         Slate Studio (http://www.slatestudio.com)
+#
+# Coding Guide:
+#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # INPUT SELECT
 # -----------------------------------------------------------------------------
+# Todo:
+#   - add empty value option
+#   - an option to pull data from store
+# -----------------------------------------------------------------------------
+
 class @InputSelect extends InputString
-  _createEl: ->
+
+  # PRIVATE ===============================================
+
+  _create_el: ->
     @$el =$ "<div class='input-#{ @config.type } input-#{ @config.klass } #{ @config.klassName }'>"
 
-  _addOption: (title, value) ->
-    selected = if @value == value then 'selected' else ''
-    $option =$ """<option value='#{ value }' #{ selected }>#{ title }</option>"""
-    @$input.append $option
 
-  _addListOptions: ->
-    data = @config.optionsList
-    for o in data
-      @_addOption(o, o)
-
-  _addHashOptions: ->
-    data = @config.optionsHash
-    for value, title of data
-      @_addOption(title, value)
-
-  _addCollectionOptions: ->
-    data       = @config.collection.data
-    valueField = @config.collection.valueField
-    titleField = @config.collection.titleField
-
-    for o in data
-      title    = o[titleField]
-      value    = o[valueField]
-      @_addOption(title, value)
-
-  _addOptions: ->
-    if @config.collection
-      @_addCollectionOptions()
-    else if @config.optionsList
-      @_addListOptions()
-    else if @config.optionsHash
-      @_addHashOptions()
-
-  _addInput: ->
+  _add_input: ->
     @$input =$ """<select name='#{ @name }' id='#{ @name }'></select>"""
     @$el.append @$input
 
@@ -49,10 +33,52 @@ class @InputSelect extends InputString
       else
         @config.optionsHash = { '': '--' }
 
-    @_addOptions()
+    @_add_options()
 
 
-_chrFormInputs['select'] = InputSelect
+  _add_options: ->
+    if @config.collection
+      @_add_collection_options()
+
+    else if @config.optionsList
+      @_add_list_options()
+
+    else if @config.optionsHash
+      @_add_hash_options()
+
+
+  _add_collection_options: ->
+    for o in @config.collection.data
+      title    = o[@config.collection.titleField]
+      value    = o[@config.collection.valueField]
+      @_add_option(title, value)
+
+
+  _add_list_options: ->
+    data = @config.optionsList
+    for o in data
+      @_add_option(o, o)
+
+
+  _add_hash_options: ->
+    data = @config.optionsHash
+    for value, title of data
+      @_add_option(title, value)
+
+
+  _add_option: (title, value) ->
+    selected = if @value == value then 'selected' else ''
+    $option =$ """<option value='#{ value }' #{ selected }>#{ title }</option>"""
+    @$input.append $option
+
+
+  # PUBLIC ================================================
+
+  updateValue: (@value) ->
+    @$input.val(@value).prop('selected', true)
+
+
+chr.formInputs['select'] = InputSelect
 
 
 

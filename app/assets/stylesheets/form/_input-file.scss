@@ -11,6 +11,7 @@
   label { display: inline; font-size: .8em; }
 
   &.empty {
+    img, a, label, input[type=checkbox] { display: none; }
     input[type=file] { margin-top: .2em; }
   }
 }

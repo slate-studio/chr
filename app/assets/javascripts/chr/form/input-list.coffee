@@ -1,28 +1,63 @@
 # -----------------------------------------------------------------------------
+# Author: Alexander Kravets <alex@slatestudio.com>,
+#         Slate Studio (http://www.slatestudio.com)
+#
+# Coding Guide:
+#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # INPUT LIST
+# -----------------------------------------------------------------------------
 # Allows to create/delete/reorder list items connected to dynamic or static
 # collection. Value should be an array of objects.
 #
 # Dependencies:
-#  - jquery.typeahead
-#  - slip
+#= require ./input-list_reorder
+#
 # -----------------------------------------------------------------------------
+
 class @InputList extends InputString
-  _updateInputValue: ->
+
+  # PRIVATE ===============================================
+
+  _add_input: ->
+    # hidden input that stores ids
+    # we use __LIST__ prefix to identify ARRAY input type and
+    # process it's value while form submission.
+    name = if @config.namePrefix then "#{@config.namePrefix}[__LIST__#{@config.target}]" else "[__LIST__#{@config.target}]"
+
+    @$input =$ "<input type='hidden' name='#{ name }' value='' />"
+    @$el.append @$input
+
+    # other options might be added here (static collection)
+    if @config.typeahead
+      # typeahead input for adding new items
+      placeholder = @config.typeahead.placeholder
+      @typeaheadInput =$ "<input type='text' placeholder='#{ placeholder }' />"
+      @$el.append @typeaheadInput
+
+    @_add_items()
+    @_update_input_value()
+
+
+  _update_input_value: ->
     ids = []
     @$items.children('li').each (i, el)->
       ids.push $(el).attr('data-id')
     value = ids.join(',')
     @$input.val(value)
 
-  _removeItem: ($el) ->
+
+  _remove_item: ($el) ->
     id = $el.attr('data-id')
     delete @objects[id]
 
     $el.parent().remove()
-    @_updateInputValue()
+    @_update_input_value()
 
-  _addItem: (o) ->
+
+  _add_item: (o) ->
     id = o['_id']
 
     @objects[id] = o
@@ -38,40 +73,21 @@ class @InputList extends InputString
                      <a href='#' class='action_remove'>Remove</a>
                    </li>"""
     @$items.append listItem
-    @_updateInputValue()
+    @_update_input_value()
 
-  _addItems: ->
+
+  _add_items: ->
     @reorderContainerClass = @config.klassName
     @objects = {}
     @$items  =$ "<ul class='#{ @reorderContainerClass }'></ul>"
 
     for o in @value
-      @_addItem(o)
+      @_add_item(o)
 
     @typeaheadInput.before @$items
 
-  _addInput: ->
-    # hidden input that stores ids
-    # NOTE: we use __LIST__ prefix to identify ARRAY input type and
-    #       process it's value while form submission.
-    name = if @config.namePrefix then "#{@config.namePrefix}[__LIST__#{@config.target}]" else "[__LIST__#{@config.target}]"
 
-    @$input =$ "<input type='hidden' name='#{ name }' value='' />"
-    @$el.append @$input
-
-    # NOTE: other options might be added here (static collection)
-    if @config.typeahead
-      # typeahead input for adding new items
-      placeholder = @config.typeahead.placeholder
-      @typeaheadInput =$ "<input type='text' placeholder='#{ placeholder }' />"
-      @$el.append @typeaheadInput
-
-    @_addItems()
-    @_updateInputValue()
-
-  #
-  # PUBLIC
-  #
+  # PUBLIC ================================================
 
   initialize: ->
     # typeahead
@@ -95,39 +111,18 @@ class @InputList extends InputString
       })
 
       @typeaheadInput.on 'typeahead:selected', (e, object, dataset) =>
-        @_addItem(object)
+        @_add_item(object)
         @typeaheadInput.typeahead('val', '')
 
-    # events
+    # remove
     @$items.on 'click', '.action_remove', (e) =>
       e.preventDefault()
-      if confirm('Are you sure?')
-        @_removeItem($(e.currentTarget))
+      if confirm('Are you sure?') then @_remove_item($(e.currentTarget))
 
-    # reorder
-    list = @$items.get(0)
-    new Slip(list)
-
-    list.addEventListener 'slip:beforeswipe', (e) -> e.preventDefault()
-
-    list.addEventListener 'slip:beforewait', ((e) ->
-      if $(e.target).hasClass("icon-reorder") then e.preventDefault()
-    ), false
-
-    list.addEventListener 'slip:beforereorder', ((e) ->
-      if not $(e.target).hasClass("icon-reorder") then e.preventDefault()
-    ), false
-
-    list.addEventListener 'slip:reorder', ((e) =>
-      e.target.parentNode.insertBefore(e.target, e.detail.insertBefore)
-      @_updateInputValue()
-      return false
-    ), false
+    @_bind_reorder()
 
     @config.onInitialize?(this)
 
-  # TODO: add support
-  updateValue: (@value) ->
 
   hash: (hash={}) ->
     hash[@config.klassName] = []
@@ -135,7 +130,16 @@ class @InputList extends InputString
     hash[@config.klassName].push(@objects[id]) for id in ids
     return hash
 
-_chrFormInputs['list'] = InputList
+
+  updateValue: (@value) ->
+    @$items.html('')
+    @_add_item(o) for o in @value
+
+
+include(InputList, inputListReorder)
+
+
+chr.formInputs['list'] = InputList
 
 
 

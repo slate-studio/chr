@@ -7,50 +7,24 @@
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# INPUT HIDDEN
+# INPUT PASSWORD
 # -----------------------------------------------------------------------------
-class @InputHidden
-  constructor: (@name, @value, @config, @object) ->
-    @_create_el()
-
-    return this
-
+class @InputPassword extends InputString
 
   # PRIVATE ===============================================
 
-  _create_el: ->
-    @$el =$ "<input type='hidden' name='#{ @name }' value='#{ @_safe_value() }' />"
-
-
-  _safe_value: ->
-    if typeof(@value) == 'object'
-      JSON.stringify(@value)
-    else
-      _escapeHtml(@value)
+  _add_input: ->
+    @$input =$ "<input type='password' name='#{ @name }' value='#{ @value }' />"
+    @$el.append @$input
 
 
   # PUBLIC ================================================
 
-  initialize: ->
-    @config.onInitialize?(this)
-
-
   updateValue: (@value) ->
-    @$el.val(@_safe_value())
+    @$input.val(@value)
 
 
-  hash: (hash={}) ->
-    hash[@config.klassName] = @$el.val()
-    return hash
-
-
-  showErrorMessage: (message) -> ;
-
-
-  hideErrorMessage: -> ;
-
-
-chr.formInputs['hidden'] = InputHidden
+chr.formInputs['password'] = InputPassword
 
 
 
