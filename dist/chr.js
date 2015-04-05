@@ -2762,7 +2762,7 @@ this.Chr = (function() {
     crumbs = path.split('/');
     if (this.module !== this.modules[crumbs[1]]) {
       if ((ref = this.module) != null) {
-        ref.hide(path === '#/');
+        ref.hide();
       }
     }
     this.module = this.modules[crumbs[1]];
@@ -2912,15 +2912,12 @@ this.Module = (function() {
     return this.nestedLists[listName] = new List(this, listName, config, parentList);
   };
 
-  Module.prototype.showNestedList = function(listName, animate) {
+  Module.prototype.showNestedList = function(listName) {
     var listToShow;
-    if (animate == null) {
-      animate = false;
-    }
     listToShow = this.nestedLists[listName];
     if (listToShow.showWithParent) {
       listToShow.updateItems();
-      listToShow.show(animate, (function(_this) {
+      listToShow.show((function(_this) {
         return function() {
           var exceptList;
           return _this.hideNestedLists(exceptList = listName);
@@ -2929,15 +2926,9 @@ this.Module = (function() {
     } else {
       this.activeList = listToShow;
       this._update_active_list_items();
-      this.activeList.show(animate);
+      this.activeList.show();
     }
-    if (animate && this.view) {
-      return this.view.$el.fadeOut($.fx.speeds._default, (function(_this) {
-        return function() {
-          return _this.destroyView();
-        };
-      })(this));
-    }
+    return this.destroyView();
   };
 
   Module.prototype.hideNestedLists = function(exceptList) {
@@ -2970,31 +2961,21 @@ this.Module = (function() {
     this.destroyView();
     results = [];
     while (this.activeList !== this.rootList) {
-      results.push(this.hideActiveList(false));
+      results.push(this.hideActiveList());
     }
     return results;
   };
 
-  Module.prototype.hideActiveList = function(animate) {
-    if (animate == null) {
-      animate = false;
-    }
-    if (animate) {
-      this.activeList.$el.fadeOut();
-    } else {
-      this.activeList.$el.hide();
-    }
+  Module.prototype.hideActiveList = function() {
+    this.activeList.$el.hide();
     return this.activeList = this.activeList.parentList;
   };
 
-  Module.prototype.showView = function(object, config, title, animate) {
+  Module.prototype.showView = function(object, config, title) {
     var newView;
-    if (animate == null) {
-      animate = false;
-    }
     newView = new View(this, config, this._view_path(), object, title);
     this.chr.$el.append(newView.$el);
-    return newView.show(animate, (function(_this) {
+    return newView.show((function(_this) {
       return function() {
         _this.destroyView();
         return _this.view = newView;
@@ -3002,14 +2983,11 @@ this.Module = (function() {
     })(this));
   };
 
-  Module.prototype.showViewByObjectId = function(objectId, config, title, animate) {
+  Module.prototype.showViewByObjectId = function(objectId, config, title) {
     var onError, onSuccess;
-    if (animate == null) {
-      animate = false;
-    }
     onSuccess = (function(_this) {
       return function(object) {
-        return _this.showView(object, config, title, animate);
+        return _this.showView(object, config, title);
       };
     })(this);
     onError = function() {
@@ -3036,27 +3014,13 @@ this.Module = (function() {
   Module.prototype.show = function() {
     this._update_active_list_items();
     this.$el.show();
-    return this.activeList.show(false);
+    return this.activeList.show();
   };
 
-  Module.prototype.hide = function(animate) {
-    if (animate == null) {
-      animate = false;
-    }
+  Module.prototype.hide = function() {
     this.hideNestedLists();
-    if (animate) {
-      if (this.view) {
-        this.view.$el.fadeOut($.fx.speeds._default, (function(_this) {
-          return function() {
-            return _this.destroyView();
-          };
-        })(this));
-      }
-      return this.$el.fadeOut();
-    } else {
-      this.destroyView();
-      return this.$el.hide();
-    }
+    this.destroyView();
+    return this.$el.hide();
   };
 
   return Module;
@@ -3392,31 +3356,23 @@ this.List = (function() {
     this.module.chr.unsetActiveListItems();
     this.module.destroyView();
     if (this.showWithParent) {
-      return this.hide(true);
+      return this.hide();
     } else {
-      return this.module.hideActiveList(true);
+      return this.module.hideActiveList();
     }
   };
 
   List.prototype._new = function(e) {
     chr.updateHash($(e.currentTarget).attr('href'), true);
-    return this.module.showView(null, this.config, 'New', true);
+    return this.module.showView(null, this.config, 'New');
   };
 
-  List.prototype.hide = function(animate) {
-    if (animate) {
-      return this.$el.fadeOut();
-    } else {
-      return this.$el.hide();
-    }
+  List.prototype.hide = function() {
+    return this.$el.hide();
   };
 
-  List.prototype.show = function(animate, callback) {
-    var onShow;
-    if (animate == null) {
-      animate = false;
-    }
-    onShow = (function(_this) {
+  List.prototype.show = function(callback) {
+    return this.$el.show(0, (function(_this) {
       return function() {
         var base;
         _this.$items.scrollTop(0);
@@ -3425,25 +3381,7 @@ this.List = (function() {
         }
         return typeof callback === "function" ? callback() : void 0;
       };
-    })(this);
-    if (animate) {
-      this.$el.css({
-        'z-index': 1,
-        'box-shadow': 'none'
-      });
-      return this.$el.fadeIn($.fx.speeds._default, (function(_this) {
-        return function() {
-          _this.$el.css({
-            'z-index': '',
-            'box-shadow': ''
-          });
-          return onShow();
-        };
-      })(this));
-    } else {
-      this.$el.show();
-      return onShow();
-    }
+    })(this));
   };
 
   List.prototype.updateItems = function() {
@@ -3548,12 +3486,12 @@ this.Item = (function() {
     id = $(e.currentTarget).attr('data-id');
     chr.updateHash(hash, true);
     if (crumbs[crumbs.length - 2] === 'view') {
-      return this.module.showViewByObjectId(id, this.config, title, true);
+      return this.module.showViewByObjectId(id, this.config, title);
     }
     if (this.config.objectStore) {
-      return this.module.showViewByObjectId('', this.config, title, true);
+      return this.module.showViewByObjectId('', this.config, title);
     }
-    return this.module.showNestedList(_last(crumbs), true);
+    return this.module.showNestedList(_last(crumbs));
   };
 
   Item.prototype.render = function() {
@@ -3598,26 +3536,6 @@ this.View = (function() {
     this.$el = $("<section class='view " + this.module.name + "' style='display:none;'>");
     if (this.config.fullsizeView) {
       this.$el.addClass('fullsize');
-    }
-    this.onShowAnimation = this.config.onShowAnimation;
-    this.onCloseAnimation = this.config.onCloseAnimation;
-    if (this.onShowAnimation == null) {
-      this.onShowAnimation = (function(_this) {
-        return function(callback) {
-          return _this.$el.fadeIn($.fx.speeds._default, function() {
-            return callback();
-          });
-        };
-      })(this);
-    }
-    if (this.onCloseAnimation == null) {
-      this.onCloseAnimation = (function(_this) {
-        return function(callback) {
-          return _this.$el.fadeOut($.fx.speeds._default, function() {
-            return callback();
-          });
-        };
-      })(this);
     }
     this.$header = $("<header></header>");
     this.$title = $("<div class='title'></div>");
@@ -3690,11 +3608,7 @@ this.View = (function() {
   };
 
   View.prototype._close = function(e) {
-    return this.onCloseAnimation((function(_this) {
-      return function() {
-        return _this.destroy();
-      };
-    })(this));
+    return this.destroy();
   };
 
   View.prototype._save = function(e) {
@@ -3741,10 +3655,8 @@ this.View = (function() {
       return this.store.remove(this.object._id, {
         onSuccess: (function(_this) {
           return function() {
-            return _this.onCloseAnimation(function() {
-              chr.updateHash("#/" + _this.closePath, true);
-              return _this.destroy();
-            });
+            chr.updateHash("#/" + _this.closePath, true);
+            return _this.destroy();
           };
         })(this),
         onError: function() {
@@ -3754,9 +3666,8 @@ this.View = (function() {
     }
   };
 
-  View.prototype.show = function(animate, callback) {
-    var after_show;
-    after_show = (function(_this) {
+  View.prototype.show = function(callback) {
+    return this.$el.show(0, (function(_this) {
       return function() {
         var base;
         if (typeof callback === "function") {
@@ -3765,20 +3676,7 @@ this.View = (function() {
         _this.form.initializePlugins();
         return typeof (base = _this.config).onViewShow === "function" ? base.onViewShow(_this) : void 0;
       };
-    })(this);
-    if (animate) {
-      return this.onShowAnimation((function(_this) {
-        return function() {
-          return after_show();
-        };
-      })(this));
-    } else {
-      return this.$el.show(0, (function(_this) {
-        return function() {
-          return after_show();
-        };
-      })(this));
-    }
+    })(this));
   };
 
   View.prototype.destroy = function() {

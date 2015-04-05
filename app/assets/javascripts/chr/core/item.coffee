@@ -74,12 +74,12 @@ class @Item
 
     # show view for a arrayStore item
     if crumbs[crumbs.length - 2] == 'view'
-      return @module.showViewByObjectId(id, @config, title, true)
+      return @module.showViewByObjectId(id, @config, title)
     # show objectStore item view
     if @config.objectStore
-      return @module.showViewByObjectId('', @config, title, true)
+      return @module.showViewByObjectId('', @config, title)
     # show nested list
-    @module.showNestedList(_last(crumbs), true)
+    @module.showNestedList(_last(crumbs))
 
 
   # PUBLIC ================================================

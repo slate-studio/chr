@@ -149,34 +149,27 @@ class @List
     @module.destroyView()
 
     if @showWithParent
-      @hide(true)
+      @hide()
     else
-      @module.hideActiveList(true)
+      @module.hideActiveList()
 
 
   _new: (e) ->
     chr.updateHash($(e.currentTarget).attr('href'), true)
-    @module.showView(null, @config, 'New', true)
+    @module.showView(null, @config, 'New')
 
 
   # PUBLIC ================================================
 
-  hide: (animate) ->
-    if animate then @$el.fadeOut() else @$el.hide()
+  hide: ->
+    @$el.hide()
 
 
-  show: (animate=false, callback) ->
-    onShow = =>
+  show: (callback) ->
+    @$el.show 0, =>
       @$items.scrollTop(0)
       @config.onListShow?(@)
       callback?()
-
-    if animate
-      # z-index workaround to remove blink effect
-      @$el.css({ 'z-index': 1, 'box-shadow': 'none' })
-      @$el.fadeIn $.fx.speeds._default, => @$el.css({ 'z-index': '', 'box-shadow': '' }) ; onShow()
-    else
-      @$el.show() ; onShow()
 
 
   updateItems: ->

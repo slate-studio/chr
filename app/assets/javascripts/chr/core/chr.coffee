@@ -51,7 +51,7 @@ class @Chr
 
     # if module changed, hide previous module
     if @module != @modules[crumbs[1]]
-      @module?.hide((path == '#/')) # NOTE: animate only for root path
+      @module?.hide()
 
     @module = @modules[crumbs[1]] # module name on position 1
 

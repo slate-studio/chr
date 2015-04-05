@@ -31,19 +31,16 @@
     isFocused: false,
 
     checkOffset: function () {
-      if ( !this.redactor.fullscreen.isOpen )
-      {
-        var boxOffset = this.redactor.$box.offset();
+      var boxOffset = this.redactor.$box.offset();
 
-        var isBelowBoxTop = boxOffset.top - this.viewHeaderHeight <= 0;
-        //var isAboveBoxBottom = boxOffset.top + this.redactor.$box.outerHeight() - this.redactor.$toolbar.outerHeight() - this.$window.scrollTop() >= 0;
-        var isAboveBoxBottom = this.redactor.$box.outerHeight() + boxOffset.top - this.viewHeaderHeight - this.redactor.$toolbar.outerHeight() >= 0;
+      var isBelowBoxTop = boxOffset.top - this.viewHeaderHeight <= 0;
+      //var isAboveBoxBottom = boxOffset.top + this.redactor.$box.outerHeight() - this.redactor.$toolbar.outerHeight() - this.$window.scrollTop() >= 0;
+      var isAboveBoxBottom = this.redactor.$box.outerHeight() + boxOffset.top - this.viewHeaderHeight - this.redactor.$toolbar.outerHeight() >= 0;
 
-        if (isBelowBoxTop && isAboveBoxBottom) {
-          this.fix();
-        } else {
-          this.unfix();
-        }
+      if (isBelowBoxTop && isAboveBoxBottom) {
+        this.fix();
+      } else {
+        this.unfix();
       }
     },
 
@@ -126,14 +123,18 @@ this.InputRedactor = (function(superClass) {
   };
 
   InputRedactor.prototype.initialize = function() {
-    var base, base1, redactor_options;
+    var base, base1, plugins, redactor_options;
+    plugins = ['fixedtoolbar'];
+    if (Loft) {
+      plugins.push('loft');
+    }
     redactor_options = {
       focus: false,
       imageFloatMargin: '20px',
       buttonSource: true,
       pastePlainText: true,
-      plugins: ['fixedtoolbar', 'loft'],
-      buttons: ['html', 'formatting', 'bold', 'italic', 'deleted', 'alignment', 'unorderedlist', 'orderedlist', 'link']
+      plugins: plugins,
+      buttons: ['html', 'formatting', 'bold', 'italic', 'deleted', 'unorderedlist', 'orderedlist', 'link']
     };
     if ((base = this.config).redactorOptions == null) {
       base.redactorOptions = {};

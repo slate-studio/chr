@@ -31,19 +31,16 @@
     isFocused: false,
 
     checkOffset: function () {
-      if ( !this.redactor.fullscreen.isOpen )
-      {
-        var boxOffset = this.redactor.$box.offset();
+      var boxOffset = this.redactor.$box.offset();
 
-        var isBelowBoxTop = boxOffset.top - this.viewHeaderHeight <= 0;
-        //var isAboveBoxBottom = boxOffset.top + this.redactor.$box.outerHeight() - this.redactor.$toolbar.outerHeight() - this.$window.scrollTop() >= 0;
-        var isAboveBoxBottom = this.redactor.$box.outerHeight() + boxOffset.top - this.viewHeaderHeight - this.redactor.$toolbar.outerHeight() >= 0;
+      var isBelowBoxTop = boxOffset.top - this.viewHeaderHeight <= 0;
+      //var isAboveBoxBottom = boxOffset.top + this.redactor.$box.outerHeight() - this.redactor.$toolbar.outerHeight() - this.$window.scrollTop() >= 0;
+      var isAboveBoxBottom = this.redactor.$box.outerHeight() + boxOffset.top - this.viewHeaderHeight - this.redactor.$toolbar.outerHeight() >= 0;
 
-        if (isBelowBoxTop && isAboveBoxBottom) {
-          this.fix();
-        } else {
-          this.unfix();
-        }
+      if (isBelowBoxTop && isAboveBoxBottom) {
+        this.fix();
+      } else {
+        this.unfix();
       }
     },
 

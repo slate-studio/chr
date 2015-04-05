@@ -29,21 +29,16 @@ class @InputRedactor extends InputString
   # PUBLIC ================================================
 
   initialize: ->
+    plugins = [ 'fixedtoolbar' ]
+    if Loft then plugins.push('loft')
+
     redactor_options =
       focus:            false
       imageFloatMargin: '20px'
       buttonSource:     true
       pastePlainText:   true
-      plugins:          [ 'fixedtoolbar', 'loft' ]
-      buttons:          [ 'html',
-                          'formatting',
-                          'bold',
-                          'italic',
-                          'deleted',
-                          'alignment',
-                          'unorderedlist',
-                          'orderedlist',
-                          'link' ]
+      plugins: plugins
+      buttons: [ 'html', 'formatting', 'bold', 'italic', 'deleted', 'unorderedlist', 'orderedlist', 'link' ]
 
     @config.redactorOptions ?= {}
     $.extend(redactor_options, @config.redactorOptions)

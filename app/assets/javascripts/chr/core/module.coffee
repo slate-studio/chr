@@ -16,16 +16,16 @@
 #
 # Public methods:
 #   addNestedList (listName, config, parentList)
-#   showNestedList (listName, animate=false)
+#   showNestedList (listName)
 #   hideNestedLists (exceptList)
 #   visibleNestedListShownWithParent ()
-#   showRootList()
-#   hideActiveList (animate=false)
-#   showView (object, config, title, animate=false)
-#   showViewByObjectId (objectId, config, title, animate=false)
+#   showRootList ()
+#   hideActiveList ()
+#   showView (object, config, title)
+#   showViewByObjectId (objectId, config, title)
 #   destroyView ()
 #   show ()
-#   hide (animate=false)
+#   hide ()
 #
 # -----------------------------------------------------------------------------
 class @Module
@@ -77,22 +77,21 @@ class @Module
     @nestedLists[listName] = new List(this, listName, config, parentList)
 
 
-  # shows one of nested lists, with or without animation
-  showNestedList: (listName, animate=false) ->
+  # shows one of nested lists
+  showNestedList: (listName) ->
     listToShow = @nestedLists[listName]
 
     if listToShow.showWithParent
       # list works as view, never becomes active
       listToShow.updateItems()
-      listToShow.show animate, => @hideNestedLists(exceptList=listName)
+      listToShow.show => @hideNestedLists(exceptList=listName)
 
     else
       @activeList = listToShow
       @_update_active_list_items()
-      @activeList.show(animate)
+      @activeList.show()
 
-    # hide view
-    if animate and @view then @view.$el.fadeOut $.fx.speeds._default, => @destroyView()
+    @destroyView()
 
 
   hideNestedLists: (exceptList) ->
@@ -105,28 +104,28 @@ class @Module
       if list.isVisible() && list.showWithParent then return list
 
 
-  showRootList: () ->
+  showRootList: ->
     @destroyView()
     while @activeList != @rootList
-      @hideActiveList(false)
+      @hideActiveList()
 
 
-  hideActiveList: (animate=false)->
-    if animate then @activeList.$el.fadeOut() else @activeList.$el.hide()
+  hideActiveList: ->
+    @activeList.$el.hide()
     @activeList = @activeList.parentList
 
 
-  showView: (object, config, title, animate=false) ->
+  showView: (object, config, title) ->
     newView = new View(this, config, @_view_path(), object, title)
     @chr.$el.append(newView.$el)
 
-    newView.show animate, =>
+    newView.show =>
       @destroyView()
       @view = newView
 
 
-  showViewByObjectId: (objectId, config, title, animate=false) ->
-    onSuccess = (object) => @showView(object, config, title, animate)
+  showViewByObjectId: (objectId, config, title) ->
+    onSuccess = (object) => @showView(object, config, title)
     onError   = -> chr.showError("can\'t show view for requested object")
 
     if objectId == ''
@@ -142,19 +141,13 @@ class @Module
   show: ->
     @_update_active_list_items()
     @$el.show()
-    @activeList.show(false)
+    @activeList.show()
 
 
-  hide: (animate=false) ->
+  hide: ->
     @hideNestedLists()
-
-    if animate
-      # TODO: move animation to the view class
-      if @view then @view.$el.fadeOut $.fx.speeds._default, => @destroyView()
-      @$el.fadeOut()
-    else
-      @destroyView()
-      @$el.hide()
+    @destroyView()
+    @$el.hide()
 
 
 

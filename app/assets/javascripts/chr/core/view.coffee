@@ -16,11 +16,9 @@
 #   disableSave      - do not add save button in header
 #   fullsizeView     — use fullsize layout in desktop mode
 #   onViewShow       - on show callback
-#   onShowAnimation  - animation method to be used on show
-#   onCloseAnimation - animation method to be used on close
 #
 # public methods:
-#   show(animate, callback)
+#   show(callback)
 #   destroy()
 #
 # -----------------------------------------------------------------------------
@@ -33,12 +31,6 @@ class @View
     # fullsize
     if @config.fullsizeView
       @$el.addClass 'fullsize'
-
-    # animations
-    @onShowAnimation   = @config.onShowAnimation
-    @onCloseAnimation  = @config.onCloseAnimation
-    @onShowAnimation  ?= (callback) => @$el.fadeIn  $.fx.speeds._default, -> callback()
-    @onCloseAnimation ?= (callback) => @$el.fadeOut $.fx.speeds._default, -> callback()
 
     # header
     @$header =$ "<header></header>"
@@ -96,7 +88,7 @@ class @View
   # EVENTS ================================================
 
   _close: (e) ->
-    @onCloseAnimation(=> @destroy())
+    @destroy()
 
 
   _save: (e) ->
@@ -122,22 +114,17 @@ class @View
     e.preventDefault()
     if confirm("Are you sure?")
       @store.remove @object._id,
-        onSuccess: => @onCloseAnimation( => chr.updateHash("#/#{ @closePath }", true) ; @destroy() )
+        onSuccess: => chr.updateHash("#/#{ @closePath }", true) ; @destroy()
         onError:   -> chr.showError('Can\'t delete object.')
 
 
   # PUBLIC ================================================
 
-  show: (animate, callback) ->
-    after_show = =>
+  show: (callback) ->
+    @$el.show 0, =>
       callback?()
       @form.initializePlugins()
       @config.onViewShow?(@)
-
-    if animate
-      @onShowAnimation(=> after_show())
-    else
-      @$el.show(0, => after_show())
 
 
   destroy: ->
