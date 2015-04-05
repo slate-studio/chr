@@ -14,7 +14,6 @@ Application setup:
 postsConfig = (data) ->
   itemTitleField: 'title'
   arrayStore: new RestArrayStore({
-    resource: 'post'
     path:     '/admin/posts'
     sortBy:   'title'
   })
