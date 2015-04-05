@@ -57,15 +57,14 @@ if typeof String.prototype.plainText != 'function'
 
 
 # -----------------------------------------------------------------------------
-# Mixins
-#  - http://arcturo.github.io/library/coffeescript/03_classes.html
+# Mixins: http://arcturo.github.io/library/coffeescript/03_classes.html
 # -----------------------------------------------------------------------------
 @extend = (obj, mixin) ->
   obj[name] = method for name, method of mixin
-  obj
+  return obj
 
 @include = (klass, mixin) ->
-  extend klass.prototype, mixin
+  extend(klass.prototype, mixin)
 
 
 

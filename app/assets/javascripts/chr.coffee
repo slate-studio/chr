@@ -5,8 +5,8 @@
 #= require ./chr/core/list
 #= require ./chr/core/item
 #= require ./chr/core/view
-#= require ./chr/form/form
 
+#= require ./chr/form/form
 #= require ./chr/form/input-form
 #= require ./chr/form/input-hidden
 #= require ./chr/form/input-string

@@ -12,8 +12,7 @@
 #
 # Dependencies:
 #= require redactor
-#= require redactor.fixedtoolbar
-#= require redactor.fullscreen
+#= require chr/vendor/redactor.fixedtoolbar
 #
 # -----------------------------------------------------------------------------
 
@@ -35,7 +34,7 @@ class @InputRedactor extends InputString
       imageFloatMargin: '20px'
       buttonSource:     true
       pastePlainText:   true
-      plugins:          [ 'loft', 'fixedtoolbar', 'fullscreen' ] #, 'video', 'table' ]
+      plugins:          [ 'fixedtoolbar', 'loft' ]
       buttons:          [ 'html',
                           'formatting',
                           'bold',
@@ -44,7 +43,7 @@ class @InputRedactor extends InputString
                           'alignment',
                           'unorderedlist',
                           'orderedlist',
-                          'link' ] #, 'video', 'table', 'horizontalrule' ]
+                          'link' ]
 
     @config.redactorOptions ?= {}
     $.extend(redactor_options, @config.redactorOptions)
