@@ -191,50 +191,28 @@ Last import in the code above is optional. But here is a default source for it a
 
 ```scss
 .sign-in {
-  font-size: 14px;
-  color: #555;
-  margin: 3em 0 0 3em;
+  margin: 2em; max-width: 18em;
 
-  h2 {
-    text-transform: uppercase;
-    font-size: 1em;
-    font-size: 16px;
-    color: $black;
-    margin-bottom: 1.5em;
+  h2 { text-transform: uppercase; color: $black; }
+  input { @include noFocus(); }
+  label { color: $black; }
+  .input { margin-bottom: .75em; }
+
+  .input input[type=checkbox] { margin-right: .5em; }
+
+  .input input.email, .input input.password {
+    float: right; margin: -2px 0 0; width: 12em;
+    border: 0; border-bottom: 1px solid $contrastColor;
   }
 
-  p {
-    margin: -1.5em 0 2em;
-    color: $positiveColor;
-  }
-
-  .form-actions, .form-inputs {
-    max-width: 280px;
-  }
-
-  .input {
-    margin-bottom: 1.5em;
-  }
-
-  input.string, input.password {
-    float: right;
-    margin-top: -.45em;
-    padding: .25em .5em;
-    width: 13.5em;
-  }
-
-  label.boolean input {
-    margin-right: .25em;
-  }
+  .input.boolean { margin-top: 1.25em; }
 
   .form-actions input {
-    width: 100%;
-    padding: 1em 2em;
-    background-color: $positiveColor;
-    border: 0;
-    color: $white;
+    width: 100%; padding: 1em 2em; margin-top: .75em;
+    color: $white; background-color: $positiveColor; border: 0;
   }
 }
+
 ```
 
 **Third**: make sure admin assets are precompiled on production, include ```admin.js``` and ```admin.css``` in ```config/initializers/assets.rb```:

@@ -20,14 +20,14 @@ postsConfig = (data) ->
   })
   formSchema:
     title { type: 'string' }
-    body: { type: 'text' }
+    body: { type: 'text'   }
 
 $ ->
   config =
     modules:
       posts: postsConfig()
 
-    chr.start(config)
+  chr.start(config)
 ```
 
 Styles setup:
