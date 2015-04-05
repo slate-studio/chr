@@ -125,7 +125,7 @@ this.InputRedactor = (function(superClass) {
   InputRedactor.prototype.initialize = function() {
     var base, base1, plugins, redactor_options;
     plugins = ['fixedtoolbar'];
-    if (Loft) {
+    if (typeof Loft !== "undefined" && Loft !== null) {
       plugins.push('loft');
     }
     redactor_options = {

@@ -30,7 +30,7 @@ class @InputRedactor extends InputString
 
   initialize: ->
     plugins = [ 'fixedtoolbar' ]
-    if Loft then plugins.push('loft')
+    if Loft? then plugins.push('loft')
 
     redactor_options =
       focus:            false
