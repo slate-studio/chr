@@ -19,8 +19,8 @@ postsConfig = (data) ->
     sortBy:   'title'
   })
   formSchema:
-    title { type: 'string' }
-    body: { type: 'text'   }
+    title: { type: 'string' }
+    body:  { type: 'text'   }
 
 $ ->
   config =
