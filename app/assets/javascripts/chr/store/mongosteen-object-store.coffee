@@ -10,7 +10,9 @@
 # MONGOSTEEN (RAILS) OBJECT STORE IMPLEMENTATION
 # -----------------------------------------------------------------------------
 class @MongosteenObjectStore extends RestObjectStore
-  # initial store configuration
+
+  # PRIVATE ===============================================
+
   _initialize_database: ->
     @dataFetchLock = false
     @ajaxConfig =

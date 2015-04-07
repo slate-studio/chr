@@ -10,7 +10,9 @@
 # REST ARRAY STORE
 # -----------------------------------------------------------------------------
 class @RestArrayStore extends ArrayStore
-  # initial store configuration
+
+  # PRIVATE ===============================================
+
   _initialize_database: ->
     @dataFetchLock = false
     @ajaxConfig = {}
@@ -64,6 +66,8 @@ class @RestArrayStore extends ArrayStore
     for id in updateDataObjectIds
       @_update_data_object(id, objectsMap[id])
 
+
+  # PUBLIC ================================================
 
   # load a single object, this is used in view when
   # store has not required item

@@ -45,6 +45,8 @@ class @ArrayStore
     @_initialize_database()
 
 
+  # PRIVATE ===============================================
+
   # when store is reorderable update sorting configuration
   _initialize_reorderable: ->
     if @reorderable
@@ -162,6 +164,8 @@ class @ArrayStore
       object[fieldName] = value
     return object
 
+
+  # PUBLIC ================================================
 
   # subsribe to store event
   on: (eventType, callback) ->

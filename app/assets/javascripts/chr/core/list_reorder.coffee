@@ -8,12 +8,13 @@
 # -----------------------------------------------------------------------------
 
 @listReorder =
+
   # PRIVATE ===============================================
 
-  _bind_reorder: (listEl) ->
-    items      = listEl.items
-    list       = listEl.$items.get(0)
-    arrayStore = listEl.config.arrayStore
+  _bind_reorder: ->
+    items      = @items
+    list       = @$items.get(0)
+    arrayStore = @config.arrayStore
 
     config = arrayStore.reorderable
 

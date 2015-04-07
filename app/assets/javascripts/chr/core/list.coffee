@@ -80,14 +80,6 @@ class @List
       @$newBtn.on 'click', (e) => @_new(e)
       @$header.append @$newBtn
 
-    # search
-    @$search =$ """<div class='search' style='display: none;'>
-                     <a href='#' class='icon'></a>
-                     <input type='text' placeholder='Search...' />
-                     <a href='#' class='cancel'>Cancel</a>
-                   </div>"""
-    @$header.append @$search
-
     if @config.items       then @_process_config_items()
     if @config.arrayStore  then @_bind_config_array_store()
     if @config.objectStore then @_bind_config_object_store()

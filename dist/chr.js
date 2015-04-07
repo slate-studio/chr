@@ -3085,10 +3085,10 @@ this.listConfig = {
       this._bind_pagination();
     }
     if (this.config.arrayStore.searchable) {
-      this._bind_search(this);
+      this._bind_search();
     }
     if (this.config.arrayStore.reorderable) {
-      return this._bind_reorder(this);
+      return this._bind_reorder();
     }
   },
   _bind_config_object_store: function() {}
@@ -3096,33 +3096,46 @@ this.listConfig = {
 
 this.listPagination = {
   _bind_pagination: function() {
-    var arrayStore;
-    arrayStore = this.config.arrayStore;
-    return this.$items.scroll((function(_this) {
+    this.lastScrollTop = 0;
+    this.$items.scroll((function(_this) {
       return function(e) {
-        var $listChildren, listChildrenCount, listFirstChildHeight, listHeight, viewHeight;
-        if (!arrayStore.dataFetchLock) {
-          $listChildren = _this.$items.children();
-          listChildrenCount = $listChildren.length;
-          listFirstChildHeight = $listChildren.first().outerHeight();
-          listHeight = listChildrenCount * listFirstChildHeight;
-          viewHeight = _this.$el.height();
-          if (listHeight < (viewHeight + e.target.scrollTop + 100)) {
-            _this._show_spinner();
-            return arrayStore.load();
+        if (_this.lastScrollTop < e.target.scrollTop) {
+          _this.lastScrollTop = e.target.scrollTop;
+          if (!_this.config.arrayStore.dataFetchLock) {
+            if (_this.listItemsHeight < (_this.listViewHeight + e.target.scrollTop + 100)) {
+              _this._show_spinner();
+              return _this.config.arrayStore.load({
+                onSuccess: function() {
+                  return _this._update_height_params();
+                },
+                onError: function() {
+                  return chr.showAlert("Can't load next page, server error 500.");
+                }
+              });
+            }
           }
         }
+      };
+    })(this));
+    return this._update_height_params();
+  },
+  _update_height_params: function() {
+    this.listViewHeight = this.$el.height();
+    this.listItemsHeight = 0;
+    return this.$items.children().each((function(_this) {
+      return function(i, el) {
+        return _this.listItemsHeight += $(el).height();
       };
     })(this));
   }
 };
 
 this.listReorder = {
-  _bind_reorder: function(listEl) {
+  _bind_reorder: function() {
     var _getObjectNewPosition, arrayStore, config, items, list;
-    items = listEl.items;
-    list = listEl.$items.get(0);
-    arrayStore = listEl.config.arrayStore;
+    items = this.items;
+    list = this.$items.get(0);
+    arrayStore = this.config.arrayStore;
     config = arrayStore.reorderable;
     _getObjectNewPosition = function(el) {
       var $el, newPosition, nextObjectId, nextObjectPosition, prevObjectId, prevObjectPosition;
@@ -3178,49 +3191,54 @@ this.listReorder = {
 };
 
 this.listSearch = {
-  _bind_search: function(listEl) {
-    var $input, arrayStore, cancel, search, show;
-    $input = listEl.$search;
-    arrayStore = listEl.config.arrayStore;
-    search = function(input) {
-      var query;
-      query = $(input).val();
-      listEl._show_spinner();
-      return arrayStore.search(query);
-    };
-    show = function() {
-      listEl.$el.addClass('list-search');
-      return $input.find('input').focus();
-    };
-    cancel = function() {
-      listEl.$el.removeClass('list-search');
-      $input.find('input').val('');
-      listEl._show_spinner();
-      return arrayStore.reset();
-    };
-    $input.show();
-    $input.on('keyup', 'input', (function(_this) {
+  _bind_search: function() {
+    this.$search = $("<div class='search'></div>");
+    this.$searchIcon = $("<a href='#' class='icon'></a>");
+    this.$searchInput = $("<input type='text' placeholder='Search...' />");
+    this.$searchCancel = $("<a href='#' class='cancel'>Cancel</a>");
+    this.$header.append(this.$search);
+    this.$search.append(this.$searchIcon);
+    this.$search.append(this.$searchInput);
+    this.$search.append(this.$searchCancel);
+    this.$searchInput.on('keyup', (function(_this) {
       return function(e) {
         if (e.keyCode === 27) {
-          return cancel();
+          return _this._on_search_cancel();
         }
         if (e.keyCode === 13) {
-          return search(e.target);
+          return _this._on_search();
         }
       };
     })(this));
-    $input.on('click', '.icon', (function(_this) {
+    this.$searchIcon.on('click', (function(_this) {
       return function(e) {
         e.preventDefault();
-        return show();
+        return _this._on_search_show();
       };
     })(this));
-    return $input.on('click', '.cancel', (function(_this) {
+    return this.$searchCancel.on('click', (function(_this) {
       return function(e) {
         e.preventDefault();
-        return cancel();
+        return _this._on_search_cancel();
       };
     })(this));
+  },
+  _on_search: function() {
+    var query;
+    query = this.$searchInput.val();
+    this._show_spinner();
+    return this.config.arrayStore.search(query);
+  },
+  _on_search_show: function() {
+    this.$el.addClass('list-search');
+    this.$searchInput.focus();
+    return this.$search.show();
+  },
+  _on_search_cancel: function() {
+    this.$el.removeClass('list-search');
+    this.$searchInput.val('');
+    this._show_spinner();
+    return this.config.arrayStore.reset(false);
   }
 };
 
@@ -3276,8 +3294,6 @@ this.List = (function() {
       })(this));
       this.$header.append(this.$newBtn);
     }
-    this.$search = $("<div class='search' style='display: none;'>\n  <a href='#' class='icon'></a>\n  <input type='text' placeholder='Search...' />\n  <a href='#' class='cancel'>Cancel</a>\n</div>");
-    this.$header.append(this.$search);
     if (this.config.items) {
       this._process_config_items();
     }
@@ -5505,12 +5521,12 @@ this.MongosteenArrayStore = (function(superClass) {
     this.nextPage = 1;
     this.objectsPerPage = (ref2 = chr.itemsPerPageRequest) != null ? ref2 : 20;
     if (this.pagination) {
+      this.lastPageLoaded = false;
       return this._bind_pagination_sync();
     }
   };
 
   MongosteenArrayStore.prototype._bind_pagination_sync = function() {
-    this.lastPageLoaded = false;
     $(this).on('object_added', (function(_this) {
       return function(e, data) {
         var new_object, new_object_position;
@@ -5551,7 +5567,7 @@ this.MongosteenArrayStore = (function(superClass) {
     return this.load();
   };
 
-  MongosteenArrayStore.prototype._udpate_next_page = function(data) {
+  MongosteenArrayStore.prototype._update_next_page = function(data) {
     if (this.pagination) {
       if (data.length > 0) {
         this.lastPageLoaded = true;
@@ -5602,6 +5618,7 @@ this.MongosteenArrayStore = (function(superClass) {
   MongosteenArrayStore.prototype.search = function(searchQuery) {
     this.searchQuery = searchQuery;
     this.nextPage = 1;
+    this.lastPageLoaded = true;
     this._reset_data();
     return this.load();
   };
@@ -5629,7 +5646,7 @@ this.MongosteenArrayStore = (function(superClass) {
     return this._ajax('GET', null, params, ((function(_this) {
       return function(data) {
         var i, len, o;
-        _this._udpate_next_page(data);
+        _this._update_next_page(data);
         for (i = 0, len = data.length; i < len; i++) {
           o = data[i];
           _this._add_data_object(o);
@@ -5642,11 +5659,18 @@ this.MongosteenArrayStore = (function(superClass) {
     })(this)), callbacks.onError);
   };
 
-  MongosteenArrayStore.prototype.reset = function() {
+  MongosteenArrayStore.prototype.reset = function(sync_with_existing_objects) {
     var params;
+    if (sync_with_existing_objects == null) {
+      sync_with_existing_objects = true;
+    }
     this.searchQuery = '';
     this.nextPage = 1;
     params = {};
+    if (!sync_with_existing_objects) {
+      this.lastPageLoaded = true;
+      this._reset_data();
+    }
     if (this.pagination) {
       this.lastPageLoaded = false;
       params.page = this.nextPage;
@@ -5655,7 +5679,7 @@ this.MongosteenArrayStore = (function(superClass) {
     params = $.param(params);
     return this._ajax('GET', null, params, ((function(_this) {
       return function(data) {
-        _this._udpate_next_page(data);
+        _this._update_next_page(data);
         _this._sync_with_data_objects(data);
         return $(_this).trigger('objects_added', {
           objects: data

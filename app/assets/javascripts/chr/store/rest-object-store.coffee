@@ -10,6 +10,9 @@
 # REST OBJECT STORE
 # -----------------------------------------------------------------------------
 class @RestObjectStore extends ObjectStore
+
+  # PRIVATE ===============================================
+
   _initialize_database: ->
     @dataFetchLock = false
     @ajaxConfig = {}
@@ -50,6 +53,8 @@ class @RestObjectStore extends ObjectStore
     @dataFetchLock = true
     $.ajax options
 
+
+  # PUBLIC ================================================
 
   # load a single object, this is used in view when
   # store has not required item

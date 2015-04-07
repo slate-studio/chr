@@ -52,10 +52,10 @@
       @_bind_pagination()
 
     if @config.arrayStore.searchable
-      @_bind_search(this)
+      @_bind_search()
 
     if @config.arrayStore.reorderable
-      @_bind_reorder(this)
+      @_bind_reorder()
 
 
   _bind_config_object_store: ->

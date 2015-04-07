@@ -13,11 +13,17 @@ class @ObjectStore
   constructor: (@config={}) ->
     @_initialize_database()
 
+  # PRIVATE ===============================================
+
   _initialize_database: ->
     @_data = @config.data
 
+
+  # PUBLIC ================================================
+
   loadObject: ->
     @_data
+
 
   update: (id, value, callback) ->
     $.extend(@_data, value)

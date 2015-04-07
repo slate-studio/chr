@@ -3,38 +3,51 @@
 # -----------------------------------------------------------------------------
 
 @listSearch =
+
   # PRIVATE ===============================================
 
-  _bind_search: (listEl) ->
-    $input     = listEl.$search
-    arrayStore = listEl.config.arrayStore
+  _bind_search: ->
+    @$search       =$ "<div class='search'></div>"
+    @$searchIcon   =$ "<a href='#' class='icon'></a>"
+    @$searchInput  =$ "<input type='text' placeholder='Search...' />"
+    @$searchCancel =$ "<a href='#' class='cancel'>Cancel</a>"
 
-    search = (input) ->
-      query = $(input).val()
-      listEl._show_spinner()
-      arrayStore.search(query)
+    @$header.append(@$search)
+    @$search.append(@$searchIcon)
+    @$search.append(@$searchInput)
+    @$search.append(@$searchCancel)
 
-    show = ->
-      listEl.$el.addClass 'list-search'
-      $input.find('input').focus()
-
-    cancel = ->
-      listEl.$el.removeClass 'list-search'
-      $input.find('input').val('')
-      listEl._show_spinner()
-      arrayStore.reset()
-
-    $input.show()
-
-    $input.on 'keyup', 'input', (e) =>
+    @$searchInput.on 'keyup', (e) =>
       if e.keyCode == 27 # esc
-        return cancel()
+        return @_on_search_cancel()
 
       if e.keyCode == 13 # enter
-        return search(e.target)
+        return @_on_search()
 
-    $input.on 'click', '.icon',   (e) => e.preventDefault() ; show()
-    $input.on 'click', '.cancel', (e) => e.preventDefault() ; cancel()
+    @$searchIcon.on   'click', (e) => e.preventDefault() ; @_on_search_show()
+    @$searchCancel.on 'click', (e) => e.preventDefault() ; @_on_search_cancel()
+
+
+  # EVENTS ================================================
+
+  _on_search: ->
+    query = @$searchInput.val()
+    @_show_spinner()
+    @config.arrayStore.search(query)
+
+
+  _on_search_show: ->
+    @$el.addClass('list-search')
+    @$searchInput.focus()
+    @$search.show()
+
+
+  _on_search_cancel: ->
+    @$el.removeClass('list-search')
+    @$searchInput.val('')
+    @_show_spinner()
+    # use reset(false) to do not sync with the existing list items
+    @config.arrayStore.reset(false)
 
 
 

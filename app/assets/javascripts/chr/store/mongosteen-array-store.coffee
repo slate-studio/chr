@@ -26,7 +26,9 @@
 #
 # -----------------------------------------------------------------------------
 class @MongosteenArrayStore extends RestArrayStore
-  # initial store configuration
+
+  # PRIVATE ===============================================
+
   _initialize_database: ->
     @dataFetchLock  = false
     @ajaxConfig =
@@ -41,6 +43,7 @@ class @MongosteenArrayStore extends RestArrayStore
     @objectsPerPage = chr.itemsPerPageRequest ? 20
 
     if @pagination
+      @lastPageLoaded = false
       @_bind_pagination_sync()
 
 
@@ -49,8 +52,6 @@ class @MongosteenArrayStore extends RestArrayStore
   # database while loading next page
   # ---------------------------------------------------------
   _bind_pagination_sync: ->
-    @lastPageLoaded = false
-
     # when object's added to the end of the list & not on the last page,
     # we don't know it's position on the backend, so remove it from store
     $(this).on 'object_added', (e, data) =>
@@ -87,7 +88,7 @@ class @MongosteenArrayStore extends RestArrayStore
     @nextPage -= 1 ; @load()
 
 
-  _udpate_next_page: (data) ->
+  _update_next_page: (data) ->
     if @pagination
       if data.length > 0
         @lastPageLoaded = true
@@ -140,9 +141,13 @@ class @MongosteenArrayStore extends RestArrayStore
     return formDataObject
 
 
-  # load results for search query
+  # PUBLIC ================================================
+
+  # load first page of results for search query, skip store 'object_removed'
+  # event handler on @_reset_data()
   search: (@searchQuery) ->
-    @nextPage = 1
+    @nextPage       = 1
+    @lastPageLoaded = true
     @_reset_data()
     @load()
 
@@ -165,7 +170,7 @@ class @MongosteenArrayStore extends RestArrayStore
     params = $.param(params)
 
     @_ajax 'GET', null, params, ((data) =>
-      @_udpate_next_page(data)
+      @_update_next_page(data)
       @_add_data_object(o) for o in data
 
       callbacks.onSuccess(data)
@@ -174,11 +179,17 @@ class @MongosteenArrayStore extends RestArrayStore
     ), callbacks.onError
 
 
-  # reset data and load first page
-  reset: ->
+  # reset data and load first page, by default this sync with
+  # objects that are currently in the _data, if you want to reset
+  # these use `reset(false)`
+  reset: (sync_with_existing_objects=true)->
     @searchQuery = ''
     @nextPage    = 1
     params       = {}
+
+    if ! sync_with_existing_objects
+      @lastPageLoaded = true
+      @_reset_data()
 
     if @pagination
       @lastPageLoaded = false
@@ -188,7 +199,7 @@ class @MongosteenArrayStore extends RestArrayStore
     params = $.param(params)
 
     @_ajax 'GET', null, params, ((data) =>
-      @_udpate_next_page(data)
+      @_update_next_page(data)
       @_sync_with_data_objects(data)
 
       $(this).trigger('objects_added', { objects: data })
