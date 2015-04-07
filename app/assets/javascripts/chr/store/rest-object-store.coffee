@@ -13,8 +13,12 @@ class @RestObjectStore extends ObjectStore
 
   # PRIVATE ===============================================
 
-  _initialize_database: ->
+  _initialize_store: ->
     @dataFetchLock = false
+    @_configure_store()
+
+
+  _configure_store: ->
     @ajaxConfig = {}
 
 

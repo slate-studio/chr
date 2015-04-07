@@ -11,11 +11,12 @@
 # -----------------------------------------------------------------------------
 class @ObjectStore
   constructor: (@config={}) ->
-    @_initialize_database()
+    @_initialize_store()
+
 
   # PRIVATE ===============================================
 
-  _initialize_database: ->
+  _initialize_store: ->
     @_data = @config.data
 
 

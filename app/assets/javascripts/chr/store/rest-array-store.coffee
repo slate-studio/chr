@@ -9,12 +9,48 @@
 # -----------------------------------------------------------------------------
 # REST ARRAY STORE
 # -----------------------------------------------------------------------------
+#
+# Config options:
+#   pagination  - enable pagination for resource index, default `true`
+#   searchable  - enable resource search, default `false`
+#   urlParams   - additional parameter to be included into request
+#   sortBy      - sort objects by field
+#   sortReverse - reverse sorted objects
+#
+# Public methods:
+#   loadObject
+#   load
+#   reset
+#   search
+#   push
+#   update
+#   remove
+#
+# -----------------------------------------------------------------------------
 class @RestArrayStore extends ArrayStore
 
   # PRIVATE ===============================================
 
-  _initialize_database: ->
-    @dataFetchLock = false
+  _initialize_store: ->
+    @dataFetchLock  = false
+    @lastPageLoaded = false
+
+    @searchable     = @config.searchable ? false
+    @searchQuery    = ''
+
+    @pagination     = @config.pagination ? true
+    @nextPage       = 1
+    @objectsPerPage = chr.itemsPerPageRequest ? 20
+
+    @requestParams ?=
+      page:    'page'
+      perPage: 'perPage'
+      search:  'search'
+
+    @_configure_store()
+
+
+  _configure_store: ->
     @ajaxConfig = {}
 
 
@@ -24,16 +60,25 @@ class @RestArrayStore extends ArrayStore
     "#{ @config.path }#{ objectPath }"
 
 
+  _request_url: (type, id) ->
+    url = @_resource_url(type, id)
+
+    if @config.urlParams
+      extraParamsString = $.param(@config.urlParams)
+      url = "#{ url }?#{ extraParamsString }"
+
+    return url
+
+
   # do requests to database api
   _ajax: (type, id, data, success, error) ->
     options = $.extend @ajaxConfig,
-      url:  @_resource_url(type, id)
+      url:  @_request_url(type, id)
       type: type
       data: data
       success: (data, textStatus, jqXHR) =>
         success?(data)
-        setTimeout ( => @dataFetchLock = false ), 350
-        #@dataFetchLock = false
+        setTimeout ( => @dataFetchLock = false ), 50
       error: (jqXHR, textStatus, errorThrown ) =>
         error?(jqXHR.responseJSON)
         @dataFetchLock = false
@@ -67,10 +112,32 @@ class @RestArrayStore extends ArrayStore
       @_update_data_object(id, objectsMap[id])
 
 
+  # update next page counter and check if the last page was loaded
+  _update_next_page: (data) ->
+    if @pagination
+      if data.length > 0
+        @lastPageLoaded = true
+
+        if data.length == @objectsPerPage
+          @nextPage += 1
+          @lastPageLoaded = false
+
+      else
+        @lastPageLoaded = true
+
+
+  _is_pagination_edge_case: ->
+    ( @pagination && @lastPageLoaded == false )
+
+
+  _reload_current_page: (callbacks) ->
+    @nextPage -= 1
+    @load(true, callbacks)
+
+
   # PUBLIC ================================================
 
-  # load a single object, this is used in view when
-  # store has not required item
+  # load a single object
   loadObject: (id, callbacks={}) ->
     callbacks.onSuccess ?= $.noop
     callbacks.onError   ?= $.noop
@@ -80,21 +147,46 @@ class @RestArrayStore extends ArrayStore
     ), callbacks.onError
 
 
-  # load objects from database, when finished
-  # trigger 'objects_added' event
-  load: (callbacks={}) ->
+  # load next page objects from database and trigger 'objects_added' event
+  load: (sync=false, callbacks={}) ->
     callbacks.onSuccess ?= $.noop
     callbacks.onError   ?= $.noop
 
-    @_ajax 'GET', null, {}, ((data) =>
-      if data.length > 0
-        for o in data
-          @_add_data_object(o)
+    params = {}
+
+    if @pagination
+      params[@requestParams.page]    = @nextPage
+      params[@requestParams.perPage] = @objectsPerPage
+
+    if @searchable && @searchQuery.length > 0
+      params[@requestParams.search]  = @searchQuery
+
+    params = $.param(params)
+
+    @_ajax 'GET', null, params, ((data) =>
+      @_update_next_page(data)
+
+      if sync
+        @_sync_with_data_objects(data)
+      else
+        @_add_data_object(o) for o in data
 
       callbacks.onSuccess(data)
 
       $(this).trigger('objects_added', { objects: data })
-    ) callbacks.onError
+    ), -> chr.showError('Error while loading data, application error 500.')
+
+
+  # reset data and load again first page
+  reset: (@searchQuery='') ->
+    @lastPageLoaded = false
+    @nextPage       = 1
+    @load(true)
+
+
+  # load search results first page
+  search: (searchQuery) ->
+    @reset(searchQuery)
 
 
   # add new object
@@ -105,8 +197,15 @@ class @RestArrayStore extends ArrayStore
     obj = @_parse_form_object(serializedFormObject)
 
     @_ajax 'POST', null, obj, ((data) =>
-      @_add_data_object(data)
+      d = @_add_data_object(data)
+
+      if @_is_pagination_edge_case()
+        if d.position >= (@nextPage - 1) * @objectsPerPage
+          # if object added to the end of the list remove it
+          @_remove_data_object(d.object._id)
+
       callbacks.onSuccess(data)
+
     ), callbacks.onError
 
 
@@ -118,8 +217,17 @@ class @RestArrayStore extends ArrayStore
     obj = @_parse_form_object(serializedFormObject)
 
     @_ajax 'PUT', id, obj, ((data) =>
-      @_update_data_object(id, data)
-      callbacks.onSuccess(data)
+      d = @_update_data_object(id, data)
+
+      if @_is_pagination_edge_case() && d.positionHasChanged
+        if d.position >= (@nextPage - 1) * @objectsPerPage - 1
+          # if object added to the end of the list reload page to
+          # sync last item on the page
+          @_reload_current_page(callbacks)
+
+      else
+        callbacks.onSuccess(data)
+
     ), callbacks.onError
 
 
@@ -130,16 +238,16 @@ class @RestArrayStore extends ArrayStore
 
     @_ajax 'DELETE', id, {}, ( =>
       @_remove_data_object(id)
-      callbacks.onSuccess()
+
+      if @_is_pagination_edge_case()
+        # after item delete reload page to sync last item on the page
+        @_reload_current_page(callbacks)
+
+      else
+        callbacks.onSuccess()
+
     ), callbacks.onError
 
-
-  # reset data and load it again
-  reset: ->
-    @_ajax 'GET', null, {}, ((data) =>
-      @_sync_with_data_objects(data)
-      $(this).trigger('objects_added', { objects: data })
-    ), -> chr.showError('Error while loading data.')
 
 
 

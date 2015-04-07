@@ -1,12 +1,22 @@
 # -----------------------------------------------------------------------------
+# Author: Alexander Kravets <alex@slatestudio.com>,
+#         Slate Studio (http://www.slatestudio.com)
+#
+# Coding Guide:
+#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # ARRAY STORE
-# javascript object storage implementation that stores/loads objects in memory,
+# -----------------------------------------------------------------------------
+#
+# Javascript object storage implementation that stores/loads objects in memory,
 # no backend database support here, supported features are:
 #   - new / update / remove
 #   - sorting
 #   - reordering
 #
-# configuration options:
+# Config options:
 #   data         — initial array of objects, default: []
 #   sortBy       — objects field name which is used for sorting, does not sort
 #                  when parameter is not provided, default: nil
@@ -14,7 +24,7 @@
 #   reorderable  — list items reordering configuration hash, should have two
 #                  fields: { positionFieldName: '', sortReverse: false }
 #
-# public methods:
+# Public methods:
 #   - on(eventType, callback)
 #        object_added
 #        object_changed
@@ -29,8 +39,9 @@
 #   - addObjects(objects)
 #   - data()
 #
-# todo:
+# TODO:
 #   - support for lists, files, nested objects
+#
 # -----------------------------------------------------------------------------
 class @ArrayStore
   constructor: (@config={}) ->
@@ -42,7 +53,7 @@ class @ArrayStore
     @reorderable = @config.reorderable ? false
 
     @_initialize_reorderable()
-    @_initialize_database()
+    @_initialize_store()
 
 
   # PRIVATE ===============================================
@@ -60,7 +71,7 @@ class @ArrayStore
 
   # this method should be overriden for database initialization
   # and config processing when implementing custom store
-  _initialize_database: ->
+  _initialize_store: ->
     ;
 
 
@@ -111,7 +122,9 @@ class @ArrayStore
 
       position = @_get_data_object_position(object._id)
 
-      $(this).trigger('object_added', { object: object, position: position })
+      data = { object: object, position: position }
+      $(this).trigger('object_added', data)
+      return data
     else
       @_update_data_object(object.id, object)
 
@@ -121,11 +134,13 @@ class @ArrayStore
   _update_data_object: (id, value) ->
     object = $.extend(@get(id), value)
 
+    old_position = @_get_data_object_position(id)
     @_sort_data()
-
     position = @_get_data_object_position(id)
 
-    $(this).trigger('object_changed', { object: object, position: position })
+    data = { object: object, position: position, positionHasChanged: (old_position != position) }
+    $(this).trigger('object_changed', data)
+    return data
 
 
   # delete object by id from _data and _map,
@@ -137,7 +152,9 @@ class @ArrayStore
 
     delete @_map[id]
 
-    $(this).trigger('object_removed', { object_id: id })
+    data = { object_id: id }
+    $(this).trigger('object_removed', data)
+    return data
 
 
   # remove all objects from _data and _map,

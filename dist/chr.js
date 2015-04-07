@@ -3097,34 +3097,30 @@ this.listConfig = {
 this.listPagination = {
   _bind_pagination: function() {
     this.lastScrollTop = 0;
-    this.$items.scroll((function(_this) {
+    return this.$items.scroll((function(_this) {
       return function(e) {
+        var listItemsHeight, listViewHeight;
         if (_this.lastScrollTop < e.target.scrollTop) {
-          _this.lastScrollTop = e.target.scrollTop;
           if (!_this.config.arrayStore.dataFetchLock) {
-            if (_this.listItemsHeight < (_this.listViewHeight + e.target.scrollTop + 100)) {
-              _this._show_spinner();
-              return _this.config.arrayStore.load({
-                onSuccess: function() {
-                  return _this._update_height_params();
-                },
-                onError: function() {
-                  return chr.showAlert("Can't load next page, server error 500.");
-                }
-              });
+            listViewHeight = _this.$el.height();
+            listItemsHeight = 0;
+            _this.$items.children().each(function() {
+              return listItemsHeight += $(this).height();
+            });
+            if (listItemsHeight < (listViewHeight + e.target.scrollTop + 100)) {
+              if (!_this.config.arrayStore.lastPageLoaded) {
+                _this._show_spinner();
+                _this.config.arrayStore.load(false, {
+                  onSuccess: function() {},
+                  onError: function() {
+                    return chr.showAlert("Can't load next page, server error 500.");
+                  }
+                });
+              }
             }
           }
         }
-      };
-    })(this));
-    return this._update_height_params();
-  },
-  _update_height_params: function() {
-    this.listViewHeight = this.$el.height();
-    this.listItemsHeight = 0;
-    return this.$items.children().each((function(_this) {
-      return function(i, el) {
-        return _this.listItemsHeight += $(el).height();
+        return _this.lastScrollTop = e.target.scrollTop;
       };
     })(this));
   }
@@ -3238,7 +3234,7 @@ this.listSearch = {
     this.$el.removeClass('list-search');
     this.$searchInput.val('');
     this._show_spinner();
-    return this.config.arrayStore.reset(false);
+    return this.config.arrayStore.reset();
   }
 };
 
@@ -4968,7 +4964,7 @@ this.ArrayStore = (function() {
     this.sortReverse = (ref1 = this.config.sortReverse) != null ? ref1 : false;
     this.reorderable = (ref2 = this.config.reorderable) != null ? ref2 : false;
     this._initialize_reorderable();
-    this._initialize_database();
+    this._initialize_store();
   }
 
   ArrayStore.prototype._initialize_reorderable = function() {
@@ -4984,7 +4980,7 @@ this.ArrayStore = (function() {
     }
   };
 
-  ArrayStore.prototype._initialize_database = function() {};
+  ArrayStore.prototype._initialize_store = function() {};
 
   ArrayStore.prototype._sort_data = function() {
     var direction, fieldName, sortByMethod;
@@ -5028,43 +5024,51 @@ this.ArrayStore = (function() {
   };
 
   ArrayStore.prototype._add_data_object = function(object) {
-    var position;
+    var data, position;
     object = this._normalize_object_id(object);
     if (!this._map[object._id]) {
       this._map[object._id] = object;
       this._data.push(object);
       this._sort_data();
       position = this._get_data_object_position(object._id);
-      return $(this).trigger('object_added', {
+      data = {
         object: object,
         position: position
-      });
+      };
+      $(this).trigger('object_added', data);
+      return data;
     } else {
       return this._update_data_object(object.id, object);
     }
   };
 
   ArrayStore.prototype._update_data_object = function(id, value) {
-    var object, position;
+    var data, object, old_position, position;
     object = $.extend(this.get(id), value);
+    old_position = this._get_data_object_position(id);
     this._sort_data();
     position = this._get_data_object_position(id);
-    return $(this).trigger('object_changed', {
+    data = {
       object: object,
-      position: position
-    });
+      position: position,
+      positionHasChanged: old_position !== position
+    };
+    $(this).trigger('object_changed', data);
+    return data;
   };
 
   ArrayStore.prototype._remove_data_object = function(id) {
-    var position;
+    var data, position;
     position = this._get_data_object_position(id);
     if (position >= 0) {
       this._data.splice(position, 1);
     }
     delete this._map[id];
-    return $(this).trigger('object_removed', {
+    data = {
       object_id: id
-    });
+    };
+    $(this).trigger('object_removed', data);
+    return data;
   };
 
   ArrayStore.prototype._reset_data = function() {
@@ -5164,10 +5168,10 @@ this.ArrayStore = (function() {
 this.ObjectStore = (function() {
   function ObjectStore(config) {
     this.config = config != null ? config : {};
-    this._initialize_database();
+    this._initialize_store();
   }
 
-  ObjectStore.prototype._initialize_database = function() {
+  ObjectStore.prototype._initialize_store = function() {
     return this._data = this.config.data;
   };
 
@@ -5194,8 +5198,26 @@ this.RestArrayStore = (function(superClass) {
     return RestArrayStore.__super__.constructor.apply(this, arguments);
   }
 
-  RestArrayStore.prototype._initialize_database = function() {
+  RestArrayStore.prototype._initialize_store = function() {
+    var ref, ref1, ref2;
     this.dataFetchLock = false;
+    this.lastPageLoaded = false;
+    this.searchable = (ref = this.config.searchable) != null ? ref : false;
+    this.searchQuery = '';
+    this.pagination = (ref1 = this.config.pagination) != null ? ref1 : true;
+    this.nextPage = 1;
+    this.objectsPerPage = (ref2 = chr.itemsPerPageRequest) != null ? ref2 : 20;
+    if (this.requestParams == null) {
+      this.requestParams = {
+        page: 'page',
+        perPage: 'perPage',
+        search: 'search'
+      };
+    }
+    return this._configure_store();
+  };
+
+  RestArrayStore.prototype._configure_store = function() {
     return this.ajaxConfig = {};
   };
 
@@ -5205,10 +5227,20 @@ this.RestArrayStore = (function(superClass) {
     return "" + this.config.path + objectPath;
   };
 
+  RestArrayStore.prototype._request_url = function(type, id) {
+    var extraParamsString, url;
+    url = this._resource_url(type, id);
+    if (this.config.urlParams) {
+      extraParamsString = $.param(this.config.urlParams);
+      url = url + "?" + extraParamsString;
+    }
+    return url;
+  };
+
   RestArrayStore.prototype._ajax = function(type, id, data, success, error) {
     var options;
     options = $.extend(this.ajaxConfig, {
-      url: this._resource_url(type, id),
+      url: this._request_url(type, id),
       type: type,
       data: data,
       success: (function(_this) {
@@ -5218,7 +5250,7 @@ this.RestArrayStore = (function(superClass) {
           }
           return setTimeout((function() {
             return _this.dataFetchLock = false;
-          }), 350);
+          }), 50);
         };
       })(this),
       error: (function(_this) {
@@ -5281,6 +5313,29 @@ this.RestArrayStore = (function(superClass) {
     return results;
   };
 
+  RestArrayStore.prototype._update_next_page = function(data) {
+    if (this.pagination) {
+      if (data.length > 0) {
+        this.lastPageLoaded = true;
+        if (data.length === this.objectsPerPage) {
+          this.nextPage += 1;
+          return this.lastPageLoaded = false;
+        }
+      } else {
+        return this.lastPageLoaded = true;
+      }
+    }
+  };
+
+  RestArrayStore.prototype._is_pagination_edge_case = function() {
+    return this.pagination && this.lastPageLoaded === false;
+  };
+
+  RestArrayStore.prototype._reload_current_page = function(callbacks) {
+    this.nextPage -= 1;
+    return this.load(true, callbacks);
+  };
+
   RestArrayStore.prototype.loadObject = function(id, callbacks) {
     if (callbacks == null) {
       callbacks = {};
@@ -5298,7 +5353,11 @@ this.RestArrayStore = (function(superClass) {
     })(this)), callbacks.onError);
   };
 
-  RestArrayStore.prototype.load = function(callbacks) {
+  RestArrayStore.prototype.load = function(sync, callbacks) {
+    var params;
+    if (sync == null) {
+      sync = false;
+    }
     if (callbacks == null) {
       callbacks = {};
     }
@@ -5308,10 +5367,22 @@ this.RestArrayStore = (function(superClass) {
     if (callbacks.onError == null) {
       callbacks.onError = $.noop;
     }
-    return this._ajax('GET', null, {}, ((function(_this) {
+    params = {};
+    if (this.pagination) {
+      params[this.requestParams.page] = this.nextPage;
+      params[this.requestParams.perPage] = this.objectsPerPage;
+    }
+    if (this.searchable && this.searchQuery.length > 0) {
+      params[this.requestParams.search] = this.searchQuery;
+    }
+    params = $.param(params);
+    return this._ajax('GET', null, params, ((function(_this) {
       return function(data) {
         var i, len, o;
-        if (data.length > 0) {
+        _this._update_next_page(data);
+        if (sync) {
+          _this._sync_with_data_objects(data);
+        } else {
           for (i = 0, len = data.length; i < len; i++) {
             o = data[i];
             _this._add_data_object(o);
@@ -5322,7 +5393,20 @@ this.RestArrayStore = (function(superClass) {
           objects: data
         });
       };
-    })(this))(callbacks.onError));
+    })(this)), function() {
+      return chr.showError('Error while loading data, application error 500.');
+    });
+  };
+
+  RestArrayStore.prototype.reset = function(searchQuery1) {
+    this.searchQuery = searchQuery1 != null ? searchQuery1 : '';
+    this.lastPageLoaded = false;
+    this.nextPage = 1;
+    return this.load(true);
+  };
+
+  RestArrayStore.prototype.search = function(searchQuery) {
+    return this.reset(searchQuery);
   };
 
   RestArrayStore.prototype.push = function(serializedFormObject, callbacks) {
@@ -5339,7 +5423,13 @@ this.RestArrayStore = (function(superClass) {
     obj = this._parse_form_object(serializedFormObject);
     return this._ajax('POST', null, obj, ((function(_this) {
       return function(data) {
-        _this._add_data_object(data);
+        var d;
+        d = _this._add_data_object(data);
+        if (_this._is_pagination_edge_case()) {
+          if (d.position >= (_this.nextPage - 1) * _this.objectsPerPage) {
+            _this._remove_data_object(d.object._id);
+          }
+        }
         return callbacks.onSuccess(data);
       };
     })(this)), callbacks.onError);
@@ -5359,8 +5449,15 @@ this.RestArrayStore = (function(superClass) {
     obj = this._parse_form_object(serializedFormObject);
     return this._ajax('PUT', id, obj, ((function(_this) {
       return function(data) {
-        _this._update_data_object(id, data);
-        return callbacks.onSuccess(data);
+        var d;
+        d = _this._update_data_object(id, data);
+        if (_this._is_pagination_edge_case() && d.positionHasChanged) {
+          if (d.position >= (_this.nextPage - 1) * _this.objectsPerPage - 1) {
+            return _this._reload_current_page(callbacks);
+          }
+        } else {
+          return callbacks.onSuccess(data);
+        }
       };
     })(this)), callbacks.onError);
   };
@@ -5378,22 +5475,13 @@ this.RestArrayStore = (function(superClass) {
     return this._ajax('DELETE', id, {}, ((function(_this) {
       return function() {
         _this._remove_data_object(id);
-        return callbacks.onSuccess();
+        if (_this._is_pagination_edge_case()) {
+          return _this._reload_current_page(callbacks);
+        } else {
+          return callbacks.onSuccess();
+        }
       };
     })(this)), callbacks.onError);
-  };
-
-  RestArrayStore.prototype.reset = function() {
-    return this._ajax('GET', null, {}, ((function(_this) {
-      return function(data) {
-        _this._sync_with_data_objects(data);
-        return $(_this).trigger('objects_added', {
-          objects: data
-        });
-      };
-    })(this)), function() {
-      return chr.showError('Error while loading data.');
-    });
   };
 
   return RestArrayStore;
@@ -5410,8 +5498,12 @@ this.RestObjectStore = (function(superClass) {
     return RestObjectStore.__super__.constructor.apply(this, arguments);
   }
 
-  RestObjectStore.prototype._initialize_database = function() {
+  RestObjectStore.prototype._initialize_store = function() {
     this.dataFetchLock = false;
+    return this._configure_store();
+  };
+
+  RestObjectStore.prototype._configure_store = function() {
     return this.ajaxConfig = {};
   };
 
@@ -5508,89 +5600,17 @@ this.MongosteenArrayStore = (function(superClass) {
     return MongosteenArrayStore.__super__.constructor.apply(this, arguments);
   }
 
-  MongosteenArrayStore.prototype._initialize_database = function() {
-    var ref, ref1, ref2;
-    this.dataFetchLock = false;
-    this.ajaxConfig = {
+  MongosteenArrayStore.prototype._configure_store = function() {
+    return this.ajaxConfig = {
       processData: false,
       contentType: false
     };
-    this.searchable = (ref = this.config.searchable) != null ? ref : false;
-    this.searchQuery = '';
-    this.pagination = (ref1 = this.config.pagination) != null ? ref1 : true;
-    this.nextPage = 1;
-    this.objectsPerPage = (ref2 = chr.itemsPerPageRequest) != null ? ref2 : 20;
-    if (this.pagination) {
-      this.lastPageLoaded = false;
-      return this._bind_pagination_sync();
-    }
-  };
-
-  MongosteenArrayStore.prototype._bind_pagination_sync = function() {
-    $(this).on('object_added', (function(_this) {
-      return function(e, data) {
-        var new_object, new_object_position;
-        if (!_this.lastPageLoaded) {
-          new_object = data.object;
-          new_object_position = data.position;
-          if (new_object_position >= _this.objectsNumberForLoadedPages) {
-            e.stopImmediatePropagation();
-            return _this._remove_data_object(new_object._id);
-          }
-        }
-      };
-    })(this));
-    $(this).on('object_changed', (function(_this) {
-      return function(e, data) {
-        var new_object, new_object_position;
-        if (!_this.lastPageLoaded) {
-          new_object = data.object;
-          new_object_position = data.position;
-          if (new_object_position >= _this.objectsNumberForLoadedPages - 1) {
-            e.stopImmediatePropagation();
-            return _this._remove_data_object(new_object._id);
-          }
-        }
-      };
-    })(this));
-    return $(this).on('object_removed', (function(_this) {
-      return function(e, data) {
-        if (!_this.lastPageLoaded) {
-          return _this._reload_current_page();
-        }
-      };
-    })(this));
-  };
-
-  MongosteenArrayStore.prototype._reload_current_page = function() {
-    this.nextPage -= 1;
-    return this.load();
-  };
-
-  MongosteenArrayStore.prototype._update_next_page = function(data) {
-    if (this.pagination) {
-      if (data.length > 0) {
-        this.lastPageLoaded = true;
-        if (data.length === this.objectsPerPage) {
-          this.nextPage += 1;
-          this.lastPageLoaded = false;
-        }
-      } else {
-        this.lastPageLoaded = true;
-      }
-    }
-    return this.objectsNumberForLoadedPages = (this.nextPage - 1) * this.objectsPerPage;
   };
 
   MongosteenArrayStore.prototype._resource_url = function(type, id) {
-    var extraParamsString, objectPath, url;
+    var objectPath;
     objectPath = id ? "/" + id : '';
-    url = "" + this.config.path + objectPath + ".json";
-    if (this.config.urlParams) {
-      extraParamsString = $.param(this.config.urlParams);
-      url = url + "?" + extraParamsString;
-    }
-    return url;
+    return "" + this.config.path + objectPath + ".json";
   };
 
   MongosteenArrayStore.prototype._parse_form_object = function(serializedFormObject) {
@@ -5615,81 +5635,6 @@ this.MongosteenArrayStore = (function(superClass) {
     return formDataObject;
   };
 
-  MongosteenArrayStore.prototype.search = function(searchQuery) {
-    this.searchQuery = searchQuery;
-    this.nextPage = 1;
-    this.lastPageLoaded = true;
-    this._reset_data();
-    return this.load();
-  };
-
-  MongosteenArrayStore.prototype.load = function(callbacks) {
-    var params;
-    if (callbacks == null) {
-      callbacks = {};
-    }
-    if (callbacks.onSuccess == null) {
-      callbacks.onSuccess = $.noop;
-    }
-    if (callbacks.onError == null) {
-      callbacks.onError = $.noop;
-    }
-    params = {};
-    if (this.pagination) {
-      params.page = this.nextPage;
-      params.perPage = this.objectsPerPage;
-    }
-    if (this.searchable && this.searchQuery.length > 0) {
-      params.search = this.searchQuery;
-    }
-    params = $.param(params);
-    return this._ajax('GET', null, params, ((function(_this) {
-      return function(data) {
-        var i, len, o;
-        _this._update_next_page(data);
-        for (i = 0, len = data.length; i < len; i++) {
-          o = data[i];
-          _this._add_data_object(o);
-        }
-        callbacks.onSuccess(data);
-        return $(_this).trigger('objects_added', {
-          objects: data
-        });
-      };
-    })(this)), callbacks.onError);
-  };
-
-  MongosteenArrayStore.prototype.reset = function(sync_with_existing_objects) {
-    var params;
-    if (sync_with_existing_objects == null) {
-      sync_with_existing_objects = true;
-    }
-    this.searchQuery = '';
-    this.nextPage = 1;
-    params = {};
-    if (!sync_with_existing_objects) {
-      this.lastPageLoaded = true;
-      this._reset_data();
-    }
-    if (this.pagination) {
-      this.lastPageLoaded = false;
-      params.page = this.nextPage;
-      params.perPage = this.objectsPerPage;
-    }
-    params = $.param(params);
-    return this._ajax('GET', null, params, ((function(_this) {
-      return function(data) {
-        _this._update_next_page(data);
-        _this._sync_with_data_objects(data);
-        return $(_this).trigger('objects_added', {
-          objects: data
-        });
-      };
-    })(this)), function() {
-      return chr.showError('Error while loading data.');
-    });
-  };
-
   return MongosteenArrayStore;
 
 })(RestArrayStore);
@@ -5704,8 +5649,7 @@ this.MongosteenObjectStore = (function(superClass) {
     return MongosteenObjectStore.__super__.constructor.apply(this, arguments);
   }
 
-  MongosteenObjectStore.prototype._initialize_database = function() {
-    this.dataFetchLock = false;
+  MongosteenObjectStore.prototype._configure_store = function() {
     return this.ajaxConfig = {
       processData: false,
       contentType: false

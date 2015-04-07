@@ -46,8 +46,7 @@
     @$el.removeClass('list-search')
     @$searchInput.val('')
     @_show_spinner()
-    # use reset(false) to do not sync with the existing list items
-    @config.arrayStore.reset(false)
+    @config.arrayStore.reset()
 
 
 
