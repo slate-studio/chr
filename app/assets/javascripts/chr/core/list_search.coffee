@@ -32,7 +32,7 @@
 
   _on_search: ->
     query = @$searchInput.val()
-    @_show_spinner()
+    @showSpinner()
     @config.arrayStore.search(query)
 
 
@@ -45,7 +45,7 @@
   _on_search_cancel: ->
     @$el.removeClass('list-search')
     @$searchInput.val('')
-    @_show_spinner()
+    @showSpinner()
     @config.arrayStore.reset()
 
 

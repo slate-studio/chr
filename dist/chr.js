@@ -2784,11 +2784,9 @@ this.Chr = (function() {
           if (config.objectStore) {
             return this.module.showViewByObjectId('', config, crumb.titleize());
           } else {
-            this.module.showNestedList(crumb);
+            this.module.showList(crumb);
           }
         }
-      } else {
-        return this.module.showRootList();
       }
     }
   };
@@ -2869,115 +2867,61 @@ this.Chr = (function() {
 window.chr = new Chr();
 
 this.Module = (function() {
-  function Module(chr1, name, config1) {
-    var base, firstNestedList, menuPath, menuTitle, ref;
+  function Module(chr1, name1, config1) {
+    var base, menuPath, menuTitle, ref;
     this.chr = chr1;
-    this.name = name;
+    this.name = name1;
     this.config = config1;
     this.nestedLists = {};
     this.$el = $("<section class='module " + this.name + "' style='display: none;'>");
     this.chr.$el.append(this.$el);
-    this.activeList = this.rootList = new List(this, this.name, this.config);
+    this.rootList = new List(this, "#/" + this.name, this.name, this.config);
     menuTitle = (ref = this.config.menuTitle) != null ? ref : this.config.title;
     if (menuTitle == null) {
       menuTitle = this.name.titleize();
     }
     menuPath = this.name;
-    if (this.config.showNestedListsAside) {
-      this.$el.addClass('first-list-aside');
-      firstNestedList = _firstNonEmptyValue(this.nestedLists);
-      if (!this.chr.isMobile() && firstNestedList) {
-        menuPath += "/" + firstNestedList.name;
-      }
-    }
     this.chr.addMenuItem(menuPath, menuTitle);
     if (typeof (base = this.config).onModuleInit === "function") {
       base.onModuleInit(this);
     }
   }
 
-  Module.prototype._update_active_list_items = function() {
-    if (!this.activeList.isVisible()) {
-      return this.activeList.updateItems();
-    }
+  Module.prototype._destroy_view = function() {
+    var ref;
+    return (ref = this.view) != null ? ref.destroy() : void 0;
   };
 
-  Module.prototype._view_path = function() {
-    var currentList, ref;
-    currentList = (ref = this.visibleNestedListShownWithParent()) != null ? ref : this.activeList;
-    return currentList.path;
+  Module.prototype.addNestedList = function(name, config, parentList) {
+    var path;
+    path = [parentList.path, name].join('/');
+    return this.nestedLists[name] = new List(this, path, name, config, parentList);
   };
 
-  Module.prototype.addNestedList = function(listName, config, parentList) {
-    return this.nestedLists[listName] = new List(this, listName, config, parentList);
-  };
-
-  Module.prototype.showNestedList = function(listName) {
-    var listToShow;
-    listToShow = this.nestedLists[listName];
-    if (listToShow.showWithParent) {
-      listToShow.updateItems();
-      listToShow.show((function(_this) {
-        return function() {
-          var exceptList;
-          return _this.hideNestedLists(exceptList = listName);
-        };
-      })(this));
-    } else {
-      this.activeList = listToShow;
-      this._update_active_list_items();
-      this.activeList.show();
-    }
-    return this.destroyView();
-  };
-
-  Module.prototype.hideNestedLists = function(exceptList) {
-    var key, list, ref, results;
-    this.activeList = this.rootList;
-    ref = this.nestedLists;
-    results = [];
-    for (key in ref) {
-      list = ref[key];
-      if (key !== exceptList) {
-        results.push(list.hide());
-      }
-    }
-    return results;
-  };
-
-  Module.prototype.visibleNestedListShownWithParent = function() {
+  Module.prototype.showList = function(name) {
     var key, list, ref;
-    ref = this.nestedLists;
-    for (key in ref) {
-      list = ref[key];
-      if (list.isVisible() && list.showWithParent) {
-        return list;
+    this._destroy_view();
+    if (!name) {
+      ref = this.nestedLists;
+      for (key in ref) {
+        list = ref[key];
+        list.hide();
       }
+      this.activeList = this.rootList;
+    } else {
+      this.activeList = this.nestedLists[name];
     }
-  };
-
-  Module.prototype.showRootList = function() {
-    var results;
-    this.destroyView();
-    results = [];
-    while (this.activeList !== this.rootList) {
-      results.push(this.hideActiveList());
-    }
-    return results;
-  };
-
-  Module.prototype.hideActiveList = function() {
-    this.activeList.$el.hide();
-    return this.activeList = this.activeList.parentList;
+    this.activeList.show();
+    return this.activeList.updateItems();
   };
 
   Module.prototype.showView = function(object, config, title) {
     var newView;
-    newView = new View(this, config, this._view_path(), object, title);
+    newView = new View(this, config, this.activeList.path, object, title);
     this.chr.$el.append(newView.$el);
     return newView.show((function(_this) {
       return function() {
-        _this.destroyView();
+        _this._destroy_view();
         return _this.view = newView;
       };
     })(this));
@@ -3006,20 +2950,13 @@ this.Module = (function() {
     }
   };
 
-  Module.prototype.destroyView = function() {
-    var ref;
-    return (ref = this.view) != null ? ref.destroy() : void 0;
-  };
-
   Module.prototype.show = function() {
-    this._update_active_list_items();
     this.$el.show();
-    return this.activeList.show();
+    return this.showList();
   };
 
   Module.prototype.hide = function() {
-    this.hideNestedLists();
-    this.destroyView();
+    this._destroy_view();
     return this.$el.hide();
   };
 
@@ -3041,7 +2978,7 @@ this.listConfig = {
       if (config.items || config.arrayStore) {
         this.module.addNestedList(slug, config, this);
       }
-      this._add_item("#/" + this.path + "/" + slug, object, 0, config);
+      this._add_item(this.path + "/" + slug, object, 0, config);
       results.push(this.configItemsCount += 1);
     }
     return results;
@@ -3049,7 +2986,7 @@ this.listConfig = {
   _bind_config_array_store: function() {
     this.config.arrayStore.on('object_added', (function(_this) {
       return function(e, data) {
-        return _this._add_item("#/" + _this.path + "/view/" + data.object._id, data.object, data.position, _this.config);
+        return _this._add_item(_this.path + "/view/" + data.object._id, data.object, data.position, _this.config);
       };
     })(this));
     if (this.config.objects) {
@@ -3077,7 +3014,7 @@ this.listConfig = {
     })(this));
     this.config.arrayStore.on('objects_added', (function(_this) {
       return function(e, data) {
-        _this._hide_spinner();
+        _this.hideSpinner();
         return _this._set_active_item();
       };
     })(this));
@@ -3090,8 +3027,7 @@ this.listConfig = {
     if (this.config.arrayStore.reorderable) {
       return this._bind_reorder();
     }
-  },
-  _bind_config_object_store: function() {}
+  }
 };
 
 this.listPagination = {
@@ -3109,7 +3045,7 @@ this.listPagination = {
             });
             if (listItemsHeight < (listViewHeight + e.target.scrollTop + 100)) {
               if (!_this.config.arrayStore.lastPageLoaded) {
-                _this._show_spinner();
+                _this.showSpinner();
                 _this.config.arrayStore.load(false, {
                   onSuccess: function() {},
                   onError: function() {
@@ -3222,7 +3158,7 @@ this.listSearch = {
   _on_search: function() {
     var query;
     query = this.$searchInput.val();
-    this._show_spinner();
+    this.showSpinner();
     return this.config.arrayStore.search(query);
   },
   _on_search_show: function() {
@@ -3233,48 +3169,35 @@ this.listSearch = {
   _on_search_cancel: function() {
     this.$el.removeClass('list-search');
     this.$searchInput.val('');
-    this._show_spinner();
+    this.showSpinner();
     return this.config.arrayStore.reset();
   }
 };
 
 this.List = (function() {
-  function List(module, name, config1, parentList) {
+  function List(module, path1, name, config1, parentList) {
     var base, ref, ref1, ref2;
     this.module = module;
+    this.path = path1;
     this.name = name;
     this.config = config1;
     this.parentList = parentList;
     this.configItemsCount = 0;
-    this.path = this._path();
     this.items = {};
     this.title = (ref = this.config.title) != null ? ref : this.name.titleize();
     this.itemClass = (ref1 = this.config.itemClass) != null ? ref1 : Item;
-    this.showWithParent = false;
-    if (this.parentList) {
-      this.showWithParent = this.parentList.config.showNestedListsAside || false;
-    }
-        if ((ref2 = this.config.showListWithParent) != null) {
-      ref2;
-    } else {
-      false;
-    };
-    this.$el = $("<div class='list " + this.name + "'>");
+    this.showWithParent = (ref2 = this.config.showWithParent) != null ? ref2 : false;
+    this.$el = $("<div class='list " + this.name + "' style='display:none;'>");
     this.module.$el.append(this.$el);
-    if (this.parentList) {
-      this.$el.hide();
+    if (this.showWithParent) {
+      this.$el.addClass('list-aside');
     }
     this.$items = $("<div class='items'>");
     this.$el.append(this.$items);
     this.$header = $("<header></header>");
     this.$el.append(this.$header);
     if (this.parentList) {
-      this.$backBtn = $("<a href='#/" + this.parentList.path + "' class='back silent'></a>");
-      this.$backBtn.on('click', (function(_this) {
-        return function(e) {
-          return _this._back(e);
-        };
-      })(this));
+      this.$backBtn = $("<a href='" + this.parentList.path + "' class='back'></a>");
     } else {
       this.$backBtn = $("<a href='#/' class='back'></a>");
     }
@@ -3282,12 +3205,7 @@ this.List = (function() {
     this.$header.append("<div class='spinner'></div>");
     this.$header.append("<span class='title'>" + this.title + "</span>");
     if (!this.config.disableNewItems && this.config.formSchema) {
-      this.$newBtn = $("<a href='#/" + this.path + "/new' class='new silent'></a>");
-      this.$newBtn.on('click', (function(_this) {
-        return function(e) {
-          return _this._new(e);
-        };
-      })(this));
+      this.$newBtn = $("<a href='" + this.path + "/new' class='new'></a>");
       this.$header.append(this.$newBtn);
     }
     if (this.config.items) {
@@ -3295,9 +3213,6 @@ this.List = (function() {
     }
     if (this.config.arrayStore) {
       this._bind_config_array_store();
-    }
-    if (this.config.objectStore) {
-      this._bind_config_object_store();
     }
     this._bind_hashchange();
     if (typeof (base = this.config).onListInit === "function") {
@@ -3328,17 +3243,6 @@ this.List = (function() {
     }
   };
 
-  List.prototype._path = function() {
-    var crumbs, l;
-    crumbs = [];
-    l = this;
-    while (l.parentList) {
-      crumbs.push(l.name);
-      l = l.parentList;
-    }
-    return this.module.name + (crumbs.length > 0 ? '/' + crumbs.reverse().join('/') : '');
-  };
-
   List.prototype._add_item = function(path, object, position, config) {
     var item;
     item = new this.itemClass(this.module, path, object, config);
@@ -3356,27 +3260,12 @@ this.List = (function() {
     }
   };
 
-  List.prototype._show_spinner = function() {
+  List.prototype.showSpinner = function() {
     return this.$el.addClass('show-spinner');
   };
 
-  List.prototype._hide_spinner = function() {
+  List.prototype.hideSpinner = function() {
     return this.$el.removeClass('show-spinner');
-  };
-
-  List.prototype._back = function(e) {
-    this.module.chr.unsetActiveListItems();
-    this.module.destroyView();
-    if (this.showWithParent) {
-      return this.hide();
-    } else {
-      return this.module.hideActiveList();
-    }
-  };
-
-  List.prototype._new = function(e) {
-    chr.updateHash($(e.currentTarget).attr('href'), true);
-    return this.module.showView(null, this.config, 'New');
   };
 
   List.prototype.hide = function() {
@@ -3399,14 +3288,10 @@ this.List = (function() {
   List.prototype.updateItems = function() {
     if (!this.config.disableUpdateItems) {
       if (this.config.arrayStore) {
-        this._show_spinner();
+        this.showSpinner();
         return this.config.arrayStore.reset();
       }
     }
-  };
-
-  List.prototype.isVisible = function() {
-    return this.$el.is(':visible');
   };
 
   return List;
@@ -3428,11 +3313,6 @@ this.Item = (function() {
     this.object = object;
     this.config = config;
     this.$el = $("<a class='item' href='" + this.path + "' data-id='" + this.object._id + "' data-title=''></a>");
-    this.$el.on('click', (function(_this) {
-      return function(e) {
-        return _this._click(e);
-      };
-    })(this));
     this.render();
   }
 
@@ -3486,26 +3366,6 @@ this.Item = (function() {
     }
   };
 
-  Item.prototype._click = function(e) {
-    var crumbs, hash, id, title;
-    if (this.$el.hasClass('active')) {
-      e.preventDefault();
-      return;
-    }
-    hash = $(e.currentTarget).attr('href');
-    crumbs = hash.split('/');
-    title = $(e.currentTarget).attr('data-title');
-    id = $(e.currentTarget).attr('data-id');
-    chr.updateHash(hash, true);
-    if (crumbs[crumbs.length - 2] === 'view') {
-      return this.module.showViewByObjectId(id, this.config, title);
-    }
-    if (this.config.objectStore) {
-      return this.module.showViewByObjectId('', this.config, title);
-    }
-    return this.module.showNestedList(_last(crumbs));
-  };
-
   Item.prototype.render = function() {
     this.$el.html('').removeClass('item-folder has-subtitle has-thumbnail');
     this._render_title();
@@ -3554,12 +3414,7 @@ this.View = (function() {
     this.$header.append(this.$title);
     this.$el.append(this.$header);
     this._set_title();
-    this.$closeBtn = $("<a href='#/" + this.closePath + "' class='close silent'>Close</a>");
-    this.$closeBtn.on('click', (function(_this) {
-      return function(e) {
-        return _this._close(e);
-      };
-    })(this));
+    this.$closeBtn = $("<a href='" + this.closePath + "' class='close'>Close</a>");
     this.$header.append(this.$closeBtn);
     if (!this.config.disableSave) {
       this.$saveBtn = $("<a href='#' class='save'>Save</a>");
@@ -3619,10 +3474,6 @@ this.View = (function() {
     return this.form.showValidationErrors(validationErrors);
   };
 
-  View.prototype._close = function(e) {
-    return this.destroy();
-  };
-
   View.prototype._save = function(e) {
     var serializedFormObj;
     e.preventDefault();
@@ -3667,8 +3518,7 @@ this.View = (function() {
       return this.store.remove(this.object._id, {
         onSuccess: (function(_this) {
           return function() {
-            chr.updateHash("#/" + _this.closePath, true);
-            return _this.destroy();
+            return chr.updateHash("#/" + _this.closePath);
           };
         })(this),
         onError: function() {

@@ -18,7 +18,6 @@
 class @Item
   constructor: (@module, @path, @object, @config) ->
     @$el =$ """<a class='item' href='#{ @path }' data-id='#{ @object._id }' data-title=''></a>"""
-    @$el.on 'click', (e) => @_click(e)
     @render()
 
 
@@ -45,7 +44,7 @@ class @Item
     if @config.itemSubtitleField
       subtitle   = @object[@config.itemSubtitleField]
       if subtitle != ''
-        @$subtitle =$ "<div class='item-subtitle'>#{subtitle}</div>"
+        @$subtitle =$ "<div class='item-subtitle'>#{ subtitle }</div>"
         @$el.append(@$subtitle)
         @$el.addClass 'has-subtitle'
 
@@ -55,31 +54,9 @@ class @Item
       imageUrl = @config.itemThumbnail(@object)
       # carrierwave fix, check if still required
       if imageUrl != '' and not imageUrl.endsWith('_old_')
-        @$thumbnail =$ "<div class='item-thumbnail'><img src='#{imageUrl}' /></div>"
+        @$thumbnail =$ "<div class='item-thumbnail'><img src='#{ imageUrl }' /></div>"
         @$el.append(@$thumbnail)
         @$el.addClass 'has-thumbnail'
-
-
-  # EVENTS ================================================
-
-  _click: (e) ->
-    if @.$el.hasClass('active') then e.preventDefault() ; return
-
-    hash   = $(e.currentTarget).attr('href')
-    crumbs = hash.split('/')
-    title  = $(e.currentTarget).attr('data-title')
-    id     = $(e.currentTarget).attr('data-id')
-
-    chr.updateHash(hash, true)
-
-    # show view for a arrayStore item
-    if crumbs[crumbs.length - 2] == 'view'
-      return @module.showViewByObjectId(id, @config, title)
-    # show objectStore item view
-    if @config.objectStore
-      return @module.showViewByObjectId('', @config, title)
-    # show nested list
-    @module.showNestedList(_last(crumbs))
 
 
   # PUBLIC ================================================

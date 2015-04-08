@@ -26,8 +26,8 @@
 @mixin scrollable { overflow: hidden; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
 
 @mixin spinner {
-  border:      .25em solid rgba($positiveColor, 0.2);
-  border-left: .25em solid $positiveColor;
+  border:      .25em solid rgba($contrastColor, 0.2);
+  border-left: .25em solid $contrastColor;
   -webkit-animation: spinning 1.1s infinite linear; animation: spinning 1.1s infinite linear;
   &, &:after { border-radius: 50%; width: 1.75em; height: 1.75em; }
 }
@@ -46,9 +46,7 @@
   color: $color; &:hover { opacity: .5; }
 }
 
-@mixin shadow {
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-}
+@mixin leftBorderShadow { box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); }
 
 @mixin switchControl() {
   $switch-width: 52px;

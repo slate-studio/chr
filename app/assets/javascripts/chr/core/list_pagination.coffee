@@ -22,7 +22,7 @@
 
             if ! @config.arrayStore.lastPageLoaded
 
-              @_show_spinner()
+              @showSpinner()
 
               @config.arrayStore.load false,
                 onSuccess: => ;

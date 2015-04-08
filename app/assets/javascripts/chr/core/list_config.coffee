@@ -4,7 +4,6 @@
 # Methods for processing:
 #   - @config.items
 #   - @config.arrayStore
-#   - @config.objectStore
 # -----------------------------------------------------------------------------
 
 @listConfig =
@@ -14,21 +13,17 @@
     for slug, config of @config.items
       object = { _id: slug, _title: config.title ? slug.titleize() }
 
-      # There might be some cases when we need this:
-      #if config.objectStore
-      #  $.extend(object, config.objectStore.get())
-
       if config.items or config.arrayStore
         @module.addNestedList(slug, config, this)
 
-      @_add_item("#/#{ @path }/#{ slug }", object, 0, config)
+      @_add_item("#{ @path }/#{ slug }", object, 0, config)
       @configItemsCount += 1
 
 
   _bind_config_array_store: ->
     # item added
     @config.arrayStore.on 'object_added', (e, data) =>
-      @_add_item("#/#{ @path }/view/#{ data.object._id }", data.object, data.position, @config)
+      @_add_item("#{ @path }/view/#{ data.object._id }", data.object, data.position, @config)
 
     if @config.objects
       @config.arrayStore.addObjects(@config.objects)
@@ -45,7 +40,7 @@
 
     # items loaded
     @config.arrayStore.on 'objects_added', (e, data) =>
-      @_hide_spinner()
+      @hideSpinner()
       @_set_active_item()
 
     if @config.arrayStore.pagination
@@ -56,9 +51,6 @@
 
     if @config.arrayStore.reorderable
       @_bind_reorder()
-
-
-  _bind_config_object_store: ->
 
 
 

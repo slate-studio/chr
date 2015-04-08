@@ -12,21 +12,21 @@ $desktop: "screen and (min-width:1150px)";
 
 /* Tablet Layout */
 @media #{$tablet} {
-  .sidebar { right: inherit; width: 9em; }
-  .module  { right: inherit; left: 9em; width: 20em; }
-  .view    { left: 29em; &.fullsize { left: 9em; } }
-  .list header,
-  .list .items { font-size: .9em; }
-  .list header { line-height: 2.9em; }
-  .module .list:first-child .back { display: none; }
+  .sidebar         { right: inherit; width: 9em;        }
+  .module          { left: 9em;                         }
+  .list            { right: inherit; width: 20em;       }
+  .list.list-aside { left: 20em; right: 0; width: auto; }
+  .view            { left: 29em;                        }
+  .view.fullsize   { left: 9em;                         }
+
+  .module, .view { @include leftBorderShadow; }
+
+  .list header, .list .items { font-size: .9em; }
+  .list header { line-height: 2.9em; border-right: 1px solid $neutralColor; }
+
   .view header .close { @include absolutePosition(0 inherit inherit 1em); @include headerButton; width: auto; &:before { display: none; } }
-  .module, .view { @include shadow; }
-  .module {
-    &:after {
-      display: block; content: ''; width: 4px; @include position(absolute, 0px -3px 0px null);
-      background-color: $white; border-left: 1px solid $neutralColor;
-    }
-  }
+
+  .module .list:first-child .back { display: none; }
 
   // scrollbars
   .view .input-stacked textarea, .view > form, .list .items { @include customScrollbar(); }
@@ -38,7 +38,7 @@ $desktop: "screen and (min-width:1150px)";
       &:not(:first-child)  { left:  20em; }
       &:first-child .items { overflow-y: hidden; }
       &:first-child .icon-folder { display: none; }
-      &:not(:first-child)        { @include shadow; }
+      &:not(:first-child)        { @include leftBorderShadow; }
       &:not(:first-child) header .back { display: none; }
     }
   }
@@ -47,9 +47,12 @@ $desktop: "screen and (min-width:1150px)";
 
 /* Desktop Layout */
 @media #{$desktop} {
-  .sidebar { width: 10em; }
-  .module  { left: 10em; width: 22em; }
-  .view    { left: 32em; &.fullsize { left: 10em; } }
+  .sidebar         { width: 10em;                       }
+  .module          { left: 10em;                        }
+  .list            { width: 22em;                       }
+  .list.list-aside { left: 22em; right: 0; width: auto; }
+  .view            { left: 32em;                        }
+  .view.fullsize   { left: 10em;                        }
 
   .module.first-list-aside {
     .list:first-child       { width: 22em; }

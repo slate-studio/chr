@@ -40,8 +40,8 @@ class @View
     @_set_title()
 
     # close
-    @$closeBtn =$ "<a href='#/#{ @closePath }' class='close silent'>Close</a>"
-    @$closeBtn.on 'click', (e) => @_close(e)
+    @$closeBtn =$ "<a href='#{ @closePath }' class='close'>Close</a>"
+    #@$closeBtn.on 'click', (e) => @_close(e)
     @$header.append @$closeBtn
 
     # save
@@ -87,8 +87,8 @@ class @View
 
   # EVENTS ================================================
 
-  _close: (e) ->
-    @destroy()
+  # _close: (e) ->
+  #   @destroy()
 
 
   _save: (e) ->
@@ -114,7 +114,7 @@ class @View
     e.preventDefault()
     if confirm("Are you sure?")
       @store.remove @object._id,
-        onSuccess: => chr.updateHash("#/#{ @closePath }", true) ; @destroy()
+        onSuccess: => chr.updateHash("#/#{ @closePath }") #; @destroy()
         onError:   -> chr.showError('Can\'t delete object.')
 
 

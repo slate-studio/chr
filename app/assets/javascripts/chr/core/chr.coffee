@@ -76,9 +76,7 @@ class @Chr
             return @module.showViewByObjectId('', config, crumb.titleize())
 
           else
-            @module.showNestedList(crumb)
-      else
-        @module.showRootList()
+            @module.showList(crumb)
 
 
   # PUBLIC ================================================

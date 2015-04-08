@@ -19,8 +19,11 @@
 #   onListInit         - callback on list is initialized
 #   onListShow         - callback on list is shown
 #   objects            - objects array to be added to the store on start
+#   showWithParent     - show list on a aside from parent
 #
 # Public methods:
+#   showSpinner()
+#   hideSpinner()
 #   hide()        - hide list
 #   show()        - show list
 #   updateItems() - update list items (sync through store with backend)
@@ -35,24 +38,20 @@
 # -----------------------------------------------------------------------------
 
 class @List
-  constructor: (@module, @name, @config, @parentList) ->
+  constructor: (@module, @path, @name, @config, @parentList) ->
     @configItemsCount = 0
-    @path           = @_path()
+
     @items          = {}
     @title          = @config.title      ? @name.titleize()
     @itemClass      = @config.itemClass  ? Item
 
-    @showWithParent = false
-    if @parentList
-      @showWithParent = @parentList.config.showNestedListsAside || false
+    @showWithParent = @config.showWithParent ? false
 
-    @config.showListWithParent ? false
-
-    @$el =$ "<div class='list #{ @name }'>"
+    @$el =$ "<div class='list #{ @name }' style='display:none;'>"
     @module.$el.append @$el
 
-    # hide all nested lists
-    if @parentList then @$el.hide()
+    if @showWithParent
+      @$el.addClass('list-aside')
 
     # items
     @$items =$ "<div class='items'>"
@@ -64,8 +63,7 @@ class @List
 
     # back button
     if @parentList
-      @$backBtn =$ "<a href='#/#{ @parentList.path }' class='back silent'></a>"
-      @$backBtn.on 'click', (e) => @_back(e)
+      @$backBtn =$ "<a href='#{ @parentList.path }' class='back'></a>"
     else
       @$backBtn =$ "<a href='#/' class='back'></a>"
     @$header.prepend @$backBtn
@@ -76,13 +74,11 @@ class @List
 
     # new item button
     if not @config.disableNewItems and @config.formSchema
-      @$newBtn =$ "<a href='#/#{ @path }/new' class='new silent'></a>"
-      @$newBtn.on 'click', (e) => @_new(e)
+      @$newBtn =$ "<a href='#{ @path }/new' class='new'></a>"
       @$header.append @$newBtn
 
     if @config.items       then @_process_config_items()
     if @config.arrayStore  then @_bind_config_array_store()
-    if @config.objectStore then @_bind_config_object_store()
 
     @_bind_hashchange()
 
@@ -104,13 +100,6 @@ class @List
           return $(a).addClass('active')
 
 
-  _path: ->
-    crumbs = [] ; l = this
-    while l.parentList
-      crumbs.push(l.name) ; l = l.parentList
-    @module.name + ( if crumbs.length > 0 then '/' + crumbs.reverse().join('/') else '' )
-
-
   _add_item: (path, object, position, config) ->
     item = new @itemClass(@module, path, object, config)
     @items[object._id] = item
@@ -126,32 +115,15 @@ class @List
       $(@$items.children()[position - 1]).after(item.$el.show())
 
 
-  _show_spinner: ->
+  # PUBLIC ================================================
+
+  showSpinner: ->
     @$el.addClass('show-spinner')
 
 
-  _hide_spinner: ->
+  hideSpinner: ->
     @$el.removeClass('show-spinner')
 
-
-  # EVENTS ================================================
-
-  _back: (e) ->
-    @module.chr.unsetActiveListItems()
-    @module.destroyView()
-
-    if @showWithParent
-      @hide()
-    else
-      @module.hideActiveList()
-
-
-  _new: (e) ->
-    chr.updateHash($(e.currentTarget).attr('href'), true)
-    @module.showView(null, @config, 'New')
-
-
-  # PUBLIC ================================================
 
   hide: ->
     @$el.hide()
@@ -167,12 +139,8 @@ class @List
   updateItems: ->
     if not @config.disableUpdateItems
       if @config.arrayStore
-        @_show_spinner()
+        @showSpinner()
         @config.arrayStore.reset()
-
-
-  isVisible: ->
-    @$el.is(':visible')
 
 
 include(List, listConfig)
