@@ -16,12 +16,30 @@
 
   _route: (path) -> #/<module>[/<list>][/new]OR[/view/<objectId>]
     crumbs = path.split('/')
+    update_list_items = true
 
-    # if module changed, hide previous module
+
+    if @module
+      path = location.hash
+
+      # do not update items when return to active list from view
+      if @module.activeList.path == path
+        update_list_items = false
+
+      # do not update items when show view
+      view_path = path.replace(@module.activeList.path, '')
+
+      if view_path.startsWith('/new') || view_path.startsWith('/view')
+        update_list_items = false
+
+
+    # if module changed, hide previous module & update list items
     if @module != @modules[crumbs[1]]
       @module?.hide()
 
+
     @module = @modules[crumbs[1]] # module name on position 1
+
 
     if @module
       @module.show()
@@ -45,6 +63,9 @@
 
           else
             @module.showList(crumb)
+
+            if update_list_items
+              @module.activeList.updateItems()
 
 
 

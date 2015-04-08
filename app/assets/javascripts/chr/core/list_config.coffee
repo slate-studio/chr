@@ -10,6 +10,7 @@
   # PRIVATE ===============================================
 
   _process_config_items: ->
+    @_config_items_count = 0
     for slug, config of @config.items
       object = { _id: slug, _title: config.title ? slug.titleize() }
 
@@ -17,7 +18,7 @@
         @module.addNestedList(slug, config, this)
 
       @_add_item("#{ @path }/#{ slug }", object, 0, config)
-      @configItemsCount += 1
+      @_config_items_count += 1
 
 
   _bind_config_array_store: ->

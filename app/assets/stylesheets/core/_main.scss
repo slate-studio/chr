@@ -24,13 +24,14 @@ html, body, .view { overflow: hidden; }
 /* Items ------------------------------------------------------------------- */
 .items  { @include absolutePosition(42px 0 0 0); @include scrollable(); padding-bottom: 5em; }
 .menu a, .items .item {
-                  display: block; position: relative;
+                  display: block; position: relative; font-weight: 300;
                   padding: 1em; color: $black; @include border($neutralColor); margin-top: -1px;
   &.active      { background-color: $neutralColor; z-index: 1; }
   &:first-child { @include noBorder(); }
 }
 .items .item {
-  &.has-subtitle  { padding: .6em 1em; }
+  &.item-folder   { font-weight: 400;    }
+  &.has-subtitle  { padding: .6em 1em;   }
   &.has-thumbnail { padding-left: 4.1em; }
   &.has-thumbnail .item-title              { line-height: 2.15; }
   &.has-thumbnail.has-subtitle             { padding-top: 1em; padding-bottom: .75em; }

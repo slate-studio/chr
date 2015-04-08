@@ -39,8 +39,6 @@
 
 class @List
   constructor: (@module, @path, @name, @config, @parentList) ->
-    @configItemsCount = 0
-
     @items          = {}
     @title          = @config.title      ? @name.titleize()
     @itemClass      = @config.itemClass  ? Item
@@ -107,7 +105,7 @@ class @List
 
 
   _update_item_position: (item, position) ->
-    position = @configItemsCount + position
+    position = @_config_items_count + position
     if position == 0
       @$items.prepend(item.$el)
     else
@@ -131,7 +129,6 @@ class @List
 
   show: (callback) ->
     @$el.show 0, =>
-      @$items.scrollTop(0)
       @config.onListShow?(@)
       callback?()
 
@@ -140,6 +137,7 @@ class @List
     if not @config.disableUpdateItems
       if @config.arrayStore
         @showSpinner()
+        @$items.scrollTop(0)
         @config.arrayStore.reset()
 
 

@@ -72,7 +72,6 @@ class @Module
       @activeList = @nestedLists[name]
 
     @activeList.show()
-    @activeList.updateItems()
 
 
   showView: (object, config, title) ->

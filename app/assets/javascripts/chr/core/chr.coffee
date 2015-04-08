@@ -50,7 +50,7 @@ class @Chr
 
 
   _add_menu_item: (moduleName, title) ->
-    @$mainMenu.append "<a href='#/#{ moduleName }'>#{ title }</a>"
+    @$mainMenu.append "<a href='#/#{ moduleName }' class='menu-#{ moduleName }'>#{ title }</a>"
 
 
   _bind_hashchange: ->
