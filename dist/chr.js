@@ -5559,7 +5559,7 @@ this.RestObjectStore = (function(superClass) {
     if (callbacks.onError == null) {
       callbacks.onError = $.noop;
     }
-    return this._ajax('GET', {}, ((function(_this) {
+    return this._ajax('GET', null, ((function(_this) {
       return function(data) {
         return callbacks.onSuccess(data);
       };
@@ -5590,98 +5590,82 @@ this.RestObjectStore = (function(superClass) {
 
 })(ObjectStore);
 
+this.railsFormObjectParser = {
+  _parse_form_object: function(serializedFormObject) {
+    var attr_name, attr_value, formDataObject, i, len, value, values;
+    formDataObject = new FormData();
+    for (attr_name in serializedFormObject) {
+      attr_value = serializedFormObject[attr_name];
+      if (attr_name.indexOf('[__LIST__') > -1) {
+        attr_name = attr_name.replace('__LIST__', '');
+        values = attr_value.split(',');
+        for (i = 0, len = values.length; i < len; i++) {
+          value = values[i];
+          formDataObject.append("" + this.config.resource + attr_name + "[]", value);
+        }
+      } else {
+        if (attr_name.startsWith('__FILE__')) {
+          attr_name = attr_name.replace('__FILE__', '');
+        }
+        formDataObject.append("" + this.config.resource + attr_name, attr_value);
+      }
+    }
+    return formDataObject;
+  }
+};
+
 var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-this.MongosteenArrayStore = (function(superClass) {
-  extend(MongosteenArrayStore, superClass);
+this.RailsArrayStore = (function(superClass) {
+  extend(RailsArrayStore, superClass);
 
-  function MongosteenArrayStore() {
-    return MongosteenArrayStore.__super__.constructor.apply(this, arguments);
+  function RailsArrayStore() {
+    return RailsArrayStore.__super__.constructor.apply(this, arguments);
   }
 
-  MongosteenArrayStore.prototype._configure_store = function() {
+  RailsArrayStore.prototype._configure_store = function() {
     return this.ajaxConfig = {
       processData: false,
       contentType: false
     };
   };
 
-  MongosteenArrayStore.prototype._resource_url = function(type, id) {
+  RailsArrayStore.prototype._resource_url = function(type, id) {
     var objectPath;
     objectPath = id ? "/" + id : '';
     return "" + this.config.path + objectPath + ".json";
   };
 
-  MongosteenArrayStore.prototype._parse_form_object = function(serializedFormObject) {
-    var attr_name, attr_value, formDataObject, i, len, value, values;
-    formDataObject = new FormData();
-    for (attr_name in serializedFormObject) {
-      attr_value = serializedFormObject[attr_name];
-      if (attr_name.indexOf('[__LIST__') > -1) {
-        attr_name = attr_name.replace('__LIST__', '');
-        values = attr_value.split(',');
-        for (i = 0, len = values.length; i < len; i++) {
-          value = values[i];
-          formDataObject.append("" + this.config.resource + attr_name + "[]", value);
-        }
-      } else {
-        if (attr_name.startsWith('__FILE__')) {
-          attr_name = attr_name.replace('__FILE__', '');
-        }
-        formDataObject.append("" + this.config.resource + attr_name, attr_value);
-      }
-    }
-    return formDataObject;
-  };
-
-  return MongosteenArrayStore;
+  return RailsArrayStore;
 
 })(RestArrayStore);
+
+include(RailsArrayStore, railsFormObjectParser);
 
 var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-this.MongosteenObjectStore = (function(superClass) {
-  extend(MongosteenObjectStore, superClass);
+this.RailsObjectStore = (function(superClass) {
+  extend(RailsObjectStore, superClass);
 
-  function MongosteenObjectStore() {
-    return MongosteenObjectStore.__super__.constructor.apply(this, arguments);
+  function RailsObjectStore() {
+    return RailsObjectStore.__super__.constructor.apply(this, arguments);
   }
 
-  MongosteenObjectStore.prototype._configure_store = function() {
+  RailsObjectStore.prototype._configure_store = function() {
     return this.ajaxConfig = {
       processData: false,
       contentType: false
     };
   };
 
-  MongosteenObjectStore.prototype._resource_url = function() {
+  RailsObjectStore.prototype._resource_url = function() {
     return this.config.path + ".json";
   };
 
-  MongosteenObjectStore.prototype._parse_form_object = function(serializedFormObject) {
-    var attr_name, attr_value, formDataObject, i, len, value, values;
-    formDataObject = new FormData();
-    for (attr_name in serializedFormObject) {
-      attr_value = serializedFormObject[attr_name];
-      if (attr_name.indexOf('[__LIST__') > -1) {
-        attr_name = attr_name.replace('__LIST__', '');
-        values = attr_value.split(',');
-        for (i = 0, len = values.length; i < len; i++) {
-          value = values[i];
-          formDataObject.append("" + this.config.resource + attr_name + "[]", value);
-        }
-      } else {
-        if (attr_name.startsWith('__FILE__')) {
-          attr_name = attr_name.replace('__FILE__', '');
-        }
-        formDataObject.append("" + this.config.resource + attr_name, attr_value);
-      }
-    }
-    return formDataObject;
-  };
-
-  return MongosteenObjectStore;
+  return RailsObjectStore;
 
 })(RestObjectStore);
+
+include(RailsObjectStore, railsFormObjectParser);

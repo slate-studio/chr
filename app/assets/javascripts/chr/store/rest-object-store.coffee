@@ -66,7 +66,7 @@ class @RestObjectStore extends ObjectStore
     callbacks.onSuccess ?= $.noop
     callbacks.onError   ?= $.noop
 
-    @_ajax 'GET', {}, ((data) =>
+    @_ajax 'GET', null, ((data) =>
       callbacks.onSuccess(data)
     ), callbacks.onError
 

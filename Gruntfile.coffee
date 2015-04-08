@@ -39,8 +39,9 @@ module.exports = (grunt) ->
             'app/assets/javascripts/chr/store/_object-store.coffee'
             'app/assets/javascripts/chr/store/rest-array-store.coffee'
             'app/assets/javascripts/chr/store/rest-object-store.coffee'
-            'app/assets/javascripts/chr/store/mongosteen-array-store.coffee'
-            'app/assets/javascripts/chr/store/mongosteen-object-store.coffee'
+            'app/assets/javascripts/chr/store/_rails-form-object-parser.coffee'
+            'app/assets/javascripts/chr/store/rails-array-store.coffee'
+            'app/assets/javascripts/chr/store/rails-object-store.coffee'
           ]
 
           'build/input-ace.js': [

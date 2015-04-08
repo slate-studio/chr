@@ -22,5 +22,5 @@
 #= require ./chr/store/_array-store
 #= require ./chr/store/rest-object-store
 #= require ./chr/store/rest-array-store
-#= require ./chr/store/mongosteen-object-store
-#= require ./chr/store/mongosteen-array-store
+#= require ./chr/store/rails-object-store
+#= require ./chr/store/rails-array-store
