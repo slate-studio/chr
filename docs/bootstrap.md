@@ -9,7 +9,7 @@ postsConfig = (data) ->
   itemTitleField:     'title'
   disableUpdateItems: true
   objects:            data.posts
-  arrayStore: new MongosteenArrayStore({
+  arrayStore: new RailsArrayStore({
     resource:    'post'
     path:        '/admin/posts'
     sortBy:      'title'
