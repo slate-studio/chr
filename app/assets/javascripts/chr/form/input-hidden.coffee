@@ -19,12 +19,13 @@ class @InputHidden
   # PRIVATE ===============================================
 
   _create_el: ->
-    @$el =$ "<input type='hidden' name='#{ @name }' value='#{ @_safe_value() }' />"
+    # use textarea instead of regular input[type=hidden] to store HTML in there as well
+    @$el =$ "<textarea style='display:none;' name='#{ @name }' rows=1>#{ @_safe_value() }</textarea>"
 
 
   _safe_value: ->
     if typeof(@value) == 'object'
-      JSON.stringify(@value)
+      return JSON.stringify(@value)
     else
       _escapeHtml(@value)
 
