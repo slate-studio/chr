@@ -38,14 +38,6 @@ class @Module
     @menuTitle  = @config.menuTitle ? @config.title
     @menuTitle ?= @name.titleize()
 
-    # do not hide root list layout, nested lists are shown on aside
-    # if @config.showNestedListsAside
-    #   @$el.addClass 'first-list-aside'
-    #   # jump to first nested list on menu click
-    #   firstNestedList = _firstNonEmptyValue(@nestedLists)
-    #   if ! @chr.isMobile() && firstNestedList
-    #     menuPath += "/#{ firstNestedList.name }"
-
     @config.onModuleInit?(this)
 
 

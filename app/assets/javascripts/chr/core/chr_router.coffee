@@ -58,14 +58,18 @@
 
           config = config.items[crumb]
 
-          if config.objectStore
-            return @module.showViewByObjectId('', config, crumb.titleize())
+          if config
+            if config.objectStore
+              return @module.showViewByObjectId('', config, crumb.titleize())
 
-          else
-            @module.showList(crumb)
+            else
+              @module.showList(crumb)
 
-            if update_list_items
-              @module.activeList.updateItems()
+              if update_list_items # for nested lists
+                @module.activeList.updateItems()
+      else
+        if update_list_items # for root list
+          @module.activeList.updateItems()
 
 
 

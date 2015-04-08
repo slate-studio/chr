@@ -30,18 +30,6 @@ $desktop: "screen and (min-width:1150px)";
 
   // scrollbars
   .view .input-stacked textarea, .view > form, .list .items { @include customScrollbar(); }
-
-  // layout when first list always shown
-  .module.first-list-aside { width: auto; right: 0;
-    .list {
-      &:first-child        { width: 20em; }
-      &:not(:first-child)  { left:  20em; }
-      &:first-child .items { overflow-y: hidden; }
-      &:first-child .icon-folder { display: none; }
-      &:not(:first-child)        { @include leftBorderShadow; }
-      &:not(:first-child) header .back { display: none; }
-    }
-  }
 }
 
 
@@ -53,11 +41,6 @@ $desktop: "screen and (min-width:1150px)";
   .list.list-aside { left: 22em; right: 0; width: auto; }
   .view            { left: 32em;                        }
   .view.fullsize   { left: 10em;                        }
-
-  .module.first-list-aside {
-    .list:first-child       { width: 22em; }
-    .list:not(:first-child) { left:  22em; }
-  }
 }
 
 

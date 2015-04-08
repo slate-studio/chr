@@ -10,14 +10,6 @@
 }
 
 
-// fullscreen
-.redactor-box-fullscreen {
-  .redactor-toolbar           { box-shadow: none; border-bottom: 2px solid $contrastColor; }
-  .redactor-placeholder:after { content: ''; }
-  .redactor-editor            { padding-bottom: 5em; border: none; }
-}
-
-
 // placeholder
 .redactor-placeholder:after { color: $lightColor!important; }
 
