@@ -2733,31 +2733,8 @@ this.include = function(klass, mixin) {
   return extend(klass.prototype, mixin);
 };
 
-this.Chr = (function() {
-  function Chr() {
-    this.formInputs = {};
-    this.modules = {};
-    this.itemsPerPageRequest = Math.ceil($(window).height() / 60) * 2;
-  }
-
-  Chr.prototype._unset_active_menu_items = function() {
-    return $('.sidebar .menu a.active').removeClass('active');
-  };
-
-  Chr.prototype._set_active_menu_item = function() {
-    var a, currentModuleName, i, len, moduleName, ref;
-    currentModuleName = window.location.hash.split('/')[1];
-    ref = this.$mainMenu.children();
-    for (i = 0, len = ref.length; i < len; i++) {
-      a = ref[i];
-      moduleName = $(a).attr('href').split('/')[1];
-      if (currentModuleName === moduleName) {
-        return $(a).addClass('active');
-      }
-    }
-  };
-
-  Chr.prototype._navigate = function(path) {
+this.chrRouter = {
+  _route: function(path) {
     var config, crumb, crumbs, i, len, objectId, ref;
     crumbs = path.split('/');
     if (this.module !== this.modules[crumbs[1]]) {
@@ -2789,22 +2766,74 @@ this.Chr = (function() {
         }
       }
     }
+  }
+};
+
+this.Chr = (function() {
+  function Chr() {
+    this.formInputs = {};
+    this.modules = {};
+    this.itemsPerPageRequest = Math.ceil($(window).height() / 60) * 2;
+  }
+
+  Chr.prototype._unset_active_items = function() {
+    $('.sidebar .menu a.active').removeClass('active');
+    return $('.list .items .item.active').removeClass('active');
   };
 
-  Chr.prototype.unsetActiveListItems = function() {
-    return $('.list .items .item.active').removeClass('active');
+  Chr.prototype._set_active_menu_item = function() {
+    var a, currentModuleName, i, len, moduleName, ref;
+    currentModuleName = window.location.hash.split('/')[1];
+    ref = this.$mainMenu.children();
+    for (i = 0, len = ref.length; i < len; i++) {
+      a = ref[i];
+      moduleName = $(a).attr('href').split('/')[1];
+      if (currentModuleName === moduleName) {
+        return $(a).addClass('active');
+      }
+    }
+  };
+
+  Chr.prototype._add_menu_item = function(moduleName, title) {
+    return this.$mainMenu.append("<a href='#/" + moduleName + "'>" + title + "</a>");
+  };
+
+  Chr.prototype._bind_hashchange = function() {
+    this.skipRoute = false;
+    window.onhashchange = (function(_this) {
+      return function() {
+        _this._unset_active_items();
+        if (!_this.skipRoute) {
+          _this._route(window.location.hash);
+        }
+        _this.skipRoute = false;
+        return $(_this).trigger('hashchange');
+      };
+    })(this);
+    return $(this).on('hashchange', (function(_this) {
+      return function() {
+        return _this._set_active_menu_item();
+      };
+    })(this));
+  };
+
+  Chr.prototype._on_start = function() {
+    if (location.hash !== '') {
+      this._route(location.hash);
+      return $(this).trigger('hashchange');
+    }
+    if (!this.isMobile()) {
+      return this.updateHash('#/' + Object.keys(this.modules)[0]);
+    }
   };
 
   Chr.prototype.isMobile = function() {
     return $(window).width() < 760;
   };
 
-  Chr.prototype.updateHash = function(hash, skipHashChange) {
-    if (skipHashChange == null) {
-      skipHashChange = false;
-    }
-    window._skipHashchange = skipHashChange;
-    return location.hash = hash;
+  Chr.prototype.updateHash = function(path, skipRoute) {
+    this.skipRoute = skipRoute != null ? skipRoute : false;
+    return window.location.hash = path;
   };
 
   Chr.prototype.start = function(config1) {
@@ -2819,37 +2848,10 @@ this.Chr = (function() {
     for (name in ref1) {
       config = ref1[name];
       this.modules[name] = new Module(this, name, config);
+      this._add_menu_item(name, this.modules[name].menuTitle);
     }
-    $(this).on('hashchange', (function(_this) {
-      return function() {
-        return _this._set_active_menu_item();
-      };
-    })(this));
-    window.onhashchange = (function(_this) {
-      return function() {
-        _this._unset_active_menu_items();
-        _this.unsetActiveListItems();
-        if (!window._skipHashchange) {
-          _this._navigate(location.hash);
-        }
-        window._skipHashchange = false;
-        return $(_this).trigger('hashchange');
-      };
-    })(this);
-    $(document).on('click', 'a.silent', function(e) {
-      return window._skipHashchange = true;
-    });
-    window._skipHashchange = false;
-    if (location.hash !== '') {
-      this._navigate(location.hash);
-      return $(this).trigger('hashchange');
-    } else if (!this.isMobile()) {
-      return location.hash = '#/' + Object.keys(this.modules)[0];
-    }
-  };
-
-  Chr.prototype.addMenuItem = function(moduleName, title) {
-    return this.$mainMenu.append("<a href='#/" + moduleName + "'>" + title + "</a>");
+    this._bind_hashchange();
+    return this._on_start();
   };
 
   Chr.prototype.showAlert = function(message) {
@@ -2864,11 +2866,13 @@ this.Chr = (function() {
 
 })();
 
+include(Chr, chrRouter);
+
 window.chr = new Chr();
 
 this.Module = (function() {
   function Module(chr1, name1, config1) {
-    var base, menuPath, menuTitle, ref;
+    var base, ref;
     this.chr = chr1;
     this.name = name1;
     this.config = config1;
@@ -2876,12 +2880,10 @@ this.Module = (function() {
     this.$el = $("<section class='module " + this.name + "' style='display: none;'>");
     this.chr.$el.append(this.$el);
     this.rootList = new List(this, "#/" + this.name, this.name, this.config);
-    menuTitle = (ref = this.config.menuTitle) != null ? ref : this.config.title;
-    if (menuTitle == null) {
-      menuTitle = this.name.titleize();
+    this.menuTitle = (ref = this.config.menuTitle) != null ? ref : this.config.title;
+    if (this.menuTitle == null) {
+      this.menuTitle = this.name.titleize();
     }
-    menuPath = this.name;
-    this.chr.addMenuItem(menuPath, menuTitle);
     if (typeof (base = this.config).onModuleInit === "function") {
       base.onModuleInit(this);
     }

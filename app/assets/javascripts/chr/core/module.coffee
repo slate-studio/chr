@@ -11,6 +11,7 @@
 # -----------------------------------------------------------------------------
 # Config options:
 #   title                - title used for menu and root list header
+#   menuTitle            - title used for the menu link
 #   showNestedListsAside - show module root list on the left and all nested
 #                          lists on the right side for desktop
 #
@@ -34,9 +35,8 @@ class @Module
     @rootList = new List(this, "#/#{ @name }", @name, @config)
 
     # menu item + layout
-    menuTitle  = @config.menuTitle ? @config.title
-    menuTitle ?= @name.titleize()
-    menuPath   = @name
+    @menuTitle  = @config.menuTitle ? @config.title
+    @menuTitle ?= @name.titleize()
 
     # do not hide root list layout, nested lists are shown on aside
     # if @config.showNestedListsAside
@@ -45,8 +45,6 @@ class @Module
     #   firstNestedList = _firstNonEmptyValue(@nestedLists)
     #   if ! @chr.isMobile() && firstNestedList
     #     menuPath += "/#{ firstNestedList.name }"
-
-    @chr.addMenuItem(menuPath, menuTitle)
 
     @config.onModuleInit?(this)
 

@@ -10,6 +10,7 @@ module.exports = (grunt) ->
           'build/chr.js': [
             # core
             'app/assets/javascripts/chr/core/utils.coffee'
+            'app/assets/javascripts/chr/core/chr_router.coffee'
             'app/assets/javascripts/chr/core/chr.coffee'
             'app/assets/javascripts/chr/core/module.coffee'
             'app/assets/javascripts/chr/core/list_config.coffee'

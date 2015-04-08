@@ -9,19 +9,21 @@
 # -----------------------------------------------------------------------------
 # CHARACTER
 # -----------------------------------------------------------------------------
+#
 # Public attributes:
 #   modules
 #   formInputs
 #   itemsPerPageRequest
 #
 # Public methods:
-#   start(@config)                 - start the character app with configuration
-#   addMenuItem(moduleName, title) - add item to main menu
-#   showAlert(message)             - show alert notification
-#   showError(message)             - show error message
-#   isMobile()                     - check if running on mobile
-#   unsetActiveListItems()         - clear selection from all list items
-#   updateHash(hash, skipHashChange=false)
+#   start(@config)              - start the character app with configuration
+#   updateHash(hash, skipRoute) - change window location hash
+#   isMobile()                  - check if running on mobile
+#   showAlert(message)          - show alert notification
+#   showError(message)          - show error message
+#
+# Dependencies:
+#= require ./chr_router
 #
 # -----------------------------------------------------------------------------
 class @Chr
@@ -34,8 +36,9 @@ class @Chr
 
   # PRIVATE ===============================================
 
-  _unset_active_menu_items: ->
+  _unset_active_items: ->
     $('.sidebar .menu a.active').removeClass('active')
+    $('.list .items .item.active').removeClass('active')
 
 
   _set_active_menu_item: ->
@@ -46,52 +49,41 @@ class @Chr
         return $(a).addClass('active')
 
 
-  _navigate: (path) -> #/<module>[/<list>][/new]OR[/view/<objectId>]
-    crumbs = path.split('/')
+  _add_menu_item: (moduleName, title) ->
+    @$mainMenu.append "<a href='#/#{ moduleName }'>#{ title }</a>"
 
-    # if module changed, hide previous module
-    if @module != @modules[crumbs[1]]
-      @module?.hide()
 
-    @module = @modules[crumbs[1]] # module name on position 1
+  _bind_hashchange: ->
+    @skipRoute = false
 
-    if @module
-      @module.show()
+    window.onhashchange = =>
+      @_unset_active_items()
 
-      config = @module.config
-      crumbs = crumbs.splice(2) # remove #/<module> part
+      if ! @skipRoute then @_route(window.location.hash)
+      @skipRoute = false
 
-      if crumbs.length > 0
-        for crumb in crumbs
-          if crumb == 'new'
-            return @module.showView(null, config, 'New')
+      $(this).trigger 'hashchange'
 
-          if crumb == 'view'
-            objectId = _last(crumbs)
-            return @module.showViewByObjectId(objectId, config)
+    $(this).on 'hashchange', => @_set_active_menu_item()
 
-          config = config.items[crumb]
 
-          if config.objectStore
-            return @module.showViewByObjectId('', config, crumb.titleize())
+  _on_start: ->
+    if location.hash != ''
+      @_route(location.hash)
+      return $(this).trigger('hashchange')
 
-          else
-            @module.showList(crumb)
+    if ! @isMobile()
+      return @updateHash('#/' + Object.keys(@modules)[0])
 
 
   # PUBLIC ================================================
-
-  unsetActiveListItems: ->
-    $('.list .items .item.active').removeClass('active')
-
 
   isMobile: ->
     $(window).width() < 760
 
 
-  updateHash: (hash, skipHashChange=false) ->
-    window._skipHashchange = skipHashChange
-    location.hash = hash
+  updateHash: (path, @skipRoute=false) ->
+    window.location.hash = path
 
 
   start: (@config) ->
@@ -99,43 +91,15 @@ class @Chr
     @$navBar   =$ "<nav class='sidebar'>"
     @$mainMenu =$ "<div class='menu'>"
 
-    @$navBar.append @$mainMenu
-    @$el.append @$navBar
+    @$navBar.append(@$mainMenu)
+    @$el.append(@$navBar)
 
-    @modules[name] = new Module(this, name, config) for name, config of @config.modules
+    for name, config of @config.modules
+      @modules[name] = new Module(this, name, config)
+      @_add_menu_item(name, @modules[name].menuTitle)
 
-    $(this).on 'hashchange', => @_set_active_menu_item()
-
-    window.onhashchange = =>
-      @_unset_active_menu_items()
-      @unsetActiveListItems()
-
-      # this allows to skip chr _navigate method for silent hashchanges,
-      # e.g. close view event
-      if not window._skipHashchange then @_navigate(location.hash)
-      window._skipHashchange = false
-
-      # triggers hashchange event which is used for navigation
-      # related code, e.g. list active item selection
-      $(this).trigger 'hashchange'
-
-    # use class 'silent' for <a> when need to skip onhashchange event
-    $(document).on 'click', 'a.silent', (e) -> window._skipHashchange = true
-
-    # if not mobile navigate on first page load or page refresh
-    window._skipHashchange = false
-
-    # if hash is not empty go to module
-    if location.hash != ''
-      @_navigate(location.hash)
-      $(this).trigger('hashchange')
-    else if ! @isMobile()
-      # if on desktop/tablet while hash is empty go to first module in the list
-      location.hash = '#/' + Object.keys(@modules)[0]
-
-
-  addMenuItem: (moduleName, title) ->
-    @$mainMenu.append "<a href='#/#{ moduleName }'>#{ title }</a>"
+    @_bind_hashchange()
+    @_on_start()
 
 
   showAlert: (message) ->
@@ -146,9 +110,12 @@ class @Chr
     alert 'Error: ' + message
 
 
-# -----------------------------------------------------------------------------
+include(Chr, chrRouter)
+
+
+# ---------------------------------------------------------
 # Initialize `chr` object in global scope
-# -----------------------------------------------------------------------------
+# ---------------------------------------------------------
 window.chr = new Chr()
 
 
