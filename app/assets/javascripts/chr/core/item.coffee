@@ -29,9 +29,12 @@ class @Item
 
 
   _render_title: ->
-    title  = @object._title # nested list title predefined in config (or slug based)
-    title ?= @object[@config.itemTitleField] # based on config
-    title ?= _firstNonEmptyValue(@object) # auto-generated: first non empty value
+    # nested list title predefined in config (or slug based)
+    title  = @object._title
+    # based on config
+    title ?= @object[@config.itemTitleField]
+    # auto-generated: first non empty value
+    title ?= _firstNonEmptyValue(@object)
     title ?= "No Title"
     title  = title.plainText()
 

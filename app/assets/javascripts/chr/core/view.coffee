@@ -41,7 +41,6 @@ class @View
 
     # close
     @$closeBtn =$ "<a href='#{ @closePath }' class='close'>Close</a>"
-    #@$closeBtn.on 'click', (e) => @_close(e)
     @$header.append @$closeBtn
 
     # save
@@ -87,10 +86,6 @@ class @View
 
   # EVENTS ================================================
 
-  # _close: (e) ->
-  #   @destroy()
-
-
   _save: (e) ->
     e.preventDefault()
     @$el.addClass('view-saving')
@@ -106,7 +101,7 @@ class @View
         onSuccess: (@object) =>
           @_save_success()
           @_add_form_delete_button()
-          chr.updateHash("#/#{ @closePath }/view/#{ @object._id }", true)
+          chr.updateHash("#{ @closePath }/view/#{ @object._id }", true)
         onError: (errors) => @_save_error('Item were not created.', errors)
 
 
@@ -114,7 +109,7 @@ class @View
     e.preventDefault()
     if confirm("Are you sure?")
       @store.remove @object._id,
-        onSuccess: => chr.updateHash("#/#{ @closePath }") #; @destroy()
+        onSuccess: => chr.updateHash("#{ @closePath }", true) ; @destroy()
         onError:   -> chr.showError('Can\'t delete object.')
 
 
