@@ -9,10 +9,6 @@
 # -----------------------------------------------------------------------------
 # INPUT SELECT
 # -----------------------------------------------------------------------------
-# Todo:
-#   - add empty value option
-#   - an option to pull data from store
-# -----------------------------------------------------------------------------
 
 class @InputSelect extends InputString
 
@@ -26,6 +22,10 @@ class @InputSelect extends InputString
     @$input =$ """<select name='#{ @name }' id='#{ @name }'></select>"""
     @$el.append @$input
 
+    @_add_options()
+
+
+  _add_options: ->
     if @config.optionsHashFieldName
       @value = String(@value)
       if @object
@@ -33,10 +33,6 @@ class @InputSelect extends InputString
       else
         @config.optionsHash = { '': '--' }
 
-    @_add_options()
-
-
-  _add_options: ->
     if @config.collection
       @_add_collection_options()
 
@@ -74,7 +70,10 @@ class @InputSelect extends InputString
 
   # PUBLIC ================================================
 
-  updateValue: (@value) ->
+  updateValue: (@value, @object) ->
+    @$input.html('')
+    @_add_options()
+
     @$input.val(@value).prop('selected', true)
 
 

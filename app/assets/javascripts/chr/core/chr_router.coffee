@@ -29,7 +29,7 @@
       # do not update items when show view
       view_path = path.replace(@module.activeList.path, '')
 
-      if view_path.startsWith('/new') || view_path.startsWith('/view')
+      if view_path.startsWith('/new/') || view_path.startsWith('/view/')
         update_list_items = false
 
 
@@ -43,6 +43,8 @@
 
     if @module
       @module.show()
+      if update_list_items # for root list
+        @module.activeList.updateItems()
 
       config = @module.config
       crumbs = crumbs.splice(2) # remove #/<module> part
@@ -67,9 +69,6 @@
 
               if update_list_items # for nested lists
                 @module.activeList.updateItems()
-      else
-        if update_list_items # for root list
-          @module.activeList.updateItems()
 
 
 

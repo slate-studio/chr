@@ -19,8 +19,7 @@ class @InputHidden
   # PRIVATE ===============================================
 
   _create_el: ->
-    # use textarea instead of regular input[type=hidden] to store HTML in there as well
-    @$el =$ "<textarea style='display:none;' name='#{ @name }' rows=1>#{ @_safe_value() }</textarea>"
+    @$el =$ "<input type='hidden' name='#{ @name }' value='#{ @_safe_value() }' />"
 
 
   _safe_value: ->
@@ -32,12 +31,14 @@ class @InputHidden
 
   # PUBLIC ================================================
 
+  showErrorMessage: (message) -> ;
+
+
+  hideErrorMessage: -> ;
+
+
   initialize: ->
     @config.onInitialize?(this)
-
-
-  updateValue: (@value) ->
-    @$el.val(@_safe_value())
 
 
   hash: (hash={}) ->
@@ -45,10 +46,8 @@ class @InputHidden
     return hash
 
 
-  showErrorMessage: (message) -> ;
-
-
-  hideErrorMessage: -> ;
+  updateValue: (@value) ->
+    @$el.val(@value)
 
 
 chr.formInputs['hidden'] = InputHidden

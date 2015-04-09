@@ -51,7 +51,7 @@ class @InputRedactor extends InputString
 
 
   updateValue: (@value) ->
-    @$input.redactor('insert.set', @_safe_value())
+    @$input.redactor('code.set', @value)
 
 
 chr.formInputs['redactor'] = InputRedactor
