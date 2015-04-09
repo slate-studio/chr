@@ -10,7 +10,6 @@
   # PRIVATE ===============================================
 
   _process_config_items: ->
-    @_config_items_count = 0
     for slug, config of @config.items
       object = { _id: slug, _title: config.title ? slug.titleize() }
 
@@ -24,6 +23,7 @@
   _bind_config_array_store: ->
     # item added
     @config.arrayStore.on 'object_added', (e, data) =>
+
       @_add_item("#{ @path }/view/#{ data.object._id }", data.object, data.position, @config)
 
     if @config.objects

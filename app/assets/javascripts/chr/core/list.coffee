@@ -39,9 +39,11 @@
 
 class @List
   constructor: (@module, @path, @name, @config, @parentList) ->
-    @items          = {}
-    @title          = @config.title      ? @name.titleize()
-    @itemClass      = @config.itemClass  ? Item
+    @items     = {}
+    @title     = @config.title      ? @name.titleize()
+    @itemClass = @config.itemClass  ? Item
+
+    @_config_items_count = 0
 
     @showWithParent = @config.showWithParent ? false
 
@@ -105,6 +107,7 @@ class @List
 
 
   _update_item_position: (item, position) ->
+    # skip static items in the head of list
     position = @_config_items_count + position
     if position == 0
       @$items.prepend(item.$el)

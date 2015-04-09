@@ -113,6 +113,8 @@ class @ArrayStore
   _add_data_object: (object) ->
     object = @_normalize_object_id(object)
 
+    # TODO: double check if we still need this
+
     # if object with same id already in the store, update it's parameters,
     # otherwise add new object (this is used while pagination sync)
     if ! @_map[object._id]
