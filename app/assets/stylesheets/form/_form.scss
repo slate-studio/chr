@@ -33,6 +33,8 @@
       @include absolutePosition(.4em .8em inherit inherit);
     }
   }
+
+  .input-disabled { textarea, input { color: $stableColor; } }
 }
 
 

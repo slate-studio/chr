@@ -29,6 +29,7 @@ class @InputString
     @_add_label()
     @_add_input()
     @_add_placeholder()
+    @_add_disabled()
 
     return this
 
@@ -83,6 +84,12 @@ class @InputString
 
     if @config.placeholder
       @$input.attr 'placeholder', @config.placeholder
+
+
+  _add_disabled: ->
+    if @config.disabled
+      @$input.prop('disabled', true)
+      @$el.addClass('input-disabled')
 
 
   # PUBLIC ================================================

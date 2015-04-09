@@ -54,8 +54,9 @@ class @Item
 
   _render_thumbnail: ->
     if @config.itemThumbnail
-      imageUrl = @config.itemThumbnail(@object)
-      # carrierwave fix, check if still required
+      imageUrl = @config.itemThumbnail?(@object) ? @object[@config.itemThumbnail]
+
+      # RAILS carrierwave fix, check if still required
       if imageUrl != '' and not imageUrl.endsWith('_old_')
         @$thumbnail =$ "<div class='item-thumbnail'><img src='#{ imageUrl }' /></div>"
         @$el.append(@$thumbnail)
