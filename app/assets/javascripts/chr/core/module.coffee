@@ -59,20 +59,10 @@ class @Module
     @activeList.show()
 
 
-  showView: (object, config, title) ->
-    @view = new View(this, config, @activeList.path, object, title)
-    @chr.$el.append(@view.$el)
-    @view.show()
-
-
-  showViewByObjectId: (objectId, config, title) ->
-    onSuccess = (object) => @showView(object, config, title)
-    onError   = -> chr.showError("can\'t show view for requested object")
-
-    if objectId == ''
-      config.objectStore.loadObject({ onSuccess: onSuccess, onError: onError })
-    else
-      config.arrayStore.loadObject(objectId, { onSuccess: onSuccess, onError: onError })
+  showView: (objectId, config) ->
+    @view = new View(this, config, @activeList.path, @activeList.name)
+    @$el.append(@view.$el)
+    @view.show(objectId)
 
 
   show: ->

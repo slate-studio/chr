@@ -23,7 +23,6 @@
       moduleHasChanged:   false
       nestedListNames:    []
       lastNestedListName: null
-      showNew:            false
       showView:           false
       objectId:           null
       showNestedView:     false
@@ -37,7 +36,7 @@
     crumbs = crumbs.splice(2)
     for crumb in crumbs
       if crumb == 'new'
-        return $.extend(params, { showNew: true })
+        return $.extend(params, { showView: true })
 
       if crumb == 'view'
         return $.extend(params, { showView: true, objectId: _last(crumbs) })
@@ -101,7 +100,7 @@
       update_active_list_items = true
 
       # show view
-      if params.showView || params.showNew
+      if params.showView
         update_active_list_items = false
 
       # close view
@@ -120,15 +119,9 @@
 
     params.config ?= @module.activeList.config
 
-    # show new
-    if params.showNew
-      console.log 'show view'
-      @module.showView(null, params.config, 'New')
-
     # show view
-    else if params.showView
-      console.log 'show view'
-      @module.showViewByObjectId(params.objectId, params.config)
+    if params.showView
+      @module.showView(params.objectId, params.config)
 
 
 

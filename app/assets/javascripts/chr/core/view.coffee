@@ -18,41 +18,33 @@
 #   onViewShow       - on show callback
 #
 # public methods:
-#   show(callback)
+#   show(objectId)
 #   destroy()
+#   showSpinner()
+#   hideSpinner()
 #
 # -----------------------------------------------------------------------------
 class @View
-  constructor: (@module, @config, @closePath, @object, @title) ->
+  constructor: (@module, @config, @closePath, @listName) ->
     @store = @config.arrayStore ? @config.objectStore
 
-    @$el =$ "<section class='view #{ @module.name }' style='display:none;'>"
+    @$el =$ "<section class='view #{ @listName }'>"
 
     # fullsize
     if @config.fullsizeView
       @$el.addClass 'fullsize'
 
     # header
-    @$header =$ "<header></header>"
-    @$title  =$ "<div class='title'></div>"
+    @$header  =$ "<header></header>"
+    @$spinner =$ "<div class='spinner'></div>"
+    @$title   =$ "<div class='title'></div>"
+    @$header.append @$spinner
     @$header.append @$title
     @$el.append @$header
-    @_set_title()
 
     # close
     @$closeBtn =$ "<a href='#{ @closePath }' class='close'>Close</a>"
     @$header.append @$closeBtn
-
-    # save
-    unless @config.disableSave
-      @$saveBtn =$ "<a href='#' class='save'>Save</a>"
-      @$saveBtn.on 'click', (e) => @_save(e)
-      @$header.append @$saveBtn
-
-    # form
-    @form = new (@config.formClass ? Form)(@object, @config)
-    @$el.append @form.$el
-    @_add_form_delete_button()
 
 
   # PRIVATE ===============================================
@@ -113,18 +105,67 @@ class @View
         onError:   -> chr.showError('Can\'t delete object.')
 
 
+  _render_form: ->
+    @_set_title()
+
+    @hideSpinner()
+
+    # save
+    unless @config.disableSave
+      @$saveBtn =$ "<a href='#' class='save'>Save</a>"
+      @$saveBtn.on 'click', (e) => @_save(e)
+      @$header.append @$saveBtn
+
+    # form
+    @form = new (@config.formClass ? Form)(@object, @config)
+    @$el.append @form.$el
+    @_add_form_delete_button()
+    @form.initializePlugins()
+
+    @config.onViewShow?(@)
+
+
+  _show_error: ->
+    @hideSpinner()
+    chr.showError("can\'t show view for requested object, application error 500")
+
+
   # PUBLIC ================================================
 
-  show: (callback) ->
-    @$el.show 0, =>
-      callback?()
-      @form.initializePlugins()
-      @config.onViewShow?(@)
+
+  showSpinner: ->
+    @$el.addClass('show-spinner')
+
+
+  hideSpinner: ->
+    @$el.removeClass('show-spinner')
 
 
   destroy: ->
-    @form.destroy()
+    @form?.destroy()
     @$el.remove()
+
+
+  show: (objectId) ->
+    callbacks =
+      onSuccess: (@object) => @_render_form()
+      onError:   => @_show_error()
+
+    @showSpinner()
+
+    # new for array store
+    if objectId == null
+      @object = null
+      @title  = "New"
+      @_load_success()
+
+    # object store
+    else if objectId == ''
+      @store.loadObject(callbacks)
+
+    # array store
+    else
+      @store.loadObject(objectId, callbacks)
 
 
 

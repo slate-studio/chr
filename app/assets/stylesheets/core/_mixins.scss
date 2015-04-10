@@ -2,51 +2,59 @@
 @mixin absolutePosition($coordinates: null null null null) {
   position: absolute; top: nth($coordinates, 1); right: nth($coordinates, 2); bottom: nth($coordinates, 3); left: nth($coordinates, 4); }
 
+
 @mixin truncate {
   text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+
 
 @mixin user-select-none {
   -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;
 }
+
 
 @mixin border($color) {
   &:after { content: ''; display: block; height: 1px;
             background-color: $color; @include position(absolute, 0px 0px null 1em); }
 }
 
+
 @mixin noBorder { &:after { display: none; } }
 
+
+@mixin headerBackArrow {
+  @include absolutePosition(0 inherit inherit 0);
+  @extend .icon-back;
+  overflow: hidden; height: 41px;
+}
+
+
+@mixin headerBackArrowWithText {
+  @include absolutePosition(0 inherit inherit 1em);
+  @include headerButton;
+  width: auto;
+  &:before { display: none; }
+}
+
+
 @mixin noFocus { &:focus { outline: none; } }
+
 
 @mixin customScrollbar {
   &::-webkit-scrollbar { width: 6px; background-color: $neutralColor; }
   &::-webkit-scrollbar-thumb { background-color: $contrastColor; border-radius: 3px; }
 }
 
+
 @mixin scrollable { overflow: hidden; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
 
-@mixin spinner {
-  border:      .25em solid rgba($contrastColor, 0.2);
-  border-left: .25em solid $contrastColor;
-  -webkit-animation: spinning 1.1s infinite linear; animation: spinning 1.1s infinite linear;
-  &, &:after { border-radius: 50%; width: 1.75em; height: 1.75em; }
-}
-
-@-webkit-keyframes spinning {
-  0%   { -webkit-transform: rotate(0deg);   transform: rotate(0deg);   }
-  100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
-}
-
-@keyframes spinning {
-  0%   { -webkit-transform: rotate(0deg);   transform: rotate(0deg);   }
-  100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
-}
 
 @mixin headerButton($color: $positiveColor) {
   color: $color; &:hover { opacity: .5; }
 }
 
+
 @mixin leftBorderShadow { box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); }
+
 
 @mixin switchControl() {
   $switch-width: 52px;
@@ -121,6 +129,24 @@
       }
     }
   }
+}
+
+
+@mixin spinner {
+  border:      .25em solid rgba($contrastColor, 0.2);
+  border-left: .25em solid $contrastColor;
+  -webkit-animation: spinning 1.1s infinite linear; animation: spinning 1.1s infinite linear;
+  &, &:after { border-radius: 50%; width: 1.75em; height: 1.75em; }
+}
+
+@-webkit-keyframes spinning {
+  0%   { -webkit-transform: rotate(0deg);   transform: rotate(0deg);   }
+  100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@keyframes spinning {
+  0%   { -webkit-transform: rotate(0deg);   transform: rotate(0deg);   }
+  100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
 }
 
 
