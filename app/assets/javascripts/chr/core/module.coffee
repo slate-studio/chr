@@ -20,6 +20,7 @@
 #   showList()
 #   showView (object, config, title)
 #   showViewByObjectId (objectId, config, title)
+#   destroyView ()
 #   show ()
 #   hide ()
 #
@@ -41,14 +42,7 @@ class @Module
     @config.onModuleInit?(this)
 
 
-  # PRIVATE ===============================================
-
-  _destroy_view: ->
-    @view?.destroy()
-
-
   # PUBLIC ================================================
-
 
   addNestedList: (name, config, parentList) ->
     path = [ parentList.path, name ].join('/')
@@ -56,8 +50,7 @@ class @Module
 
 
   showList: (name) ->
-    @_destroy_view()
-    if ! name
+    if ! name # show root list, hide all nested
       list.hide() for key, list of @nestedLists
       @activeList = @rootList
     else
@@ -67,12 +60,9 @@ class @Module
 
 
   showView: (object, config, title) ->
-    newView = new View(this, config, @activeList.path, object, title)
-    @chr.$el.append(newView.$el)
-
-    newView.show =>
-      @_destroy_view()
-      @view = newView
+    @view = new View(this, config, @activeList.path, object, title)
+    @chr.$el.append(@view.$el)
+    @view.show()
 
 
   showViewByObjectId: (objectId, config, title) ->
@@ -91,8 +81,13 @@ class @Module
 
 
   hide: ->
-    @_destroy_view()
+    @destroyView()
     @$el.hide()
+
+
+  destroyView: ->
+    @view?.destroy()
+
 
 
 

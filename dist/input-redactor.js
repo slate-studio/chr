@@ -147,7 +147,7 @@ this.InputRedactor = (function(superClass) {
 
   InputRedactor.prototype.updateValue = function(value) {
     this.value = value;
-    return this.$input.redactor('insert.set', this._safe_value());
+    return this.$input.redactor('code.set', this.value);
   };
 
   return InputRedactor;

@@ -61,18 +61,18 @@ class @List
     @$header =$ "<header></header>"
     @$el.append @$header
 
-    # back button
+    # back
     if @parentList
-      @$backBtn =$ "<a href='#{ @parentList.path }' class='back'></a>"
+      @$backBtn =$ "<a href='#{ @parentList.path }' class='back'>Close</a>"
     else
-      @$backBtn =$ "<a href='#/' class='back'></a>"
+      @$backBtn =$ "<a href='#/' class='back'>Close</a>"
     @$header.prepend @$backBtn
 
     # spinner & title
     @$header.append "<div class='spinner'></div>"
     @$header.append "<span class='title'>#{ @title }</span>"
 
-    # new item button
+    # new item
     if not @config.disableNewItems and @config.formSchema
       @$newBtn =$ "<a href='#{ @path }/new' class='new'></a>"
       @$header.append @$newBtn

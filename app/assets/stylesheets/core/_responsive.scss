@@ -24,6 +24,9 @@ $desktop: "screen and (min-width:1150px)";
   .list header, .list .items { font-size: .9em; }
   .list header { line-height: 2.9em; border-right: 1px solid $neutralColor; }
 
+  .list.list-aside header { font-size: 1em; }
+
+  .list.list-aside header .back,
   .view header .close { @include absolutePosition(0 inherit inherit 1em); @include headerButton; width: auto; &:before { display: none; } }
 
   .module .list:first-child .back { display: none; }

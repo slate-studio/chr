@@ -2734,37 +2734,116 @@ this.include = function(klass, mixin) {
 };
 
 this.chrRouter = {
-  _route: function(path) {
-    var config, crumb, crumbs, i, len, objectId, ref;
-    crumbs = path.split('/');
-    if (this.module !== this.modules[crumbs[1]]) {
+  _parse_path: function() {
+    var crumb, crumbs, i, lastList, len, module, nestedViewName, params, parentList;
+    params = {
+      path: location.hash,
+      module: null,
+      moduleMissing: false,
+      moduleHasChanged: false,
+      nestedListNames: [],
+      lastNestedListName: null,
+      showNew: false,
+      showView: false,
+      objectId: null,
+      showNestedView: false
+    };
+    crumbs = params.path.split('/');
+    module = this.modules[crumbs[1]];
+    params.module = module;
+    params.moduleMissing = module ? false : true;
+    params.moduleHasChanged = this.module !== module;
+    crumbs = crumbs.splice(2);
+    for (i = 0, len = crumbs.length; i < len; i++) {
+      crumb = crumbs[i];
+      if (crumb === 'new') {
+        return $.extend(params, {
+          showNew: true
+        });
+      }
+      if (crumb === 'view') {
+        return $.extend(params, {
+          showView: true,
+          objectId: _last(crumbs)
+        });
+      }
+      params.lastNestedListName = crumb;
+      params.nestedListNames.push(crumb);
+    }
+    if (params.lastNestedListName) {
+      lastList = module.nestedLists[params.lastNestedListName];
+      if (!lastList) {
+        nestedViewName = params.nestedListNames.pop();
+        params.lastNestedListName = _last(params.nestedListNames);
+        parentList = module.nestedLists[params.lastNestedListName];
+        if (parentList == null) {
+          parentList = module.rootList;
+        }
+        params.showNestedView = true;
+        params.showView = true;
+        params.objectId = '';
+        params.config = parentList.config.items[nestedViewName];
+      }
+    }
+    return params;
+  },
+  _route: function() {
+    var i, len, list, listName, name, params, ref, ref1, ref2, update_active_list_items;
+    params = this._parse_path();
+    if (params.moduleMissing) {
+      return;
+    }
+    if (params.moduleHasChanged) {
       if ((ref = this.module) != null) {
         ref.hide();
       }
-    }
-    this.module = this.modules[crumbs[1]];
-    if (this.module) {
+      this.module = params.module;
       this.module.show();
-      config = this.module.config;
-      crumbs = crumbs.splice(2);
-      if (crumbs.length > 0) {
-        for (i = 0, len = crumbs.length; i < len; i++) {
-          crumb = crumbs[i];
-          if (crumb === 'new') {
-            return this.module.showView(null, config, 'New');
+      ref1 = params.nestedListNames;
+      for (i = 0, len = ref1.length; i < len; i++) {
+        listName = ref1[i];
+        list = this.module.nestedLists[listName];
+        if (list) {
+          if (list.showWithParent) {
+            this.module.activeList.updateItems();
           }
-          if (crumb === 'view') {
-            objectId = _last(crumbs);
-            return this.module.showViewByObjectId(objectId, config);
-          }
-          config = config.items[crumb];
-          if (config.objectStore) {
-            return this.module.showViewByObjectId('', config, crumb.titleize());
-          } else {
-            this.module.showList(crumb);
-          }
+          this.module.showList(listName);
         }
       }
+      this.module.activeList.updateItems();
+    } else {
+      this.module.destroyView();
+      ref2 = this.module.nestedLists;
+      for (name in ref2) {
+        list = ref2[name];
+        if (params.path.indexOf(list.path) !== 0) {
+          list.hide();
+        }
+      }
+      update_active_list_items = true;
+      if (params.showView || params.showNew) {
+        update_active_list_items = false;
+      }
+      if (this.module.activeList.path === params.path) {
+        update_active_list_items = false;
+      }
+      if (this.module.activeList.path.indexOf(params.path) === 0) {
+        update_active_list_items = false;
+      }
+      this.module.showList(params.lastNestedListName);
+      if (update_active_list_items) {
+        this.module.activeList.updateItems();
+      }
+    }
+    if (params.config == null) {
+      params.config = this.module.activeList.config;
+    }
+    if (params.showNew) {
+      console.log('show view');
+      return this.module.showView(null, params.config, 'New');
+    } else if (params.showView) {
+      console.log('show view');
+      return this.module.showViewByObjectId(params.objectId, params.config);
     }
   }
 };
@@ -2795,7 +2874,7 @@ this.Chr = (function() {
   };
 
   Chr.prototype._add_menu_item = function(moduleName, title) {
-    return this.$mainMenu.append("<a href='#/" + moduleName + "'>" + title + "</a>");
+    return this.$mainMenu.append("<a href='#/" + moduleName + "' class='menu-" + moduleName + "'>" + title + "</a>");
   };
 
   Chr.prototype._bind_hashchange = function() {
@@ -2804,7 +2883,7 @@ this.Chr = (function() {
       return function() {
         _this._unset_active_items();
         if (!_this.skipRoute) {
-          _this._route(window.location.hash);
+          _this._route();
         }
         _this.skipRoute = false;
         return $(_this).trigger('hashchange');
@@ -2819,7 +2898,7 @@ this.Chr = (function() {
 
   Chr.prototype._on_start = function() {
     if (location.hash !== '') {
-      this._route(location.hash);
+      this._route();
       return $(this).trigger('hashchange');
     }
     if (!this.isMobile()) {
@@ -2889,11 +2968,6 @@ this.Module = (function() {
     }
   }
 
-  Module.prototype._destroy_view = function() {
-    var ref;
-    return (ref = this.view) != null ? ref.destroy() : void 0;
-  };
-
   Module.prototype.addNestedList = function(name, config, parentList) {
     var path;
     path = [parentList.path, name].join('/');
@@ -2902,7 +2976,6 @@ this.Module = (function() {
 
   Module.prototype.showList = function(name) {
     var key, list, ref;
-    this._destroy_view();
     if (!name) {
       ref = this.nestedLists;
       for (key in ref) {
@@ -2913,20 +2986,13 @@ this.Module = (function() {
     } else {
       this.activeList = this.nestedLists[name];
     }
-    this.activeList.show();
-    return this.activeList.updateItems();
+    return this.activeList.show();
   };
 
   Module.prototype.showView = function(object, config, title) {
-    var newView;
-    newView = new View(this, config, this.activeList.path, object, title);
-    this.chr.$el.append(newView.$el);
-    return newView.show((function(_this) {
-      return function() {
-        _this._destroy_view();
-        return _this.view = newView;
-      };
-    })(this));
+    this.view = new View(this, config, this.activeList.path, object, title);
+    this.chr.$el.append(this.view.$el);
+    return this.view.show();
   };
 
   Module.prototype.showViewByObjectId = function(objectId, config, title) {
@@ -2958,8 +3024,13 @@ this.Module = (function() {
   };
 
   Module.prototype.hide = function() {
-    this._destroy_view();
+    this.destroyView();
     return this.$el.hide();
+  };
+
+  Module.prototype.destroyView = function() {
+    var ref;
+    return (ref = this.view) != null ? ref.destroy() : void 0;
   };
 
   return Module;
@@ -2981,7 +3052,7 @@ this.listConfig = {
         this.module.addNestedList(slug, config, this);
       }
       this._add_item(this.path + "/" + slug, object, 0, config);
-      results.push(this.configItemsCount += 1);
+      results.push(this._config_items_count += 1);
     }
     return results;
   },
@@ -3184,10 +3255,10 @@ this.List = (function() {
     this.name = name;
     this.config = config1;
     this.parentList = parentList;
-    this.configItemsCount = 0;
     this.items = {};
     this.title = (ref = this.config.title) != null ? ref : this.name.titleize();
     this.itemClass = (ref1 = this.config.itemClass) != null ? ref1 : Item;
+    this._config_items_count = 0;
     this.showWithParent = (ref2 = this.config.showWithParent) != null ? ref2 : false;
     this.$el = $("<div class='list " + this.name + "' style='display:none;'>");
     this.module.$el.append(this.$el);
@@ -3199,9 +3270,9 @@ this.List = (function() {
     this.$header = $("<header></header>");
     this.$el.append(this.$header);
     if (this.parentList) {
-      this.$backBtn = $("<a href='" + this.parentList.path + "' class='back'></a>");
+      this.$backBtn = $("<a href='" + this.parentList.path + "' class='back'>Close</a>");
     } else {
-      this.$backBtn = $("<a href='#/' class='back'></a>");
+      this.$backBtn = $("<a href='#/' class='back'>Close</a>");
     }
     this.$header.prepend(this.$backBtn);
     this.$header.append("<div class='spinner'></div>");
@@ -3253,7 +3324,7 @@ this.List = (function() {
   };
 
   List.prototype._update_item_position = function(item, position) {
-    position = this.configItemsCount + position;
+    position = this._config_items_count + position;
     if (position === 0) {
       return this.$items.prepend(item.$el);
     } else {
@@ -3278,7 +3349,6 @@ this.List = (function() {
     return this.$el.show(0, (function(_this) {
       return function() {
         var base;
-        _this.$items.scrollTop(0);
         if (typeof (base = _this.config).onListShow === "function") {
           base.onListShow(_this);
         }
@@ -3291,6 +3361,7 @@ this.List = (function() {
     if (!this.config.disableUpdateItems) {
       if (this.config.arrayStore) {
         this.showSpinner();
+        this.$items.scrollTop(0);
         return this.config.arrayStore.reset();
       }
     }
@@ -3357,9 +3428,9 @@ this.Item = (function() {
   };
 
   Item.prototype._render_thumbnail = function() {
-    var imageUrl;
+    var base, imageUrl, ref;
     if (this.config.itemThumbnail) {
-      imageUrl = this.config.itemThumbnail(this.object);
+      imageUrl = (ref = typeof (base = this.config).itemThumbnail === "function" ? base.itemThumbnail(this.object) : void 0) != null ? ref : this.object[this.config.itemThumbnail];
       if (imageUrl !== '' && !imageUrl.endsWith('_old_')) {
         this.$thumbnail = $("<div class='item-thumbnail'><img src='" + imageUrl + "' /></div>");
         this.$el.append(this.$thumbnail);
@@ -3502,7 +3573,7 @@ this.View = (function() {
             _this.object = object;
             _this._save_success();
             _this._add_form_delete_button();
-            return chr.updateHash("#/" + _this.closePath + "/view/" + _this.object._id, true);
+            return chr.updateHash(_this.closePath + "/view/" + _this.object._id, true);
           };
         })(this),
         onError: (function(_this) {
@@ -3520,7 +3591,8 @@ this.View = (function() {
       return this.store.remove(this.object._id, {
         onSuccess: (function(_this) {
           return function() {
-            return chr.updateHash("#/" + _this.closePath);
+            chr.updateHash("" + _this.closePath, true);
+            return _this.destroy();
           };
         })(this),
         onError: function() {
@@ -4103,6 +4175,7 @@ this.InputString = (function() {
     this._add_label();
     this._add_input();
     this._add_placeholder();
+    this._add_disabled();
     return this;
   }
 
@@ -4162,6 +4235,13 @@ this.InputString = (function() {
     }
   };
 
+  InputString.prototype._add_disabled = function() {
+    if (this.config.disabled) {
+      this.$input.prop('disabled', true);
+      return this.$el.addClass('input-disabled');
+    }
+  };
+
   InputString.prototype.initialize = function() {
     var base;
     return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
@@ -4218,14 +4298,13 @@ this.InputHidden = (function() {
     }
   };
 
+  InputHidden.prototype.showErrorMessage = function(message) {};
+
+  InputHidden.prototype.hideErrorMessage = function() {};
+
   InputHidden.prototype.initialize = function() {
     var base;
     return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
-  };
-
-  InputHidden.prototype.updateValue = function(value) {
-    this.value = value;
-    return this.$el.val(this._safe_value());
   };
 
   InputHidden.prototype.hash = function(hash) {
@@ -4236,9 +4315,10 @@ this.InputHidden = (function() {
     return hash;
   };
 
-  InputHidden.prototype.showErrorMessage = function(message) {};
-
-  InputHidden.prototype.hideErrorMessage = function() {};
+  InputHidden.prototype.updateValue = function(value) {
+    this.value = value;
+    return this.$el.val(this.value);
+  };
 
   return InputHidden;
 
@@ -4703,6 +4783,10 @@ this.InputSelect = (function(superClass) {
   InputSelect.prototype._add_input = function() {
     this.$input = $("<select name='" + this.name + "' id='" + this.name + "'></select>");
     this.$el.append(this.$input);
+    return this._add_options();
+  };
+
+  InputSelect.prototype._add_options = function() {
     if (this.config.optionsHashFieldName) {
       this.value = String(this.value);
       if (this.object) {
@@ -4713,10 +4797,6 @@ this.InputSelect = (function(superClass) {
         };
       }
     }
-    return this._add_options();
-  };
-
-  InputSelect.prototype._add_options = function() {
     if (this.config.collection) {
       return this._add_collection_options();
     } else if (this.config.optionsList) {
@@ -4768,8 +4848,11 @@ this.InputSelect = (function(superClass) {
     return this.$input.append($option);
   };
 
-  InputSelect.prototype.updateValue = function(value1) {
+  InputSelect.prototype.updateValue = function(value1, object) {
     this.value = value1;
+    this.object = object;
+    this.$input.html('');
+    this._add_options();
     return this.$input.val(this.value).prop('selected', true);
   };
 
@@ -5198,7 +5281,7 @@ this.RestArrayStore = (function(superClass) {
     if (callbacks.onError == null) {
       callbacks.onError = $.noop;
     }
-    return this._ajax('GET', id, {}, ((function(_this) {
+    return this._ajax('GET', id, null, ((function(_this) {
       return function(data) {
         return callbacks.onSuccess(data);
       };

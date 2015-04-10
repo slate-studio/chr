@@ -59,7 +59,7 @@ class @Chr
     window.onhashchange = =>
       @_unset_active_items()
 
-      if ! @skipRoute then @_route(window.location.hash)
+      if ! @skipRoute then @_route()
       @skipRoute = false
 
       $(this).trigger 'hashchange'
@@ -69,7 +69,7 @@ class @Chr
 
   _on_start: ->
     if location.hash != ''
-      @_route(location.hash)
+      @_route()
       return $(this).trigger('hashchange')
 
     if ! @isMobile()
