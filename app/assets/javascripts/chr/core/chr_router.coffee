@@ -29,7 +29,7 @@
       # do not update items when show view
       view_path = path.replace(@module.activeList.path, '')
 
-      if view_path.startsWith('/new/') || view_path.startsWith('/view/')
+      if view_path.startsWith('/view/') || view_path.endsWith('/new')
         update_list_items = false
 
 
