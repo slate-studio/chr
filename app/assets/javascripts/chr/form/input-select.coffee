@@ -19,7 +19,7 @@ class @InputSelect extends InputString
 
 
   _add_input: ->
-    @$input =$ """<select name='#{ @name }' id='#{ @name }'></select>"""
+    @$input =$ """<select name='#{ @name }'></select>"""
     @$el.append @$input
 
     @_add_options()

@@ -58,6 +58,7 @@ class @InputMarkdown extends InputString
     @session = @editor.getSession()
 
     @session.setValue(@$input.val())
+    @session.setUseWrapMode(true)
     @session.setMode("ace/mode/markdown")
 
     # options: https://github.com/ajaxorg/ace/wiki/Configuring-Ace
