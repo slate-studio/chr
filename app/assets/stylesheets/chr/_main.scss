@@ -10,7 +10,7 @@ html a { text-decoration: none; }
 
 
 /* Header ------------------------------------------------------------------ */
-.header          { height: 40px; background-color: $white; text-align: center;
+.header          { height: 40px; background-color: rgba(255,255,255,.9); text-align: center;
   .title         { @include truncate; display: inline-block; max-width: 70%; font-weight: 500; line-height: 2.5; }
   .back, .close  { @include header-back-arrow;                                                 }
   .new           { @include position(absolute, 0 0   null null); @extend .icon-plus;           }
@@ -71,7 +71,7 @@ html a { text-decoration: none; }
 .header       { @include position(fixed, 0 null null null); z-index: 10; width: 100%; }
 .view, .list  { @include position(absolute, 0 0 null 0); background-color: $white; z-index: 1; padding-top: 41px; min-height: 100%; }
 .list.scroll-lock { overflow: hidden; bottom: 0; }
-.content, .items  { padding-bottom: 5em; }
+.content, .items  { padding-bottom: 5em; position: relative; z-index: 0; }
 
 
 /* Tablet ------------------------------------------------------------------ */
@@ -84,6 +84,7 @@ html a { text-decoration: none; }
   .items,
   .content { @include position(absolute, 41px 0 0 0); @include scrollable(); }
 
+  .view .close { @include header-back-label; }
   .module .list:first-child .back { @include hide; }
 }
 
@@ -96,9 +97,9 @@ html a { text-decoration: none; }
   .list.list-aside { left: 22em; right: 0; width: auto;     }
   .list .header    { border-right: 1px solid $neutralColor; }
   .view            { left: 22em; @include border-shadow;    }
-  .view.fullsize   { left: 0em; box-shadow: none;           }
+  .view.fullsize   { left: 0em; @include no-border-shadow;  }
 
-  .list.list-aside .back, .view .close   { @include header-back-label; }
+  .list.list-aside .back { @include header-back-label; }
   .input-text textarea, .content, .items { @include custom-scrollbar;  }
 }
 

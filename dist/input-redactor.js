@@ -105,3 +105,59 @@
   };
 
 }(jQuery));
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.InputRedactor = (function(superClass) {
+  extend(InputRedactor, superClass);
+
+  function InputRedactor() {
+    return InputRedactor.__super__.constructor.apply(this, arguments);
+  }
+
+  InputRedactor.prototype._add_input = function() {
+    this.$el.css('opacity', 0);
+    this.$input = $("<textarea class='redactor' name='" + this.name + "' rows=1>" + (this._safe_value()) + "</textarea>");
+    return this.$el.append(this.$input);
+  };
+
+  InputRedactor.prototype.initialize = function() {
+    var base, base1, plugins, redactor_options;
+    plugins = [];
+    if (!chr.isMobile()) {
+      plugins.push('fixedtoolbar');
+    }
+    if (typeof Loft !== "undefined" && Loft !== null) {
+      plugins.push('loft');
+    }
+    redactor_options = {
+      focus: false,
+      imageFloatMargin: '20px',
+      buttonSource: true,
+      pastePlainText: true,
+      plugins: plugins,
+      buttons: ['html', 'formatting', 'bold', 'italic', 'deleted', 'unorderedlist', 'orderedlist', 'link']
+    };
+    if (chr.isMobile()) {
+      redactor_options.toolbarFixed = false;
+    }
+    if ((base = this.config).redactorOptions == null) {
+      base.redactorOptions = {};
+    }
+    $.extend(redactor_options, this.config.redactorOptions);
+    this.$input.redactor(redactor_options);
+    this.$el.css('opacity', 1);
+    return typeof (base1 = this.config).onInitialize === "function" ? base1.onInitialize(this) : void 0;
+  };
+
+  InputRedactor.prototype.updateValue = function(value) {
+    this.value = value;
+    return this.$input.redactor('code.set', this.value);
+  };
+
+  return InputRedactor;
+
+})(InputString);
+
+chr.formInputs['redactor'] = InputRedactor;

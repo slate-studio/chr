@@ -28,18 +28,15 @@
   _process_config_items: ->
     for slug, config of @config.items
       object =
-        _id:      slug
-        title:    config.title    ? slug.titleize()
-        subtitle: config.subtitle ? ''
+        _id:          slug
+        __title__:    config.title    ? slug.titleize()
+        __subtitle__: config.subtitle ? false
 
       item_type = 'nested_object'
 
       if config.items || config.arrayStore
         item_type = 'folder'
         @module.addNestedList(slug, config, this)
-
-      config.itemTitleField    = 'title'
-      config.itemSubtitleField = 'subtitle'
 
       @_add_item("#{ @path }/#{ slug }", object, 0, config, item_type)
       @_config_items_count += 1

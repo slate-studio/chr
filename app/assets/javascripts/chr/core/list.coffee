@@ -59,8 +59,6 @@ class @List
     @$items =$ "<div class='items'>"
     @$el.append @$items
 
-    # TODO: add shadow on scroll
-
     # header
     @$header =$ "<header class='header'></header>"
     @$el.append @$header

@@ -33,15 +33,15 @@ chr._bind_mobile_scroll = ->
     $viewport      = $(window)
 
     $viewport.scroll (e) =>
+      if ! @module then return
+
+      if @module.view then return
+
       scroll_top = $viewport.scrollTop()
+      @module.activeList.scrollCache = scroll_top
 
       # trigger next page loading only when scrolling to bottom
       if @lastScrollTop < scroll_top
-
-        if ! @module then return
-
-        if @module.view then return
-
         chr._load_next_page($viewport, @module.activeList, scroll_top)
 
       @lastScrollTop = scroll_top

@@ -67,6 +67,7 @@
 
     if params.backToMenu
       if @module
+        @module.activeList.scrollCache = 0
         @module.hide()
         @module = null
       return
@@ -88,8 +89,9 @@
       @module.destroyView()
 
       for name, list of @module.nestedLists
-        # hide all lists not in the path
+        # hide all lists not in the path and flush scroll cache for them
         if params.path.indexOf(list.path) != 0
+          list.scrollCache = 0
           list.hide()
 
       update_active_list_items = true
@@ -114,7 +116,6 @@
 
     params.config ?= @module.activeList.config
 
-
     # show view
     if params.showView
       @module.showView(params.objectId, params.config)
@@ -124,16 +125,16 @@
 
   # PUBLIC ================================================
 
-  # TODO: add code that saves scrollTop for lists, it's used
-  # when come back to list from view
   mobileListLock: (showView) ->
     if chr.isMobile()
       @module.rootList.$el.addClass('scroll-lock')
+
       for name, list of @module.nestedLists
         list.$el.addClass('scroll-lock')
 
       if ! showView
         @module.activeList.$el.removeClass('scroll-lock')
+        $(window).scrollTop( @module.activeList.scrollCache ? 0)
 
 
 

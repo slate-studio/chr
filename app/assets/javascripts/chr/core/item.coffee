@@ -24,7 +24,8 @@ class @Item
   # PRIVATE ===============================================
 
   _render_title: ->
-    title  = @object[@config.itemTitleField]
+    title  = @object.__title__ # title for @config.items
+    title ?= @object[@config.itemTitleField]
     title ?= _firstNonEmptyValue(@object)
     title ?= "No Title"
     title  = title.plainText()
@@ -34,12 +35,15 @@ class @Item
 
 
   _render_subtitle: ->
+    subtitle = @object.__subtitle__ # subtitle for @config.items
+
     if @config.itemSubtitleField
-      subtitle   = @object[@config.itemSubtitleField]
-      if subtitle != ''
-        @$subtitle =$ "<div class='item-subtitle'>#{ subtitle }</div>"
-        @$el.append(@$subtitle)
-        @$el.addClass 'has-subtitle'
+      subtitle ?= @object[@config.itemSubtitleField]
+
+    if subtitle
+      @$subtitle =$ "<div class='item-subtitle'>#{ subtitle }</div>"
+      @$el.append(@$subtitle)
+      @$el.addClass 'has-subtitle'
 
 
   _render_thumbnail: ->

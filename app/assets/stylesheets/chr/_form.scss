@@ -139,7 +139,7 @@
     label { display: inline; font-size: .8em; }
 
     &.empty {
-      img, a, label, input[type=checkbox] { display: none; }
+      img, a, label, input[type=checkbox] { @include hide; }
       input[type=file] { margin-top: .2em; }
     }
   }

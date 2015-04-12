@@ -13,7 +13,6 @@
 # Dependencies:
 #= require redactor
 #= require chr/vendor/redactor.fixedtoolbar
-#
 # -----------------------------------------------------------------------------
 
 class @InputRedactor extends InputString
@@ -28,8 +27,12 @@ class @InputRedactor extends InputString
 
   # PUBLIC ================================================
 
+  # TODO: fixed toolbar disabled on mobile
   initialize: ->
-    plugins = [ 'fixedtoolbar' ]
+    plugins = []
+
+    if ! chr.isMobile() then plugins.push('fixedtoolbar')
+
     if Loft? then plugins.push('loft')
 
     redactor_options =
@@ -39,6 +42,10 @@ class @InputRedactor extends InputString
       pastePlainText:   true
       plugins: plugins
       buttons: [ 'html', 'formatting', 'bold', 'italic', 'deleted', 'unorderedlist', 'orderedlist', 'link' ]
+
+    if chr.isMobile()
+      redactor_options.toolbarFixed = false
+      # redactor_options.toolbarFixedTopOffset = 40
 
     @config.redactorOptions ?= {}
     $.extend(redactor_options, @config.redactorOptions)

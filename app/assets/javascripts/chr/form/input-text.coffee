@@ -27,7 +27,6 @@ class @InputText extends InputString
   # PUBLIC ================================================
 
   initialize: ->
-    # TODO: refactor a bit plugin code so there is no blink while jumping from object to object
     @$input.textareaAutoSize()
 
     @config.onInitialize?(this)
