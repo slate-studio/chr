@@ -1,62 +1,63 @@
-/* Mixins ------------------------------------------------------------------ */
 @mixin absolutePosition($coordinates: null null null null) {
   position: absolute; top: nth($coordinates, 1); right: nth($coordinates, 2); bottom: nth($coordinates, 3); left: nth($coordinates, 4); }
 
+/* Mixins ------------------------------------------------------------------ */
 
-@mixin truncate {
-  text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+@mixin antialiased { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
+@mixin hide { display: none; }
 
-@mixin user-select-none {
-  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none;
-}
+@mixin truncate { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 
+@mixin no-focus-outline { &:focus { outline: none; } }
 
-@mixin border($color) {
-  &:after { content: ''; display: block; height: 1px;
-            background-color: $color; @include position(absolute, 0px 0px null 1em); }
-}
-
-
-@mixin noBorder { &:after { display: none; } }
-
-
-@mixin headerBackArrow {
-  @include absolutePosition(0 inherit inherit 0);
-  @extend .icon-back;
-  overflow: hidden; height: 41px;
-}
-
-
-@mixin headerBackArrowWithText {
-  @include absolutePosition(0 inherit inherit 1em);
-  @include headerButton;
-  width: auto;
-  &:before { display: none; }
-}
-
-
-@mixin noFocus { &:focus { outline: none; } }
-
-
-@mixin customScrollbar {
-  &::-webkit-scrollbar { width: 6px; background-color: $neutralColor; }
-  &::-webkit-scrollbar-thumb { background-color: $contrastColor; border-radius: 3px; }
-}
-
+@mixin no-outline { @include no-focus-outline; outline: none; border: none; }
 
 @mixin scrollable { overflow: hidden; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
 
+@mixin border-shadow { box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); }
 
-@mixin headerButton($color: $positiveColor) {
-  color: $color; &:hover { opacity: .5; }
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar       { width: 6px; background-color: $neutralColor;          }
+  &::-webkit-scrollbar-thumb { background-color: $contrastColor; border-radius: 3px; }
+}
+
+@mixin header-button($color: $positiveColor) {
+  display: inline-block; height: 40px; line-height: 2.5; color: $color;
+  @include no-focus-outline; &:hover { opacity: .5; }
+}
+
+@mixin header-back-arrow { @include position(absolute, 0 null null 0); @extend .icon-back; overflow: hidden; height: 40px; }
+
+@mixin header-back-label {
+  @include position(absolute, 0 null null 1em); @include header-button; width: auto; &:before { @include hide; }
 }
 
 
-@mixin leftBorderShadow { box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); }
+/* Menu Title --------------------------------------------- */
+@mixin menu-title($color) {
+   display: block; position: relative; padding: 1.5em 0 .5em 1em; font-weight: 800; color: $color;
+}
 
 
-@mixin switchControl() {
+/* Menu Item & List Item ---------------------------------- */
+@mixin bottom-border($color) {
+  &:after { content: ''; display: block; height: 1px; background-color: $color;
+            @include position(absolute, null 0px 0px 1em); }
+}
+
+@mixin no-bottom-border { &:after { @include hide; } }
+
+@mixin list-item($color, $activeBgColor, $borderColor) {
+  display: block; position: relative; padding: 1em; color: $color; font-weight: 300;
+  margin-top: -1px; @include bottom-border($borderColor);
+  &.active     { background-color: $activeBgColor; z-index: 1; }
+  &:last-child { @include no-bottom-border; }
+}
+
+
+/* Switch ------------------------------------------------- */
+@mixin switch {
   $switch-width: 52px;
   $switch-padding: 2px;
   $switch-height: 32px;
@@ -132,6 +133,7 @@
 }
 
 
+/* Spinner ------------------------------------------------ */
 @mixin spinner {
   border:      .25em solid rgba($contrastColor, 0.2);
   border-left: .25em solid $contrastColor;

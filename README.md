@@ -39,7 +39,7 @@ Styles setup:
 
 ## Documentation
 
-* [Start with Rails](docs/rails.md)
+* [Rails Setup](docs/rails.md)
 * [Bootstrap Data](docs/bootstrap.md)
 
 More documentation and samples comming soon...

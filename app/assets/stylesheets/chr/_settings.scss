@@ -7,3 +7,9 @@ $neutralColor:   rgb(246,246,246) !default;
 $contrastColor:  rgb(230,230,230) !default;
 $white:          rgb(255,255,255) !default;
 $black:          #333 !default;
+
+$fontFamily: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+
+/* Layouts ----------------------------------------------------------------- */
+$tablet:  "screen and (min-width:768px)";
+$desktop: "screen and (min-width:1024px)";

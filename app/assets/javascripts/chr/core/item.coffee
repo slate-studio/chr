@@ -66,11 +66,11 @@ class @Item
   # PUBLIC ================================================
 
   render: ->
-    @$el.html('').removeClass('item-folder has-subtitle has-thumbnail')
+    @$el.html('').removeClass('is-folder has-subtitle has-thumbnail')
     @_render_title()
 
     if @_is_folder()
-      @$el.addClass('item-folder')
+      @$el.addClass('is-folder')
       @$el.append $("<div class='icon-folder'></div>")
     else
       @_render_subtitle()

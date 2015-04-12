@@ -1,11 +1,10 @@
 /* Form -------------------------------------------------------------------- */
 .view {
-  form  { @include absolutePosition(42px 0 0 0); @include scrollable(); z-index: 0; padding-bottom: 5em; }
   form  { color: $black; }
   label { display: block; }
 
   .input-stacked {
-    @include position(relative); @include border($neutralColor); &:first-child { @include noBorder(); }
+    @include position(relative); @include bottom-border($neutralColor); &:first-child { @include no-bottom-border; }
     padding: .5em 1em .9em;
 
     &.input-text { min-height: 82px; } // workaround for empty or oneline textareas

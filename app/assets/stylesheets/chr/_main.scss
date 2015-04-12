@@ -1,0 +1,106 @@
+/* Global ------------------------------------------------------------------ */
+*, *:before, *:after { box-sizing: border-box; }
+html { @include antialiased; font-family: $fontFamily; }
+html a { text-decoration: none; }
+
+
+/* Menu -------------------------------------------------------------------- */
+.menu { font-size: .8em; letter-spacing: 1px; text-transform: uppercase; }
+.menu:before { @include menu-title($contrastColor); content: 'CHARACTER'; }
+
+
+/* Header ------------------------------------------------------------------ */
+.header          { height: 40px; background-color: $white; text-align: center;
+  .title         { @include truncate; display: inline-block; max-width: 70%; font-weight: 500; line-height: 2.5; }
+  .back, .close  { @include header-back-arrow;                                                 }
+  .new           { @include position(absolute, 0 0   null null); @extend .icon-plus;           }
+  .new + .search { @include position(absolute, 0 40px inherit inherit);                        }
+  .save          { @include position(absolute, 0 1em null null); @include header-button;       }
+  .spinner       { @include spinner; @include hide; position: absolute; margin: 6px 0 0 -36px; }
+}
+
+.show-spinner .spinner { display: inline-block; }
+
+
+/* Item -------------------------------------------------------------------- */
+.menu a, .item { @include list-item($black, $neutralColor, $neutralColor); }
+
+.item .icon-reorder { top: 50%; margin-top: -20px; right: 0; }
+
+.item.is-folder                              { font-weight: 400;       }
+.item.has-subtitle                           { padding: .6em 1em;      }
+.item.has-thumbnail                          { padding-left: 4.1em;    }
+.item.has-thumbnail .item-title              { line-height: 2.15;      }
+.item.has-thumbnail.has-subtitle             { padding: 1em 1em .75em; }
+.item.has-thumbnail.has-subtitle .item-title { line-height: 1.2;       }
+.item.reorderable                            { padding-right: 2.5em;   }
+
+.item-title         { @include truncate;                                                         }
+.item-subtitle      { @include truncate; color: $stableColor; font-size: .8em; line-height: 1.5; }
+.item-thumbnail     { @include absolutePosition(.5em 0 0 .5em); width: 3.1em; height: 3.1em;     }
+.item-thumbnail img { width: 100%; border-radius: 25px;                                          }
+
+
+/* Search ------------------------------------------------------------------ */
+.search { @include position(absolute, 0 0 null null); width: 40px; height: 40px; overflow: hidden;
+  .icon { @include position(absolute, 0 null null 0); @extend .icon-search; }
+  input, .cancel { @include hide; }
+}
+
+.list-search {
+  .item.is-folder { @include hide; }
+  .new + .search  { @include position(absolute, 0 0 null 0); }
+  .search   { @include position(absolute, 0 null null null); width: 100%; background-color: $white;
+    .cancel { display: inline; @include header-button; @include absolutePosition(0 1em null null);    }
+    input   { display: block; width: 100%; height: 40px; padding: 0 5em 0 2.5em; @include no-outline; }
+    .icon   { &:hover { opacity: 1; } &:before { border-color: $stableColor; } &:after { background-color: $stableColor; } }
+  }
+}
+
+
+/* Mobile ------------------------------------------------------------------ */
+.header       { @include position(fixed, 0 null null null); z-index: 10; width: 100%; }
+.view, .list  { @include absolutePosition(0 0 null 0); background-color: $white; z-index: 1; padding-top: 40px; min-height: 100%; }
+.view, .items { padding-bottom: 5em; }
+.list.scroll-lock { overflow: hidden; bottom: 0; }
+
+
+/* Tablet ------------------------------------------------------------------ */
+@media #{$tablet} {
+//html, body, .view { overflow: hidden; }
+// .sidebar { @include absolutePosition(0 0 0 0); z-index: 1; }
+// .module  { @include absolutePosition(0 0 0 0); z-index: 2; }
+// .view    { @include absolutePosition(0 0 0 0); z-index: 3; background-color: #fff; }
+// .list    { @include absolutePosition(0 0 0 0); z-index: 0; overflow: hidden; background-color: #fff; }
+//.view, .list { header { position: relative; z-index: 1; } }
+//.items  { @include absolutePosition(42px 0 0 0); @include scrollable(); padding-bottom: 5em; }
+// form  { @include absolutePosition(42px 0 0 0); @include scrollable(); z-index: 0; padding-bottom: 5em; }
+
+
+  .sidebar                        { right: inherit; width: 9em; }
+  .module                         { left: 9em; @include border-shadow; }
+  .module .list:first-child .back { @include hide; }
+}
+
+
+/* Desktop ----------------------------------------------------------------- */
+@media #{$desktop} {
+  .sidebar         { width: 10em; }
+  .module          { left:  10em; }
+  .list            { width: 22em; }
+  .list.list-aside { left: 22em; right: 0; width: auto;     }
+  .view            { left: 22em; @include border-shadow; }
+  .view.fullsize   { left: 0em; box-shadow: none;           }
+
+  .list header, .list .items { font-size: .9em; }
+  .list.list-aside header    { font-size: 1em;  }
+
+  .list header { line-height: 2.9em; border-right: 1px solid $neutralColor; }
+
+  .list.list-aside header .back, .view header .close { @include header-back-label;  }
+  .view .input-stacked textarea, .view > form, .list .items { @include custom-scrollbar; }
+}
+
+
+
+

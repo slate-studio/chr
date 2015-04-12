@@ -43,15 +43,15 @@ class @InputHtml extends InputString
   # PUBLIC ================================================
 
   initialize: ->
-    @editor  = ace.edit(@$editor.get(0))
-    @session = @editor.getSession()
+    @editor = ace.edit(@$editor.get(0))
+    @editor.$blockScrolling = Infinity
 
+    @session = @editor.getSession()
     @session.setValue(@$input.val())
     @session.setUseWrapMode(true)
     @session.setMode("ace/mode/html")
 
     # ace options: https://github.com/ajaxorg/ace/wiki/Configuring-Ace
-    @editor.$blockScrolling = Infinity # disable warning
     @editor.setOptions
       autoScrollEditorIntoView: true
       minLines:                 5

@@ -19,7 +19,7 @@
     params =
       path:               location.hash
       module:             null
-      moduleMissing:      false
+      backToMenu:         false
       moduleHasChanged:   false
       nestedListNames:    []
       lastNestedListName: null
@@ -30,7 +30,7 @@
     crumbs                  = params.path.split('/')
     module                  = @modules[crumbs[1]]
     params.module           = module
-    params.moduleMissing    = if module then false else true
+    params.backToMenu       = if module then false else true
     params.moduleHasChanged = ( @module != module )
 
     crumbs = crumbs.splice(2)
@@ -65,7 +65,10 @@
   _route: ->
     params = @_parse_path()
 
-    if params.moduleMissing
+    if params.backToMenu
+      if @module
+        @module.hide()
+        @module = null
       return
 
     if params.moduleHasChanged
@@ -74,20 +77,12 @@
 
       # show module, root list becomes active
       @module.show()
+      @module.activeList.updateItems()
 
       # show nested lists
       for listName in params.nestedListNames
-
-        list = @module.nestedLists[listName]
-
-        if list
-          # if nested list shown with parent, update parent
-          if list.showWithParent
-            @module.activeList.updateItems()
-          @module.showList(listName)
-
-      # update active list (root list or last nested shown)
-      @module.activeList.updateItems()
+        @module.showList(listName)
+        @module.activeList.updateItems()
 
     else
       @module.destroyView()
@@ -119,9 +114,22 @@
 
     params.config ?= @module.activeList.config
 
+
     # show view
     if params.showView
       @module.showView(params.objectId, params.config)
+
+    @_mobile_list_lock(params.showView)
+
+
+  _mobile_list_lock: (showView) ->
+    if chr.isMobile()
+      @module.rootList.$el.addClass('scroll-lock')
+      for name, list of @module.nestedLists
+        list.$el.addClass('scroll-lock')
+
+      if ! showView
+        @module.activeList.$el.removeClass('scroll-lock')
 
 
 

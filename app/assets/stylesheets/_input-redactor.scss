@@ -15,7 +15,7 @@
 
 
 // scrollbars
-.redactor-editor, textarea.redactor { @include customScrollbar(); }
+.redactor-editor, textarea.redactor { @include custom-scrollbar; }
 
 
 // line-height issue fix

@@ -20,7 +20,7 @@ class @Form
   constructor: (@object, @config) ->
     @groups    = []
     @inputs    = {}
-    @$el       = $(@config.rootEl || '<form>')
+    @$el       = $(@config.rootEl || "<form class='form'>")
     @schema    = @_get_schema()
     @isRemoved = false
 

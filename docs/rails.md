@@ -1,6 +1,6 @@
 # Character
 
-## Rails
+## Rails Setup
 
 An example of admin implementation setup for [Rails](https://github.com/rails/rails) app that uses [Mongoid](https://github.com/mongoid/mongoid) stack.
 
@@ -194,7 +194,7 @@ Last import in the code above is optional. But here is a default source for it a
   margin: 2em; max-width: 18em;
 
   h2 { text-transform: uppercase; color: $black; }
-  input { @include noFocus(); }
+  input { @include no-outline; }
   label { color: $black; }
   .input { margin-bottom: .75em; }
 

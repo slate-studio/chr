@@ -1,10 +1,9 @@
 @import "bourbon";
 
-@import "core/settings";
-@import "core/mixins";
-@import "core/icons";
-@import "core/main";
-@import "core/responsive";
+@import "chr/settings";
+@import "chr/mixins";
+@import "chr/icons";
+@import "chr/main";
 
 @import "form/form";
 @import "form/input-checkbox";
@@ -13,3 +12,7 @@
 @import "form/input-form";
 @import "form/input-list";
 @import "form/input-string";
+
+
+
+

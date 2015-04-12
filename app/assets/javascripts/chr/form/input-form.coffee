@@ -137,6 +137,13 @@ class @InputForm
       @_add_form_reorder_button(form)
       prevForm = _last(@forms)
       position = if prevForm then prevForm.inputs[@config.sortBy].value + 1 else 1
+
+      # having an issue here for scenario when no nested object are there for new object
+      # form.inputs doesn't include sortBy field
+      console.log @config
+      console.log @config.sortBy
+      console.log form.inputs
+
       form.inputs[@config.sortBy].updateValue(position)
 
     @forms.push(form)

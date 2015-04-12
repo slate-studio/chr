@@ -11,7 +11,7 @@
 
 .view .input-switch { padding-top: .75em;
   .label  { cursor: pointer; }
-  .switch { @include switchControl(); float: right; }
+  .switch { @include switch; float: right; }
 }
 
 

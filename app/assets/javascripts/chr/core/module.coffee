@@ -77,6 +77,7 @@ class @Module
 
   destroyView: ->
     @view?.destroy()
+    @view = null
 
 
 

@@ -58,7 +58,7 @@ class @List
     @$el.append @$items
 
     # header
-    @$header =$ "<header></header>"
+    @$header =$ "<header class='header'></header>"
     @$el.append @$header
 
     # back

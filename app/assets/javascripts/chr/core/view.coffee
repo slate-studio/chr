@@ -35,7 +35,7 @@ class @View
       @$el.addClass 'fullsize'
 
     # header
-    @$header  =$ "<header></header>"
+    @$header  =$ "<header class='header'></header>"
     @$spinner =$ "<div class='spinner'></div>"
     @$title   =$ "<div class='title'></div>"
     @$header.append @$spinner
@@ -49,11 +49,19 @@ class @View
 
   # PRIVATE ===============================================
 
-  _set_title: (reset=false) ->
-    if reset && @config.arrayStore then @title = null
-    title  = @title
-    title ?= @object[@config.itemTitleField] if @config.itemTitleField
-    title ?= _firstNonEmptyValue(@object)
+  _set_title: ->
+    if ! @object
+      title = "New"
+
+    else if @config.objectStore
+      title  = @config.title
+      title ?= _firstNonEmptyValue(@object)
+
+    else
+      if @config.itemTitleField
+        title = @object[@config.itemTitleField]
+      title ?= _firstNonEmptyValue(@object)
+
     @$title.html(title.plainText())
 
 
@@ -66,7 +74,7 @@ class @View
 
   _save_success: ->
     @$el.removeClass('view-saving')
-    @_set_title(true)
+    @_set_title()
     @form.updateValues(@object)
 
 
@@ -156,11 +164,11 @@ class @View
     # new for array store
     if objectId == null
       @object = null
-      @title  = "New"
-      @_load_success()
+      @_render_form()
 
     # object store
     else if objectId == ''
+      @_set_title()
       @store.loadObject(callbacks)
 
     # array store
