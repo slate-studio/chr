@@ -9,14 +9,39 @@
 @listConfig =
   # PRIVATE ===============================================
 
+  _add_item: (path, object, position, config, type) ->
+    item = new @itemClass(@module, path, object, config, type)
+    @items[object._id] = item
+    @_update_item_position(item, position)
+
+
+  _update_item_position: (item, position) ->
+    # skip static items in the head of list
+    position = @_config_items_count + position
+    if position == 0
+      @$items.prepend(item.$el)
+    else
+      @$items.append(item.$el.hide())
+      $(@$items.children()[position - 1]).after(item.$el.show())
+
+
   _process_config_items: ->
     for slug, config of @config.items
-      object = { _id: slug, _title: config.title ? slug.titleize() }
+      object =
+        _id:      slug
+        title:    config.title    ? slug.titleize()
+        subtitle: config.subtitle ? ''
 
-      if config.items or config.arrayStore
+      item_type = 'nested_object'
+
+      if config.items || config.arrayStore
+        item_type = 'folder'
         @module.addNestedList(slug, config, this)
 
-      @_add_item("#{ @path }/#{ slug }", object, 0, config)
+      config.itemTitleField    = 'title'
+      config.itemSubtitleField = 'subtitle'
+
+      @_add_item("#{ @path }/#{ slug }", object, 0, config, item_type)
       @_config_items_count += 1
 
 
@@ -24,7 +49,7 @@
     # item added
     @config.arrayStore.on 'object_added', (e, data) =>
 
-      @_add_item("#{ @path }/view/#{ data.object._id }", data.object, data.position, @config)
+      @_add_item("#{ @path }/view/#{ data.object._id }", data.object, data.position, @config, 'object')
 
     if @config.objects
       @config.arrayStore.addObjects(@config.objects)

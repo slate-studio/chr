@@ -16,31 +16,21 @@
 #
 # -----------------------------------------------------------------------------
 class @Item
-  constructor: (@module, @path, @object, @config) ->
-    @$el =$ """<a class='item' href='#{ @path }' data-id='#{ @object._id }' data-title=''></a>"""
+  constructor: (@module, @path, @object, @config, @type) ->
+    @$el =$ """<a class='item is-#{ @type }' href='#{ @path }' data-id='#{ @object._id }'></a>"""
     @render()
 
 
   # PRIVATE ===============================================
 
-  _is_folder: ->
-    # update this logic as it's not reliable
-    if @object._title then true else false
-
-
   _render_title: ->
-    # nested list title predefined in config (or slug based)
-    title  = @object._title
-    # based on config
-    title ?= @object[@config.itemTitleField]
-    # auto-generated: first non empty value
+    title  = @object[@config.itemTitleField]
     title ?= _firstNonEmptyValue(@object)
     title ?= "No Title"
     title  = title.plainText()
 
     @$title =$ "<div class='item-title'>#{ title }</div>"
     @$el.append(@$title)
-    @$el.attr('data-title', title)
 
 
   _render_subtitle: ->
@@ -66,14 +56,15 @@ class @Item
   # PUBLIC ================================================
 
   render: ->
-    @$el.html('').removeClass('is-folder has-subtitle has-thumbnail')
-    @_render_title()
+    @$el.html('').removeClass('has-subtitle has-thumbnail')
 
-    if @_is_folder()
-      @$el.addClass('is-folder')
+    @_render_title()
+    @_render_subtitle()
+
+    if @type == 'folder'
       @$el.append $("<div class='icon-folder'></div>")
-    else
-      @_render_subtitle()
+
+    if @type == 'object'
       @_render_thumbnail()
 
       if @config.arrayStore and @config.arrayStore.reorderable

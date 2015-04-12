@@ -11,6 +11,8 @@
 # -----------------------------------------------------------------------------
 #
 # Configuration options:
+#   title              - list title
+#   subtitle           - list subtitle
 #   itemClass          - item class to be used instead of default one
 #   itemTitleField     - object attributes name for list item title
 #   itemSubtitleField  - object attributes name for list item subtitle
@@ -57,6 +59,8 @@ class @List
     @$items =$ "<div class='items'>"
     @$el.append @$items
 
+    # TODO: add shadow on scroll
+
     # header
     @$header =$ "<header class='header'></header>"
     @$el.append @$header
@@ -98,22 +102,6 @@ class @List
         itemPath = $(a).attr('href')
         if hash.startsWith(itemPath)
           return $(a).addClass('active')
-
-
-  _add_item: (path, object, position, config) ->
-    item = new @itemClass(@module, path, object, config)
-    @items[object._id] = item
-    @_update_item_position(item, position)
-
-
-  _update_item_position: (item, position) ->
-    # skip static items in the head of list
-    position = @_config_items_count + position
-    if position == 0
-      @$items.prepend(item.$el)
-    else
-      @$items.append(item.$el.hide())
-      $(@$items.children()[position - 1]).after(item.$el.show())
 
 
   # PUBLIC ================================================

@@ -46,6 +46,10 @@ class @View
     @$closeBtn =$ "<a href='#{ @closePath }' class='close'>Close</a>"
     @$header.append @$closeBtn
 
+    # content
+    @$content =$ "<div class='content'></div>"
+    @$el.append @$content
+
 
   # PRIVATE ===============================================
 
@@ -65,11 +69,11 @@ class @View
     @$title.html(title.plainText())
 
 
-  _add_form_delete_button: ->
+  _add_delete_button: ->
     unless @config.disableDelete or @config.objectStore or (! @object)
-      @$deleteBtn =$ "<a href='#' class='delete'>Delete</a>"
+      @$deleteBtn =$ "<a href='#' class='view-delete'>Delete</a>"
       @$deleteBtn.on 'click', (e) => @_delete(e)
-      @form.$el.append @$deleteBtn
+      @$content.append @$deleteBtn
 
 
   _save_success: ->
@@ -100,7 +104,7 @@ class @View
       @store.push serializedFormObj,
         onSuccess: (@object) =>
           @_save_success()
-          @_add_form_delete_button()
+          @_add_delete_button()
           chr.updateHash("#{ @closePath }/view/#{ @object._id }", true)
         onError: (errors) => @_save_error('Item were not created.', errors)
 
@@ -109,7 +113,7 @@ class @View
     e.preventDefault()
     if confirm("Are you sure?")
       @store.remove @object._id,
-        onSuccess: => chr.updateHash("#{ @closePath }", true) ; @destroy()
+        onSuccess: => chr.updateHash("#{ @closePath }", true) ; @destroy() ; chr.mobileListLock(false)
         onError:   -> chr.showError('Can\'t delete object.')
 
 
@@ -126,10 +130,10 @@ class @View
 
     # form
     @form = new (@config.formClass ? Form)(@object, @config)
-    @$el.append @form.$el
-    @_add_form_delete_button()
+    @$content.append @form.$el
     @form.initializePlugins()
 
+    @_add_delete_button()
     @config.onViewShow?(@)
 
 

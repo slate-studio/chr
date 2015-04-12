@@ -1,6 +1,3 @@
-@mixin absolutePosition($coordinates: null null null null) {
-  position: absolute; top: nth($coordinates, 1); right: nth($coordinates, 2); bottom: nth($coordinates, 3); left: nth($coordinates, 4); }
-
 /* Mixins ------------------------------------------------------------------ */
 
 @mixin antialiased { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -29,9 +26,7 @@
 
 @mixin header-back-arrow { @include position(absolute, 0 null null 0); @extend .icon-back; overflow: hidden; height: 40px; }
 
-@mixin header-back-label {
-  @include position(absolute, 0 null null 1em); @include header-button; width: auto; &:before { @include hide; }
-}
+@mixin header-back-label { @include position(absolute, 0 null null 1em); @include header-button; width: auto; &:before { @include hide; } }
 
 
 /* Menu Title --------------------------------------------- */

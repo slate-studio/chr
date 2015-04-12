@@ -119,10 +119,14 @@
     if params.showView
       @module.showView(params.objectId, params.config)
 
-    @_mobile_list_lock(params.showView)
+    @mobileListLock(params.showView)
 
 
-  _mobile_list_lock: (showView) ->
+  # PUBLIC ================================================
+
+  # TODO: add code that saves scrollTop for lists, it's used
+  # when come back to list from view
+  mobileListLock: (showView) ->
     if chr.isMobile()
       @module.rootList.$el.addClass('scroll-lock')
       for name, list of @module.nestedLists
