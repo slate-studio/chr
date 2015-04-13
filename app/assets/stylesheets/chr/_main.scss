@@ -76,6 +76,7 @@ html a { text-decoration: none; }
 
 /* Tablet ------------------------------------------------------------------ */
 @media #{$tablet} {
+  body     { overflow: hidden; }
   .sidebar { @include position(absolute, 0 null 0 0); width: 9em; }
   .module  { @include position(absolute, 0 0 0 9em); z-index: 1; @include border-shadow; }
   .view,

@@ -40,6 +40,9 @@ chr._bind_mobile_scroll = ->
       scroll_top = $viewport.scrollTop()
       @module.activeList.scrollCache = scroll_top
 
+      # TODO: updated this for iphone (test with no mouse on safari),
+      # scenario: list is loaded and do not fill the page size
+
       # trigger next page loading only when scrolling to bottom
       if @lastScrollTop < scroll_top
         chr._load_next_page($viewport, @module.activeList, scroll_top)

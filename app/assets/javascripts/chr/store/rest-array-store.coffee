@@ -143,7 +143,8 @@ class @RestArrayStore extends ArrayStore
     callbacks.onError   ?= $.noop
 
     @_ajax 'GET', id, null, ((data) =>
-      callbacks.onSuccess(data)
+      object = @_normalize_object_id(data)
+      callbacks.onSuccess(object)
     ), callbacks.onError
 
 
@@ -247,7 +248,6 @@ class @RestArrayStore extends ArrayStore
         callbacks.onSuccess()
 
     ), callbacks.onError
-
 
 
 

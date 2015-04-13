@@ -4098,7 +4098,7 @@ this.InputForm = (function() {
   }
 
   InputForm.prototype._create_el = function() {
-    return this.$el = $("<div class='input-stacked nested-forms " + this.config.klassName + "'>");
+    return this.$el = $("<div class='input-stacked nested-forms input-" + this.config.klassName + "'>");
   };
 
   InputForm.prototype._add_label = function() {
@@ -4270,7 +4270,7 @@ this.InputString = (function() {
   };
 
   InputString.prototype._create_el = function() {
-    return this.$el = $("<label for='" + this.name + "' class='input-" + this.config.type + " input-" + this.config.klass + " " + this.config.klassName + "'>");
+    return this.$el = $("<label for='" + this.name + "' class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
   };
 
   InputString.prototype._add_label = function() {
@@ -4426,7 +4426,7 @@ this.InputCheckbox = (function(superClass) {
   }
 
   InputCheckbox.prototype._create_el = function() {
-    return this.$el = $("<label for='" + this.name + "' class='input-" + this.config.type + " input-" + this.config.klass + " " + this.config.klassName + "'>");
+    return this.$el = $("<label for='" + this.name + "' class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
   };
 
   InputCheckbox.prototype._safe_value = function() {
@@ -4558,7 +4558,7 @@ this.InputFile = (function(superClass) {
   }
 
   InputFile.prototype._create_el = function() {
-    return this.$el = $("<div class='input-" + this.config.type + " input-" + this.config.klass + " " + this.config.klassName + "'>");
+    return this.$el = $("<div class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
   };
 
   InputFile.prototype._add_input = function() {
@@ -4859,7 +4859,7 @@ this.InputSelect = (function(superClass) {
   }
 
   InputSelect.prototype._create_el = function() {
-    return this.$el = $("<div class='input-" + this.config.type + " input-" + this.config.klass + " " + this.config.klassName + "'>");
+    return this.$el = $("<div class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
   };
 
   InputSelect.prototype._add_input = function() {
@@ -5365,7 +5365,9 @@ this.RestArrayStore = (function(superClass) {
     }
     return this._ajax('GET', id, null, ((function(_this) {
       return function(data) {
-        return callbacks.onSuccess(data);
+        var object;
+        object = _this._normalize_object_id(data);
+        return callbacks.onSuccess(object);
       };
     })(this)), callbacks.onError);
   };

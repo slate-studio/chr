@@ -44,7 +44,7 @@ class @InputString
 
 
   _create_el: ->
-    @$el =$ "<label for='#{ @name }' class='input-#{ @config.type } input-#{ @config.klass } #{ @config.klassName }'>"
+    @$el =$ "<label for='#{ @name }' class='input-#{ @config.type } input-#{ @config.klass } input-#{ @config.klassName }'>"
 
 
   _add_label: ->

@@ -34,6 +34,7 @@
 /* Menu Title --------------------------------------------- */
 @mixin menu-title($color) {
    display: block; position: relative; padding: 1.5em 0 .75em 1em; font-weight: 800; color: $color;
+   // TODO: fix size for mobile, menu items too small
 }
 
 
