@@ -5,8 +5,8 @@
 .input-inverter,
 .input-redactor {
   .redactor-box     { margin-bottom: 0; }
-  .redactor-toolbar { box-shadow: none; border-bottom: 2px solid $contrastColor; }
-  .redactor-editor  { border: 1px solid $contrastColor; border-top: 0; }
+  .redactor-toolbar { box-shadow: none; border-bottom: 2px solid $neutralColor; }
+  .redactor-editor  { border: 0; padding: 1em 0 0 0; }
 }
 
 

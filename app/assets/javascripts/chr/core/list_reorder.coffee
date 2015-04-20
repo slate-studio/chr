@@ -59,7 +59,7 @@
       objectPositionValue = _getObjectNewPosition(e.target)
       objectId = $(e.target).attr('data-id')
       value = {}
-      value["[#{arrayStore.sortBy}"] = "#{ objectPositionValue }"
+      value["[#{arrayStore.sortBy}]"] = "#{ objectPositionValue }"
 
       arrayStore.update objectId, value,
         # error handling

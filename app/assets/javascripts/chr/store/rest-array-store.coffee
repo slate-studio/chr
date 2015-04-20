@@ -14,8 +14,6 @@
 #   pagination  - enable pagination for resource index, default `true`
 #   searchable  - enable resource search, default `false`
 #   urlParams   - additional parameter to be included into request
-#   sortBy      - sort objects by field
-#   sortReverse - reverse sorted objects
 #
 # Public methods:
 #   loadObject
