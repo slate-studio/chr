@@ -10,6 +10,7 @@
 # UTILS
 # -----------------------------------------------------------------------------
 # Public methods:
+#   _any(array)
 #   _last(array)
 #   _first(array)
 #   _firstNonEmptyValue(hash)
@@ -21,6 +22,9 @@
 #   String.plainText()
 #   include(class, hash)
 # -----------------------------------------------------------------------------
+
+# _any(array)
+@_any = (array) -> array.length > 0
 
 # _last(array)
 @_last = (array) -> array[array.length - 1]

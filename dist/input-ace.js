@@ -24828,7 +24828,8 @@ this.InputHtml = (function(superClass) {
 
   InputHtml.prototype._update_inputs = function() {
     this.value = this.editor.getSession().getValue();
-    return this.$input.val(this.value);
+    this.$input.val(this.value);
+    return this.$input.trigger('change');
   };
 
   InputHtml.prototype.initialize = function() {
@@ -24893,9 +24894,11 @@ this.InputMarkdown = (function(superClass) {
     var html, md_source;
     md_source = this.session.getValue();
     this.$input.val(md_source);
+    this.$input.trigger('change');
     if (this.$inputHtml) {
       html = marked(md_source);
-      return this.$inputHtml.val(html);
+      this.$inputHtml.val(html);
+      return this.$inputHtml.trigger('change');
     }
   };
 

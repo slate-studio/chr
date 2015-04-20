@@ -2654,6 +2654,10 @@ jQuery.fn.scrollParent = function() {
         };
     })();
 })(window.jQuery);
+this._any = function(array) {
+  return array.length > 0;
+};
+
 this._last = function(array) {
   return array[array.length - 1];
 };
@@ -3507,6 +3511,53 @@ this.Item = (function() {
 
 })();
 
+this.viewLocalStorage = {
+  _bind_form_change: function() {
+    if (typeof Storage) {
+      return this.form.$el.on('change', (function(_this) {
+        return function(e) {
+          return _this._cache_form_state();
+        };
+      })(this));
+    } else {
+      return console.log(':: local storage is not supported ::');
+    }
+  },
+  _cache_form_state: function() {
+    var hash, json;
+    hash = this.form.hash();
+    json = JSON.stringify(hash);
+    localStorage.setItem(this.path, json);
+    return this.$el.addClass('has-unsaved-changes');
+  },
+  _update_object_from_local_storage: function() {
+    var hash, json;
+    if (typeof Storage) {
+      json = localStorage.getItem(this.path);
+      if (json) {
+        hash = JSON.parse(json);
+        $.extend(this.object, hash);
+        return this.$el.addClass('has-unsaved-changes');
+      }
+    }
+  },
+  _changes_not_saved: function() {
+    if (typeof Storage) {
+      if (localStorage.getItem(this.path)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
+  _clear_local_storage_cache: function() {
+    if (typeof Storage) {
+      localStorage.removeItem(this.path);
+      return this.$el.removeClass('has-unsaved-changes');
+    }
+  }
+};
+
 this.View = (function() {
   function View(module, config, closePath, listName) {
     var ref;
@@ -3515,6 +3566,7 @@ this.View = (function() {
     this.closePath = closePath;
     this.listName = listName;
     this.store = (ref = this.config.arrayStore) != null ? ref : this.config.objectStore;
+    this.path = window.location.hash;
     this.$el = $("<section class='view " + this.listName + "'>");
     if (this.config.fullsizeView) {
       this.$el.addClass('fullsize');
@@ -3526,6 +3578,11 @@ this.View = (function() {
     this.$header.append(this.$title);
     this.$el.append(this.$header);
     this.$closeBtn = $("<a href='" + this.closePath + "' class='close'>Close</a>");
+    this.$closeBtn.on('click', (function(_this) {
+      return function(e) {
+        return _this._close(e);
+      };
+    })(this));
     this.$header.append(this.$closeBtn);
     this.$content = $("<div class='content'></div>");
     this.$el.append(this.$content);
@@ -3566,13 +3623,24 @@ this.View = (function() {
   View.prototype._save_success = function() {
     this.$el.removeClass('view-saving');
     this._set_title();
-    return this.form.updateValues(this.object);
+    this.form.updateValues(this.object);
+    return this._clear_local_storage_cache();
   };
 
   View.prototype._save_error = function(message, validationErrors) {
     this.$el.removeClass('view-saving');
     chr.showError(message);
     return this.form.showValidationErrors(validationErrors);
+  };
+
+  View.prototype._close = function(e) {
+    if (this._changes_not_saved()) {
+      if (confirm('Your changes are not saved, still want to close?')) {
+        return this._clear_local_storage_cache();
+      } else {
+        return e.preventDefault();
+      }
+    }
   };
 
   View.prototype._save = function(e) {
@@ -3619,6 +3687,7 @@ this.View = (function() {
       return this.store.remove(this.object._id, {
         onSuccess: (function(_this) {
           return function() {
+            _this._clear_local_storage_cache();
             chr.updateHash("" + _this.closePath, true);
             _this.destroy();
             return chr.mobileListLock(false);
@@ -3644,11 +3713,15 @@ this.View = (function() {
       })(this));
       this.$header.append(this.$saveBtn);
     }
+    this._update_object_from_local_storage();
     this.form = new ((ref = this.config.formClass) != null ? ref : Form)(this.object, this.config);
     this.$content.append(this.form.$el);
     this.form.initializePlugins();
     this._add_delete_button();
-    return typeof (base = this.config).onViewShow === "function" ? base.onViewShow(this) : void 0;
+    if (typeof (base = this.config).onViewShow === "function") {
+      base.onViewShow(this);
+    }
+    return this._bind_form_change();
   };
 
   View.prototype._show_error = function() {
@@ -3702,6 +3775,8 @@ this.View = (function() {
   return View;
 
 })();
+
+include(View, viewLocalStorage);
 
 this.Form = (function() {
   function Form(object1, config1) {
@@ -3760,6 +3835,7 @@ this.Form = (function() {
     results = [];
     for (fieldName in schema) {
       config = schema[fieldName];
+      config.fieldName = fieldName;
       if (config.type === 'group') {
         group = this._generate_inputs_group(fieldName, config);
         results.push($el.append(group.$el));
@@ -4182,16 +4258,17 @@ this.InputForm = (function() {
   };
 
   InputForm.prototype.hash = function(hash) {
-    var form, j, len, ref;
+    var form, j, len, objects, ref;
     if (hash == null) {
       hash = {};
     }
-    hash[this.config.klassName] = [];
+    objects = [];
     ref = this.forms;
     for (j = 0, len = ref.length; j < len; j++) {
       form = ref[j];
-      hash[this.config.klassName].push(form.hash());
+      objects.push(form.hash());
     }
+    hash[this.config.fieldName] = objects;
     return hash;
   };
 
@@ -4283,6 +4360,11 @@ this.InputString = (function() {
   InputString.prototype._add_input = function() {
     var data;
     this.$input = $("<input type='text' name='" + this.name + "' value='" + (this._safe_value()) + "' />");
+    this.$input.on('keyup', (function(_this) {
+      return function(e) {
+        return _this.$input.trigger('change');
+      };
+    })(this));
     this.$el.append(this.$input);
     if (this.config.options && $.isArray(this.config.options)) {
       data = new Bloodhound({
@@ -4616,6 +4698,13 @@ this.InputFile = (function(superClass) {
     return this._update_state();
   };
 
+  InputFile.prototype.hash = function(hash) {
+    if (hash == null) {
+      hash = {};
+    }
+    return hash;
+  };
+
   return InputFile;
 
 })(InputString);
@@ -4695,12 +4784,15 @@ this.InputList = (function(superClass) {
     name = this.config.namePrefix ? this.config.namePrefix + "[__LIST__" + this.config.target + "]" : "[__LIST__" + this.config.target + "]";
     this.$input = $("<input type='hidden' name='" + name + "' value='' />");
     this.$el.append(this.$input);
+    this.reorderContainerClass = this.config.klassName;
+    this.$items = $("<ul class='" + this.reorderContainerClass + "'></ul>");
+    this.$el.append(this.$items);
     if (this.config.typeahead) {
       placeholder = this.config.typeahead.placeholder;
       this.typeaheadInput = $("<input type='text' placeholder='" + placeholder + "' />");
       this.$el.append(this.typeaheadInput);
     }
-    this._add_items();
+    this._render_items();
     return this._update_input_value();
   };
 
@@ -4711,7 +4803,8 @@ this.InputList = (function(superClass) {
       return ids.push($(el).attr('data-id'));
     });
     value = ids.join(',');
-    return this.$input.val(value);
+    this.$input.val(value);
+    return this.$input.trigger('change');
   };
 
   InputList.prototype._remove_item = function($el) {
@@ -4722,31 +4815,53 @@ this.InputList = (function(superClass) {
     return this._update_input_value();
   };
 
-  InputList.prototype._add_item = function(o) {
-    var id, item, listItem;
-    id = o['_id'];
-    this.objects[id] = o;
+  InputList.prototype._ordered_ids = function() {
+    var ids;
+    ids = this.$input.val().split(',');
+    if (ids[0] === '') {
+      ids = [];
+    }
+    return ids;
+  };
+
+  InputList.prototype._render_items = function() {
+    var j, len, o, ref, results;
+    this.$items.html('');
+    this.objects = {};
+    ref = this.value;
+    results = [];
+    for (j = 0, len = ref.length; j < len; j++) {
+      o = ref[j];
+      results.push(this._render_item(o));
+    }
+    return results;
+  };
+
+  InputList.prototype._render_item = function(o) {
+    var item, listItem;
+    this._add_object(o);
     if (this.config.itemTemplate) {
       item = this.config.itemTemplate(o);
     } else {
       item = o[this.config.titleFieldName];
     }
-    listItem = $("<li data-id='" + id + "'>\n  <span class='icon-reorder' data-container-class='" + this.reorderContainerClass + "'></span>\n  " + item + "\n  <a href='#' class='action_remove'>Remove</a>\n</li>");
+    listItem = $("<li data-id='" + o._id + "'>\n  <span class='icon-reorder' data-container-class='" + this.reorderContainerClass + "'></span>\n  " + item + "\n  <a href='#' class='action_remove'>Remove</a>\n</li>");
     this.$items.append(listItem);
     return this._update_input_value();
   };
 
-  InputList.prototype._add_items = function() {
-    var j, len, o, ref;
-    this.reorderContainerClass = this.config.klassName;
-    this.objects = {};
-    this.$items = $("<ul class='" + this.reorderContainerClass + "'></ul>");
-    ref = this.value;
-    for (j = 0, len = ref.length; j < len; j++) {
-      o = ref[j];
-      this._add_item(o);
+  InputList.prototype._add_object = function(o) {
+    this._normalize_object(o);
+    return this.objects[o._id] = o;
+  };
+
+  InputList.prototype._normalize_object = function(o) {
+    if (o._id == null) {
+      o._id = o.id;
     }
-    return this.typeaheadInput.before(this.$items);
+    if (!o._id) {
+      return console.log("::: list item is missing an 'id' or '_id' :::");
+    }
   };
 
   InputList.prototype.initialize = function() {
@@ -4756,7 +4871,23 @@ this.InputList = (function(superClass) {
       dataSource = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace(this.config.titleFieldName),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: this.config.typeahead.url,
+        remote: {
+          url: this.config.typeahead.url,
+          filter: (function(_this) {
+            return function(parsedResponse) {
+              var data, j, len, o;
+              data = [];
+              for (j = 0, len = parsedResponse.length; j < len; j++) {
+                o = parsedResponse[j];
+                _this._normalize_object(o);
+                if (!_this.objects[o._id]) {
+                  data.push(o);
+                }
+              }
+              return data;
+            };
+          })(this)
+        },
         limit: limit
       });
       dataSource.initialize();
@@ -4770,7 +4901,7 @@ this.InputList = (function(superClass) {
       });
       this.typeaheadInput.on('typeahead:selected', (function(_this) {
         return function(e, object, dataset) {
-          _this._add_item(object);
+          _this._render_item(object);
           return _this.typeaheadInput.typeahead('val', '');
         };
       })(this));
@@ -4787,31 +4918,25 @@ this.InputList = (function(superClass) {
     return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
   };
 
+  InputList.prototype.updateValue = function(value1) {
+    this.value = value1;
+    return this._render_items();
+  };
+
   InputList.prototype.hash = function(hash) {
-    var id, ids, j, len;
+    var id, j, len, ordered_objects, ref;
     if (hash == null) {
       hash = {};
     }
-    hash[this.config.klassName] = [];
-    ids = this.$input.val().split(',');
-    for (j = 0, len = ids.length; j < len; j++) {
-      id = ids[j];
-      hash[this.config.klassName].push(this.objects[id]);
-    }
-    return hash;
-  };
-
-  InputList.prototype.updateValue = function(value1) {
-    var j, len, o, ref, results;
-    this.value = value1;
-    this.$items.html('');
-    ref = this.value;
-    results = [];
+    hash[this.config.target] = this.$input.val();
+    ordered_objects = [];
+    ref = this._ordered_ids();
     for (j = 0, len = ref.length; j < len; j++) {
-      o = ref[j];
-      results.push(this._add_item(o));
+      id = ref[j];
+      ordered_objects.push(this.objects[id]);
     }
-    return results;
+    hash[this.config.klassName] = ordered_objects;
+    return hash;
   };
 
   return InputList;
@@ -4956,6 +5081,11 @@ this.InputText = (function(superClass) {
 
   InputText.prototype._add_input = function() {
     this.$input = $("<textarea class='autosize' name='" + this.name + "' rows=1>" + (this._safe_value()) + "</textarea>");
+    this.$input.on('keyup', (function(_this) {
+      return function(e) {
+        return _this.$input.trigger('change');
+      };
+    })(this));
     return this.$el.append(this.$input);
   };
 
@@ -4991,7 +5121,7 @@ this.ArrayStore = (function() {
         this.sortBy = this.reorderable.positionFieldName;
         return this.sortReverse = (ref = this.reorderable.sortReverse) != null ? ref : false;
       } else {
-        console.log('Wrong reordering configuration, missing positionFieldName parameter.');
+        console.log(':: wrong reordering configuration, missing positionFieldName parameter ::');
         return this.reorderable = false;
       }
     }

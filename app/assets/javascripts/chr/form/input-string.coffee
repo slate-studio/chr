@@ -56,6 +56,8 @@ class @InputString
 
   _add_input: ->
     @$input =$ "<input type='text' name='#{ @name }' value='#{ @_safe_value() }' />"
+    # trigger change event on keyup so value is cached while typing
+    @$input.on 'keyup', (e) => @$input.trigger('change')
     @$el.append @$input
 
     if @config.options and $.isArray(@config.options)

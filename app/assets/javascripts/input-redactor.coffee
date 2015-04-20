@@ -43,6 +43,10 @@ class @InputRedactor extends InputString
       plugins: plugins
       buttons: [ 'html', 'formatting', 'bold', 'italic', 'deleted', 'unorderedlist', 'orderedlist', 'link' ]
 
+      changeCallback: =>
+        @$input.trigger('change')
+
+
     if chr.isMobile()
       redactor_options.toolbarFixed = false
       # redactor_options.toolbarFixedTopOffset = 40

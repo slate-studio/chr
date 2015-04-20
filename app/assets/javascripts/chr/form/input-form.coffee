@@ -107,10 +107,10 @@ class @InputForm
     @config.onInitialize?(this)
 
 
-  hash: (hash={})->
-    hash[@config.klassName] = []
-    for form in @forms
-      hash[@config.klassName].push form.hash()
+  hash: (hash={}) ->
+    objects = []
+    objects.push(form.hash()) for form in @forms
+    hash[@config.fieldName] = objects
     return hash
 
 
@@ -138,7 +138,7 @@ class @InputForm
       prevForm = _last(@forms)
       position = if prevForm then prevForm.inputs[@config.sortBy].value + 1 else 1
 
-      # having an issue here for scenario when no nested object are there for new object
+      # @TODO: having an issue here for scenario when no nested object are there for new object
       # form.inputs doesn't include sortBy field
       console.log @config
       console.log @config.sortBy

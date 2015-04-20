@@ -45,6 +45,11 @@ Styles setup:
 More documentation and samples comming soon...
 
 
+## Notes
+
+1. Consider replace ```slip.js``` with [sortable.js](https://github.com/RubaXa/Sortable)
+
+
 ## Character family:
 
 - [Character](https://github.com/slate-studio/chr): Powerful responsive javascript CMS for apps

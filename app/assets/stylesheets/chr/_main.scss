@@ -12,13 +12,14 @@ html a { text-decoration: none; }
 /* Header ------------------------------------------------------------------ */
 .header          { height: 40px; background-color: rgba(255,255,255,.9); text-align: center;
   .title         { @include truncate; display: inline-block; max-width: 70%; font-weight: 500; line-height: 2.5; }
-  .back, .close  { @include header-back-arrow;                                                 }
-  .new           { @include position(absolute, 0 0   null null); @extend .icon-plus;           }
-  .new + .search { @include position(absolute, 0 40px inherit inherit);                        }
-  .save          { @include position(absolute, 0 1em null null); @include header-button;       }
-  .spinner       { @include spinner; @include hide; position: absolute; margin: 6px 0 0 -36px; }
+  .back, .close  { @include header-back-arrow;                                                         }
+  .new           { @include position(absolute, 0 0   null null); @extend .icon-plus;                   }
+  .new + .search { @include position(absolute, 0 40px inherit inherit);                                }
+  .spinner       { @include spinner; @include hide; position: absolute; margin: 6px 0 0 -36px;         }
+  .save          { @include position(absolute, 0 1em null null); @include header-button($stableColor); }
 }
 
+.view.has-unsaved-changes .save { color: $positiveColor; }
 .show-spinner .spinner { display: inline-block; }
 
 

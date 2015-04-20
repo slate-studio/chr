@@ -21,6 +21,8 @@ class @InputText extends InputString
 
   _add_input: ->
     @$input =$ "<textarea class='autosize' name='#{ @name }' rows=1>#{ @_safe_value() }</textarea>"
+    # trigger change event on keyup so value is cached while typing
+    @$input.on 'keyup', (e) => @$input.trigger('change')
     @$el.append @$input
 
 

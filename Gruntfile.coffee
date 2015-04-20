@@ -19,6 +19,7 @@ module.exports = (grunt) ->
             'app/assets/javascripts/chr/core/list_search.coffee'
             'app/assets/javascripts/chr/core/list.coffee'
             'app/assets/javascripts/chr/core/item.coffee'
+            'app/assets/javascripts/chr/core/view_local-storage.coffee'
             'app/assets/javascripts/chr/core/view.coffee'
             # form
             'app/assets/javascripts/chr/form/form.coffee'

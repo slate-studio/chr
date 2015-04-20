@@ -137,7 +137,12 @@ this.InputRedactor = (function(superClass) {
       buttonSource: true,
       pastePlainText: true,
       plugins: plugins,
-      buttons: ['html', 'formatting', 'bold', 'italic', 'deleted', 'unorderedlist', 'orderedlist', 'link']
+      buttons: ['html', 'formatting', 'bold', 'italic', 'deleted', 'unorderedlist', 'orderedlist', 'link'],
+      changeCallback: (function(_this) {
+        return function() {
+          return _this.$input.trigger('change');
+        };
+      })(this)
     };
     if (chr.isMobile()) {
       redactor_options.toolbarFixed = false;

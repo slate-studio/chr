@@ -9,6 +9,9 @@
 # -----------------------------------------------------------------------------
 # INPUT FILE
 # -----------------------------------------------------------------------------
+# @TODO: add clear button when file is picked for the first time and you want
+#        to cancel that pick
+# -----------------------------------------------------------------------------
 class @InputFile extends InputString
   constructor: (@name, @value, @config, @object) ->
     @_create_el()
@@ -79,6 +82,11 @@ class @InputFile extends InputString
 
   updateValue: (@value, @object) ->
     @_update_state()
+
+
+  hash: (hash={})->
+    # @TODO: file input type does not support caching and versioning as of now
+    return hash
 
 
 chr.formInputs['file'] = InputFile

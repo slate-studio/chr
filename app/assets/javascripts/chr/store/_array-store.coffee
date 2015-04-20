@@ -65,7 +65,7 @@ class @ArrayStore
         @sortBy      = @reorderable.positionFieldName
         @sortReverse = @reorderable.sortReverse ? false
       else
-        console.log 'Wrong reordering configuration, missing positionFieldName parameter.'
+        console.log ':: wrong reordering configuration, missing positionFieldName parameter ::'
         @reorderable = false
 
 

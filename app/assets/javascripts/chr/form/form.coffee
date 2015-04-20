@@ -9,6 +9,7 @@
 # -----------------------------------------------------------------------------
 # FORM
 # -----------------------------------------------------------------------------
+#
 # Generates form based on provided configuration schema. If schema is not
 # provided generates default form based on object keys. This uses Rails
 # conventions for managing names for attributes, arrays, hashs and nested
@@ -68,6 +69,7 @@ class @Form
 
   _build_schema: (schema, $el) ->
     for fieldName, config of schema
+      config.fieldName = fieldName
       if config.type == 'group'
         group = @_generate_inputs_group(fieldName, config)
         $el.append group.$el

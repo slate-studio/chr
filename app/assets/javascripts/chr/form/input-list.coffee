@@ -22,13 +22,17 @@ class @InputList extends InputString
   # PRIVATE ===============================================
 
   _add_input: ->
-    # hidden input that stores ids
-    # we use __LIST__ prefix to identify ARRAY input type and
-    # process it's value while form submission.
-    name = if @config.namePrefix then "#{@config.namePrefix}[__LIST__#{@config.target}]" else "[__LIST__#{@config.target}]"
+    # hidden input that stores ids, we use __LIST__ prefix to identify
+    # ARRAY input type and process it's value while form submission.
+    name = if @config.namePrefix then "#{ @config.namePrefix }[__LIST__#{ @config.target }]" else "[__LIST__#{ @config.target }]"
 
     @$input =$ "<input type='hidden' name='#{ name }' value='' />"
     @$el.append @$input
+
+    # list holder for items
+    @reorderContainerClass = @config.klassName
+    @$items =$ "<ul class='#{ @reorderContainerClass }'></ul>"
+    @$el.append @$items
 
     # other options might be added here (static collection)
     if @config.typeahead
@@ -37,16 +41,21 @@ class @InputList extends InputString
       @typeaheadInput =$ "<input type='text' placeholder='#{ placeholder }' />"
       @$el.append @typeaheadInput
 
-    @_add_items()
+    @_render_items()
     @_update_input_value()
 
 
   _update_input_value: ->
     ids = []
-    @$items.children('li').each (i, el)->
-      ids.push $(el).attr('data-id')
+    @$items.children('li').each (i, el) -> ids.push $(el).attr('data-id')
+
+    # @TODO: we need a better separator here, comma is too generic
+    #        it's used cause most cases list of IDs concidered to be here,
+    #        we might make this a @config setting.
     value = ids.join(',')
+
     @$input.val(value)
+    @$input.trigger('change')
 
 
   _remove_item: ($el) ->
@@ -57,34 +66,45 @@ class @InputList extends InputString
     @_update_input_value()
 
 
-  _add_item: (o) ->
-    id = o['_id']
+  _ordered_ids: ->
+    ids = @$input.val().split(',')
+    if ids[0] == '' then ids = []
+    return ids
 
-    @objects[id] = o
+
+  _render_items: ->
+    @$items.html('')
+    @objects = {}
+
+    for o in @value
+      @_render_item(o)
+
+
+  _render_item: (o) ->
+    @_add_object(o)
 
     if @config.itemTemplate
       item = @config.itemTemplate(o)
     else
       item = o[@config.titleFieldName]
 
-    listItem =$ """<li data-id='#{ id }'>
+    listItem =$ """<li data-id='#{ o._id }'>
                      <span class='icon-reorder' data-container-class='#{ @reorderContainerClass }'></span>
                      #{ item }
                      <a href='#' class='action_remove'>Remove</a>
                    </li>"""
-    @$items.append listItem
+    @$items.append(listItem)
     @_update_input_value()
 
 
-  _add_items: ->
-    @reorderContainerClass = @config.klassName
-    @objects = {}
-    @$items  =$ "<ul class='#{ @reorderContainerClass }'></ul>"
+  _add_object: (o) ->
+    @_normalize_object(o)
+    @objects[o._id] = o
 
-    for o in @value
-      @_add_item(o)
 
-    @typeaheadInput.before @$items
+  _normalize_object: (o) ->
+    o._id ?= o.id
+    if ! o._id then console.log("::: list item is missing an 'id' or '_id' :::")
 
 
   # PUBLIC ================================================
@@ -96,7 +116,14 @@ class @InputList extends InputString
       dataSource = new Bloodhound
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace(@config.titleFieldName)
         queryTokenizer: Bloodhound.tokenizers.whitespace
-        remote: @config.typeahead.url
+        remote:
+          url:    @config.typeahead.url
+          # exclude objects that are already in the list
+          filter: (parsedResponse) =>
+            data = []
+            for o in parsedResponse
+              @_normalize_object(o) ; if ! @objects[o._id] then data.push(o)
+            return data
         limit:  limit
 
       dataSource.initialize()
@@ -105,13 +132,13 @@ class @InputList extends InputString
         hint:       false
         highlight:  true
       }, {
-        name:       @config.klassName,
-        displayKey: @config.titleFieldName,
+        name:       @config.klassName
+        displayKey: @config.titleFieldName
         source:     dataSource.ttAdapter()
       })
 
       @typeaheadInput.on 'typeahead:selected', (e, object, dataset) =>
-        @_add_item(object)
+        @_render_item(object)
         @typeaheadInput.typeahead('val', '')
 
     # remove
@@ -124,16 +151,19 @@ class @InputList extends InputString
     @config.onInitialize?(this)
 
 
-  hash: (hash={}) ->
-    hash[@config.klassName] = []
-    ids                     = @$input.val().split(',')
-    hash[@config.klassName].push(@objects[id]) for id in ids
-    return hash
-
-
   updateValue: (@value) ->
-    @$items.html('')
-    @_add_item(o) for o in @value
+    @_render_items()
+
+
+  hash: (hash={}) ->
+    hash[@config.target] = @$input.val()
+    ordered_objects = []
+
+    for id in @_ordered_ids()
+      ordered_objects.push(@objects[id])
+
+    hash[@config.klassName] = ordered_objects
+    return hash
 
 
 include(InputList, inputListReorder)

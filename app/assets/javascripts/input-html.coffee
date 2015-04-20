@@ -38,6 +38,7 @@ class @InputHtml extends InputString
   _update_inputs: ->
     @value = @editor.getSession().getValue()
     @$input.val(@value)
+    @$input.trigger('change')
 
 
   # PUBLIC ================================================

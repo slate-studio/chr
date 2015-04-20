@@ -45,10 +45,12 @@ class @InputMarkdown extends InputString
   _update_inputs: ->
     md_source = @session.getValue()
     @$input.val(md_source)
+    @$input.trigger('change')
 
     if @$inputHtml
       html = marked(md_source)
       @$inputHtml.val(html)
+      @$inputHtml.trigger('change')
 
 
   # PUBLIC ================================================
