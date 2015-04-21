@@ -10,6 +10,10 @@
 }
 
 
+// toolbar
+.redactor-toolbar li a:hover { background-color: $positiveColor; }
+
+
 // placeholder
 .redactor-placeholder:after { color: $lightColor!important; }
 
