@@ -116,7 +116,7 @@ class @View
       @store.update @object._id, serializedFormObj,
         onSuccess: (@object) =>
           @_save_success()
-        onError: (errors) => @_save_error('Changes were not saved.', errors)
+        onError: (errors) => @_save_error('Changes are not saved.', errors)
     else
       @store.push serializedFormObj,
         onSuccess: (@object) =>
@@ -124,7 +124,7 @@ class @View
           @_add_delete_button()
           chr.updateHash("#{ @closePath }/view/#{ @object._id }", true)
           @path = window.location.hash
-        onError: (errors) => @_save_error('Item were not created.', errors)
+        onError: (errors) => @_save_error('Document is not created due to an error.', errors)
 
 
   _delete: (e) ->
@@ -136,7 +136,7 @@ class @View
           chr.updateHash("#{ @closePath }", true)
           @destroy()
           chr.mobileListLock(false)
-        onError: -> chr.showError('Can\'t delete object.')
+        onError: -> chr.showError('Can\'t delete document.')
 
 
   _render_form: ->
