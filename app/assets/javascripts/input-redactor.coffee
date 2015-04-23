@@ -29,6 +29,7 @@ class @InputRedactor extends InputString
 
   # TODO: fixed toolbar disabled on mobile
   initialize: ->
+    @_trigger_change = true
     plugins = []
 
     if ! chr.isMobile() then plugins.push('fixedtoolbar')
@@ -43,8 +44,13 @@ class @InputRedactor extends InputString
       plugins: plugins
       buttons: [ 'html', 'formatting', 'bold', 'italic', 'deleted', 'unorderedlist', 'orderedlist', 'link' ]
 
+      # to have caching working we need to trigger 'change' event for textarea
+      # when content got changed in redactor, but skip this when updating value
+      # via `updateValue` method
       changeCallback: =>
-        @$input.trigger('change')
+        if @_trigger_change
+          @$input.trigger('change')
+        @_trigger_change = true
 
 
     if chr.isMobile()
@@ -62,6 +68,7 @@ class @InputRedactor extends InputString
 
 
   updateValue: (@value) ->
+    @_trigger_change = false
     @$input.redactor('code.set', @value)
 
 

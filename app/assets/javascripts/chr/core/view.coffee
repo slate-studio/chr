@@ -85,14 +85,15 @@ class @View
   _save_success: ->
     @$el.removeClass('view-saving')
     @_set_title()
+    @form.hideValidationErrors()
     @form.updateValues(@object)
     @_clear_local_storage_cache()
 
 
   _save_error: (message, validationErrors) ->
     @$el.removeClass('view-saving')
-    chr.showError(message)
     @form.showValidationErrors(validationErrors)
+    chr.showError(message)
 
 
   # EVENTS ================================================
@@ -122,6 +123,7 @@ class @View
           @_save_success()
           @_add_delete_button()
           chr.updateHash("#{ @closePath }/view/#{ @object._id }", true)
+          @path = window.location.hash
         onError: (errors) => @_save_error('Item were not created.', errors)
 
 

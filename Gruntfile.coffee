@@ -31,6 +31,7 @@ module.exports = (grunt) ->
             'app/assets/javascripts/chr/form/input-color.coffee'
             'app/assets/javascripts/chr/form/input-date.coffee'
             'app/assets/javascripts/chr/form/input-file.coffee'
+            'app/assets/javascripts/chr/form/input-list_typeahead.coffee'
             'app/assets/javascripts/chr/form/input-list_reorder.coffee'
             'app/assets/javascripts/chr/form/input-list.coffee'
             'app/assets/javascripts/chr/form/input-password.coffee'

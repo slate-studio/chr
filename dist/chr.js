@@ -3623,14 +3623,15 @@ this.View = (function() {
   View.prototype._save_success = function() {
     this.$el.removeClass('view-saving');
     this._set_title();
+    this.form.hideValidationErrors();
     this.form.updateValues(this.object);
     return this._clear_local_storage_cache();
   };
 
   View.prototype._save_error = function(message, validationErrors) {
     this.$el.removeClass('view-saving');
-    chr.showError(message);
-    return this.form.showValidationErrors(validationErrors);
+    this.form.showValidationErrors(validationErrors);
+    return chr.showError(message);
   };
 
   View.prototype._close = function(e) {
@@ -3669,7 +3670,8 @@ this.View = (function() {
             _this.object = object;
             _this._save_success();
             _this._add_delete_button();
-            return chr.updateHash(_this.closePath + "/view/" + _this.object._id, true);
+            chr.updateHash(_this.closePath + "/view/" + _this.object._id, true);
+            return _this.path = window.location.hash;
           };
         })(this),
         onError: (function(_this) {

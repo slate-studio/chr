@@ -12,8 +12,11 @@
 # Allows to create/delete/reorder list items connected to dynamic or static
 # collection. Value should be an array of objects.
 #
+# All items should be unique for now.
+#
 # Dependencies:
 #= require ./input-list_reorder
+#= require ./input-list_typeahead
 #
 # -----------------------------------------------------------------------------
 
@@ -22,6 +25,9 @@ class @InputList extends InputString
   # PRIVATE ===============================================
 
   _add_input: ->
+    # @TODO: check if we can use @config.name instead of @config.target
+    # @config.target ?= @config.klassName
+
     # hidden input that stores ids, we use __LIST__ prefix to identify
     # ARRAY input type and process it's value while form submission.
     name = if @config.namePrefix then "#{ @config.namePrefix }[__LIST__#{ @config.target }]" else "[__LIST__#{ @config.target }]"
@@ -35,11 +41,8 @@ class @InputList extends InputString
     @$el.append @$items
 
     # other options might be added here (static collection)
-    if @config.typeahead
-      # typeahead input for adding new items
-      placeholder = @config.typeahead.placeholder
-      @typeaheadInput =$ "<input type='text' placeholder='#{ placeholder }' />"
-      @$el.append @typeaheadInput
+
+    @_create_typeahead_el(@config.typeahead.placeholder)
 
     @_render_items()
     @_update_input_value()
@@ -111,35 +114,7 @@ class @InputList extends InputString
 
   initialize: ->
     # typeahead
-    if @config.typeahead
-      limit = @config.typeahead.limit || 5
-      dataSource = new Bloodhound
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace(@config.titleFieldName)
-        queryTokenizer: Bloodhound.tokenizers.whitespace
-        remote:
-          url:    @config.typeahead.url
-          # exclude objects that are already in the list
-          filter: (parsedResponse) =>
-            data = []
-            for o in parsedResponse
-              @_normalize_object(o) ; if ! @objects[o._id] then data.push(o)
-            return data
-        limit:  limit
-
-      dataSource.initialize()
-
-      @typeaheadInput.typeahead({
-        hint:       false
-        highlight:  true
-      }, {
-        name:       @config.klassName
-        displayKey: @config.titleFieldName
-        source:     dataSource.ttAdapter()
-      })
-
-      @typeaheadInput.on 'typeahead:selected', (e, object, dataset) =>
-        @_render_item(object)
-        @typeaheadInput.typeahead('val', '')
+    @_bind_typeahead()
 
     # remove
     @$items.on 'click', '.action_remove', (e) =>
@@ -167,6 +142,7 @@ class @InputList extends InputString
 
 
 include(InputList, inputListReorder)
+include(InputList, inputListTypeahead)
 
 
 chr.formInputs['list'] = InputList

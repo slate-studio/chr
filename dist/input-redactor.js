@@ -124,6 +124,7 @@ this.InputRedactor = (function(superClass) {
 
   InputRedactor.prototype.initialize = function() {
     var base, base1, plugins, redactor_options;
+    this._trigger_change = true;
     plugins = [];
     if (!chr.isMobile()) {
       plugins.push('fixedtoolbar');
@@ -140,7 +141,10 @@ this.InputRedactor = (function(superClass) {
       buttons: ['html', 'formatting', 'bold', 'italic', 'deleted', 'unorderedlist', 'orderedlist', 'link'],
       changeCallback: (function(_this) {
         return function() {
-          return _this.$input.trigger('change');
+          if (_this._trigger_change) {
+            _this.$input.trigger('change');
+          }
+          return _this._trigger_change = true;
         };
       })(this)
     };
@@ -158,6 +162,7 @@ this.InputRedactor = (function(superClass) {
 
   InputRedactor.prototype.updateValue = function(value) {
     this.value = value;
+    this._trigger_change = false;
     return this.$input.redactor('code.set', this.value);
   };
 
