@@ -9,6 +9,10 @@
 # -----------------------------------------------------------------------------
 # LIST ITEM
 # -----------------------------------------------------------------------------
+#
+# config options:
+#   onItemRender
+#
 # public methods:
 #   render()
 #   destroy()
@@ -74,6 +78,8 @@ class @Item
       if @config.arrayStore and @config.arrayStore.reorderable
         @$el.addClass('reorderable')
         @$el.append $("<div class='icon-reorder'></div>")
+
+    @config.onItemRender?(this)
 
 
   destroy: ->
