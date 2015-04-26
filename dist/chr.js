@@ -2654,6 +2654,56 @@ jQuery.fn.scrollParent = function() {
         };
     })();
 })(window.jQuery);
+this._expandableGroupStateCache = {};
+
+this.ExpandableGroup = (function() {
+  function ExpandableGroup(form, group, name) {
+    this.form = form;
+    this.group = group;
+    this.$expander = $("<a href='#' class='group-edit hidden'>" + name + "</a>");
+    this.group.$el.before(this.$expander);
+    this._restore_expander_from_cache();
+    this.$expander.on('click', (function(_this) {
+      return function(e) {
+        _this._toggle_expander();
+        return e.preventDefault();
+      };
+    })(this));
+  }
+
+  ExpandableGroup.prototype._restore_expander_from_cache = function() {
+    if (_expandableGroupStateCache.__hash) {
+      if (_expandableGroupStateCache.__hash === window.location.hash) {
+        if (_expandableGroupStateCache[this._group_id()]) {
+          this.$expander.removeClass('hidden');
+        }
+      }
+      if (_expandableGroupStateCache.__hash.endsWith('new')) {
+        return this.$expander.removeClass('hidden');
+      }
+    }
+  };
+
+  ExpandableGroup.prototype._toggle_expander = function() {
+    this.$expander.toggleClass('hidden');
+    return this._cache_expander_state();
+  };
+
+  ExpandableGroup.prototype._cache_expander_state = function() {
+    _expandableGroupStateCache.__hash = window.location.hash;
+    return _expandableGroupStateCache[this._group_id()] = this.group.$el.is(':visible');
+  };
+
+  ExpandableGroup.prototype._group_id = function() {
+    var groupIndex;
+    groupIndex = $('form').find(".group." + this.group.klassName).index(this.group.$el);
+    return this.group.klassName + "-" + groupIndex;
+  };
+
+  return ExpandableGroup;
+
+})();
+
 this._any = function(array) {
   return array.length > 0;
 };
@@ -3482,6 +3532,7 @@ this.Item = (function() {
   };
 
   Item.prototype.render = function() {
+    var base;
     this.$el.html('').removeClass('has-subtitle has-thumbnail');
     this._render_title();
     this._render_subtitle();
@@ -3492,9 +3543,10 @@ this.Item = (function() {
       this._render_thumbnail();
       if (this.config.arrayStore && this.config.arrayStore.reorderable) {
         this.$el.addClass('reorderable');
-        return this.$el.append($("<div class='icon-reorder'></div>"));
+        this.$el.append($("<div class='icon-reorder'></div>"));
       }
     }
+    return typeof (base = this.config).onItemRender === "function" ? base.onItemRender(this) : void 0;
   };
 
   Item.prototype.destroy = function() {
@@ -3659,7 +3711,7 @@ this.View = (function() {
         })(this),
         onError: (function(_this) {
           return function(errors) {
-            return _this._save_error('Changes were not saved.', errors);
+            return _this._save_error('Changes are not saved.', errors);
           };
         })(this)
       });
@@ -3676,7 +3728,7 @@ this.View = (function() {
         })(this),
         onError: (function(_this) {
           return function(errors) {
-            return _this._save_error('Item were not created.', errors);
+            return _this._save_error('Document is not created due to an error.', errors);
           };
         })(this)
       });
@@ -3696,7 +3748,7 @@ this.View = (function() {
           };
         })(this),
         onError: function() {
-          return chr.showError('Can\'t delete object.');
+          return chr.showError('Can\'t delete document.');
         }
       });
     }
@@ -4743,6 +4795,54 @@ this.InputFileImage = (function(superClass) {
 
 chr.formInputs['image'] = InputFileImage;
 
+this.inputListTypeahead = {
+  _create_typeahead_el: function(placeholder) {
+    this.typeaheadInput = $("<input type='text' placeholder='" + placeholder + "' />");
+    return this.$el.append(this.typeaheadInput);
+  },
+  _bind_typeahead: function() {
+    var dataSource, limit;
+    limit = this.config.typeahead.limit || 5;
+    dataSource = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.obj.whitespace(this.config.titleFieldName),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      remote: {
+        url: this.config.typeahead.url,
+        filter: (function(_this) {
+          return function(parsedResponse) {
+            var data, i, len, o;
+            data = [];
+            for (i = 0, len = parsedResponse.length; i < len; i++) {
+              o = parsedResponse[i];
+              _this._normalize_object(o);
+              if (!_this.objects[o._id]) {
+                data.push(o);
+              }
+            }
+            return data;
+          };
+        })(this)
+      },
+      limit: limit
+    });
+    dataSource.initialize();
+    this.typeaheadInput.typeahead({
+      hint: false,
+      highlight: true
+    }, {
+      name: this.config.klassName,
+      displayKey: this.config.titleFieldName,
+      source: dataSource.ttAdapter()
+    });
+    return this.typeaheadInput.on('typeahead:selected', (function(_this) {
+      return function(e, object, dataset) {
+        _this._render_item(object);
+        return _this.typeaheadInput.typeahead('val', '');
+      };
+    })(this));
+  }
+};
+
 this.inputListReorder = {
   _bind_reorder: function() {
     var list;
@@ -4782,18 +4882,14 @@ this.InputList = (function(superClass) {
   }
 
   InputList.prototype._add_input = function() {
-    var name, placeholder;
+    var name;
     name = this.config.namePrefix ? this.config.namePrefix + "[__LIST__" + this.config.target + "]" : "[__LIST__" + this.config.target + "]";
     this.$input = $("<input type='hidden' name='" + name + "' value='' />");
     this.$el.append(this.$input);
     this.reorderContainerClass = this.config.klassName;
     this.$items = $("<ul class='" + this.reorderContainerClass + "'></ul>");
     this.$el.append(this.$items);
-    if (this.config.typeahead) {
-      placeholder = this.config.typeahead.placeholder;
-      this.typeaheadInput = $("<input type='text' placeholder='" + placeholder + "' />");
-      this.$el.append(this.typeaheadInput);
-    }
+    this._create_typeahead_el(this.config.typeahead.placeholder);
     this._render_items();
     return this._update_input_value();
   };
@@ -4867,47 +4963,8 @@ this.InputList = (function(superClass) {
   };
 
   InputList.prototype.initialize = function() {
-    var base, dataSource, limit;
-    if (this.config.typeahead) {
-      limit = this.config.typeahead.limit || 5;
-      dataSource = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace(this.config.titleFieldName),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-          url: this.config.typeahead.url,
-          filter: (function(_this) {
-            return function(parsedResponse) {
-              var data, j, len, o;
-              data = [];
-              for (j = 0, len = parsedResponse.length; j < len; j++) {
-                o = parsedResponse[j];
-                _this._normalize_object(o);
-                if (!_this.objects[o._id]) {
-                  data.push(o);
-                }
-              }
-              return data;
-            };
-          })(this)
-        },
-        limit: limit
-      });
-      dataSource.initialize();
-      this.typeaheadInput.typeahead({
-        hint: false,
-        highlight: true
-      }, {
-        name: this.config.klassName,
-        displayKey: this.config.titleFieldName,
-        source: dataSource.ttAdapter()
-      });
-      this.typeaheadInput.on('typeahead:selected', (function(_this) {
-        return function(e, object, dataset) {
-          _this._render_item(object);
-          return _this.typeaheadInput.typeahead('val', '');
-        };
-      })(this));
-    }
+    var base;
+    this._bind_typeahead();
     this.$items.on('click', '.action_remove', (function(_this) {
       return function(e) {
         e.preventDefault();
@@ -4946,6 +5003,8 @@ this.InputList = (function(superClass) {
 })(InputString);
 
 include(InputList, inputListReorder);
+
+include(InputList, inputListTypeahead);
 
 chr.formInputs['list'] = InputList;
 

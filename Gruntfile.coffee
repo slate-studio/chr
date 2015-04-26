@@ -56,6 +56,10 @@ module.exports = (grunt) ->
             'app/assets/javascripts/input-redactor.coffee'
           ]
 
+          'build/expandable-group.js': [
+            'app/assets/javascripts/expandable-group.coffee'
+          ]
+
     concat:
       chr:
         src: [
@@ -63,6 +67,7 @@ module.exports = (grunt) ->
           'app/assets/javascripts/chr/vendor/jquery.scrollparent.js'
           'app/assets/javascripts/chr/vendor/jquery.textarea_autosize.js'
           'app/assets/javascripts/chr/vendor/jquery.typeahead.js'
+          'build/expandable-group.js'
           'build/chr.js'
         ]
         dest: 'dist/chr.js'

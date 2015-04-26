@@ -1,0 +1,17 @@
+
+// expandable group
+
+.group-edit { color: $stableColor; font-size: .9em; @include position(absolute, null .5em null null); text-transform: lowercase; margin-top: -1.5em;
+  &:hover   { color: $positiveColor; }
+}
+
+.group-edit:before {
+  content: '-';
+  display: block; width: 1em; height: 1em;
+  @include position(absolute, null null null -.75em);
+}
+
+.group-edit.hidden:before   { content: '+';  }
+.group-edit.hidden + .group { display: none; }
+
+.form .group .input-stacked:last-child { @include bottom-border($neutralColor); }
