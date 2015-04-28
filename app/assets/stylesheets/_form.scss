@@ -2,7 +2,6 @@
   // label
   label { display: block; }
 
-
   // general
   .input-stacked {
     @include position(relative); padding: .5em 1em .9em;
@@ -40,6 +39,10 @@
     &:before { content: '\00d7'; color: $stableColor; line-height: 1.35em; width: 1.5em; text-align: center; }
     &:hover  { background-color: $positiveColor; &:before { color: $white; } }
   }
+
+
+  // required
+  .input-required .label:before { content: '*'; color: $assertiveColor; @include position(absolute, null null null .38em); }
 
 
   // disabled

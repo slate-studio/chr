@@ -19,6 +19,7 @@ class @InputFile extends InputString
     @_add_label()
     @_add_input()
     @_update_state()
+    @_add_required()
 
     return this
 

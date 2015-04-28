@@ -4389,6 +4389,7 @@ this.InputString = (function() {
     this._add_input();
     this._add_placeholder();
     this._add_disabled();
+    this._add_required();
     return this;
   }
 
@@ -4457,6 +4458,12 @@ this.InputString = (function() {
     if (this.config.disabled) {
       this.$input.prop('disabled', true);
       return this.$el.addClass('input-disabled');
+    }
+  };
+
+  InputString.prototype._add_required = function() {
+    if (this.config.required) {
+      return this.$el.addClass('input-required');
     }
   };
 
@@ -4690,6 +4697,7 @@ this.InputFile = (function(superClass) {
     this._add_label();
     this._add_input();
     this._update_state();
+    this._add_required();
     return this;
   }
 

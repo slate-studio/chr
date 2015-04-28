@@ -30,6 +30,7 @@ class @InputString
     @_add_input()
     @_add_placeholder()
     @_add_disabled()
+    @_add_required()
 
     return this
 
@@ -92,6 +93,11 @@ class @InputString
     if @config.disabled
       @$input.prop('disabled', true)
       @$el.addClass('input-disabled')
+
+
+  _add_required: ->
+    if @config.required
+      @$el.addClass('input-required')
 
 
   # PUBLIC ================================================

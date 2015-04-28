@@ -15,8 +15,7 @@
 
 
 // placeholder
-.redactor-placeholder:after { color: $lightColor!important; }
-
+.redactor-placeholder:after { color: $lightColor!important; left: 0; top: 18px; }
 
 // scrollbars
 .redactor-editor, textarea.redactor { @include custom-scrollbar; }

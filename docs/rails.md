@@ -75,17 +75,11 @@ Notes on code above:
   2. Need to setup ```index``` view and ```admin``` layout to render admin app;
   3. ```bootstrap_data``` is a placeholder for objects that might be required to be loaded when app starts.
 
-Devise would require a custom ```SessionController``` implementation in ```app/controllers/admin/devise_overrides/session_controller.rb```. ```SessionController``` sets ```admin``` layout to be used for devise views rendering and enables login by email (*looks like workaround*).
+Devise would require a custom ```SessionController``` implementation in ```app/controllers/admin/devise_overrides/session_controller.rb```. ```SessionController``` sets ```admin``` layout to be used for devise views rendering.
 
 ```ruby
 class Admin::DeviseOverrides::SessionsController < Devise::SessionsController
   layout 'admin'
-
-  protected
-
-    def configure_permitted_parameters
-      devise_parameter_sanitizer.for(:sign_in) << :email
-    end
 end
 ```
 
@@ -113,8 +107,14 @@ Admin index view ```app/views/admin/index.html.erb```:
 
 ```erb
 <body class='loading'>
-  <%= link_to 'Sign Out', destroy_admin_session_path, method: :delete, style: 'display:none;' %>
+
+  <% admin_email = Rails.env.production? ? current_admin.email : 'developer@example.com' %>
+
+  <%= link_to 'Sign Out', destroy_admin_session_path, 'data-admin-email' => admin_email,
+               method: :delete,
+               style: 'display:none;', class:  'menu-logout' %>
 </body>
+
 <%= javascript_include_tag :admin %>
 ```
 
