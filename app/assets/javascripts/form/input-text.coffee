@@ -11,8 +11,8 @@
 # -----------------------------------------------------------------------------
 #
 # Dependencies:
-#= require ../vendor/jquery.scrollparent
-#= require ../vendor/jquery.textarea_autosize
+#= require ../chr/vendor/jquery.scrollparent
+#= require ../chr/vendor/jquery.textarea_autosize
 #
 # -----------------------------------------------------------------------------
 class @InputText extends InputString

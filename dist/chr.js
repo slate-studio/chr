@@ -3832,1344 +3832,6 @@ this.View = (function() {
 
 include(View, viewLocalStorage);
 
-this.Form = (function() {
-  function Form(object1, config1) {
-    this.object = object1;
-    this.config = config1;
-    this.groups = [];
-    this.inputs = {};
-    this.$el = $(this.config.rootEl || "<form class='form'>");
-    this.schema = this._get_schema();
-    this.isRemoved = false;
-    this._build_schema(this.schema, this.$el);
-    this._add_nested_form_remove_button();
-  }
-
-  Form.prototype._get_schema = function() {
-    var schema;
-    schema = this.config.formSchema;
-    if (this.object) {
-      if (schema == null) {
-        schema = this._generate_default_schema();
-      }
-    }
-    return schema;
-  };
-
-  Form.prototype._generate_default_schema = function() {
-    var key, ref, schema, value;
-    schema = {};
-    ref = this.object;
-    for (key in ref) {
-      value = ref[key];
-      schema[key] = this._generate_default_input_config(key, value);
-    }
-    return schema;
-  };
-
-  Form.prototype._generate_default_input_config = function(fieldName, value) {
-    var config;
-    config = {};
-    if (fieldName[0] === '_') {
-      config.type = 'hidden';
-    } else if (value === true || value === false) {
-      config.type = 'checkbox';
-    } else if (value) {
-      if (value.hasOwnProperty('url')) {
-        config.type = 'file';
-      } else if (value.length > 60) {
-        config.type = 'text';
-      }
-    }
-    return config;
-  };
-
-  Form.prototype._build_schema = function(schema, $el) {
-    var config, fieldName, group, input, results;
-    results = [];
-    for (fieldName in schema) {
-      config = schema[fieldName];
-      config.fieldName = fieldName;
-      if (config.type === 'group') {
-        group = this._generate_inputs_group(fieldName, config);
-        results.push($el.append(group.$el));
-      } else {
-        input = this._generate_input(fieldName, config);
-        results.push($el.append(input.$el));
-      }
-    }
-    return results;
-  };
-
-  Form.prototype._generate_inputs_group = function(klassName, groupConfig) {
-    var $group, group;
-    $group = $("<div class='group " + klassName + "' />");
-    if (groupConfig.inputs) {
-      this._build_schema(groupConfig.inputs, $group);
-    }
-    group = {
-      $el: $group,
-      klassName: klassName,
-      onInitialize: groupConfig.onInitialize
-    };
-    this.groups.push(group);
-    return group;
-  };
-
-  Form.prototype._generate_input = function(fieldName, inputConfig) {
-    var input, inputName, value;
-    if (this.object) {
-      value = this.object[fieldName];
-    } else {
-      value = inputConfig["default"];
-    }
-    if (value == null) {
-      value = '';
-    }
-    inputName = inputConfig.name || fieldName;
-    input = this._render_input(inputName, inputConfig, value);
-    this.inputs[fieldName] = input;
-    return input;
-  };
-
-  Form.prototype._render_input = function(name, config, value) {
-    var inputClass, inputConfig, inputName;
-    inputConfig = $.extend({}, config);
-    if (inputConfig.label == null) {
-      inputConfig.label = name.titleize();
-    }
-    if (inputConfig.type == null) {
-      inputConfig.type = 'string';
-    }
-    if (inputConfig.klass == null) {
-      inputConfig.klass = 'stacked';
-    }
-    inputConfig.klassName = name;
-    inputClass = chr.formInputs[inputConfig.type];
-    if (inputClass == null) {
-      inputClass = chr.formInputs['string'];
-    }
-    inputName = this.config.namePrefix ? this.config.namePrefix + "[" + name + "]" : "[" + name + "]";
-    if (inputConfig.type === 'form') {
-      inputConfig.namePrefix = inputName.replace("[" + name + "]", "[" + name + "_attributes]");
-    } else {
-      inputConfig.namePrefix = this.config.namePrefix;
-    }
-    return new inputClass(inputName, value, inputConfig, this.object);
-  };
-
-  Form.prototype._add_nested_form_remove_button = function() {
-    var fieldName, input;
-    if (this.config.removeButton) {
-      fieldName = '_destroy';
-      input = this._render_input(fieldName, {
-        type: 'hidden'
-      }, false);
-      this.inputs[fieldName] = input;
-      this.$el.append(input.$el);
-      this.$removeButton = $("<a href='#' class='nested-form-delete'>Delete</a>");
-      this.$el.append(this.$removeButton);
-      return this.$removeButton.on('click', (function(_this) {
-        return function(e) {
-          var base;
-          e.preventDefault();
-          if (confirm('Are you sure?')) {
-            input.updateValue('true');
-            _this.$el.hide();
-            _this.isRemoved = true;
-            return typeof (base = _this.config).onRemove === "function" ? base.onRemove(_this) : void 0;
-          }
-        };
-      })(this));
-    }
-  };
-
-  Form.prototype._forms = function() {
-    var addNestedForms, forms;
-    forms = [this];
-    addNestedForms = function(form) {
-      var input, name, ref, results;
-      ref = form.inputs;
-      results = [];
-      for (name in ref) {
-        input = ref[name];
-        if (input.config.type === 'form') {
-          forms = forms.concat(input.forms);
-          results.push((function() {
-            var i, len, ref1, results1;
-            ref1 = input.forms;
-            results1 = [];
-            for (i = 0, len = ref1.length; i < len; i++) {
-              form = ref1[i];
-              results1.push(addNestedForms(form));
-            }
-            return results1;
-          })());
-        } else {
-          results.push(void 0);
-        }
-      }
-      return results;
-    };
-    addNestedForms(this);
-    return forms;
-  };
-
-  Form.prototype.destroy = function() {
-    var group, i, input, len, name, ref, ref1;
-    ref = this.groups;
-    for (i = 0, len = ref.length; i < len; i++) {
-      group = ref[i];
-      if (typeof group.destroy === "function") {
-        group.destroy();
-      }
-    }
-    ref1 = this.inputs;
-    for (name in ref1) {
-      input = ref1[name];
-      if (typeof input.destroy === "function") {
-        input.destroy();
-      }
-    }
-    return this.$el.remove();
-  };
-
-  Form.prototype.serialize = function(obj) {
-    var file, form, i, input, j, len, len1, name, ref, ref1, ref2, ref3;
-    if (obj == null) {
-      obj = {};
-    }
-    ref = this.$el.serializeArray();
-    for (i = 0, len = ref.length; i < len; i++) {
-      input = ref[i];
-      obj[input.name] = input.value;
-    }
-    ref1 = this._forms();
-    for (j = 0, len1 = ref1.length; j < len1; j++) {
-      form = ref1[j];
-      ref2 = form.inputs;
-      for (name in ref2) {
-        input = ref2[name];
-        if (input.config.type === 'file' || input.config.type === 'image') {
-          file = input.$input.get()[0].files[0];
-          obj["__FILE__" + input.name] = file;
-          if (input.isEmpty()) {
-            obj[input.removeName()] = 'true';
-          }
-        }
-      }
-      ref3 = form.inputs;
-      for (name in ref3) {
-        input = ref3[name];
-        if (input.config.ignoreOnSubmission) {
-          delete obj[name];
-        }
-      }
-    }
-    return obj;
-  };
-
-  Form.prototype.hash = function(hash) {
-    var input, name, ref;
-    if (hash == null) {
-      hash = {};
-    }
-    ref = this.inputs;
-    for (name in ref) {
-      input = ref[name];
-      input.hash(hash);
-    }
-    return hash;
-  };
-
-  Form.prototype.initializePlugins = function() {
-    var group, i, input, len, name, ref, ref1, results;
-    ref = this.groups;
-    for (i = 0, len = ref.length; i < len; i++) {
-      group = ref[i];
-      if (typeof group.onInitialize === "function") {
-        group.onInitialize(this, group);
-      }
-    }
-    ref1 = this.inputs;
-    results = [];
-    for (name in ref1) {
-      input = ref1[name];
-      results.push(input.initialize());
-    }
-    return results;
-  };
-
-  Form.prototype.showValidationErrors = function(errors) {
-    var firstMessage, input, inputName, messages, results;
-    this.hideValidationErrors();
-    results = [];
-    for (inputName in errors) {
-      messages = errors[inputName];
-      input = this.inputs[inputName];
-      firstMessage = messages[0];
-      results.push(input.showErrorMessage(firstMessage));
-    }
-    return results;
-  };
-
-  Form.prototype.hideValidationErrors = function() {
-    var input, inputName, ref, results;
-    ref = this.inputs;
-    results = [];
-    for (inputName in ref) {
-      input = ref[inputName];
-      results.push(input.hideErrorMessage());
-    }
-    return results;
-  };
-
-  Form.prototype.updateValues = function(object) {
-    var name, results, value;
-    results = [];
-    for (name in object) {
-      value = object[name];
-      if (this.inputs[name]) {
-        results.push(this.inputs[name].updateValue(value, object));
-      } else {
-        results.push(void 0);
-      }
-    }
-    return results;
-  };
-
-  return Form;
-
-})();
-
-this.inputFormReorder = {
-  _bind_forms_reorder: function() {
-    var form, i, len, list, ref, results;
-    if (this.config.sortBy) {
-      list = this.$forms.addClass(this.reorderContainerClass).get(0);
-      new Slip(list);
-      list.addEventListener('slip:beforeswipe', function(e) {
-        return e.preventDefault();
-      });
-      list.addEventListener('slip:beforewait', (function(e) {
-        if ($(e.target).hasClass("icon-reorder")) {
-          return e.preventDefault();
-        }
-      }), false);
-      list.addEventListener('slip:beforereorder', (function(e) {
-        if (!$(e.target).hasClass("icon-reorder")) {
-          return e.preventDefault();
-        }
-      }), false);
-      list.addEventListener('slip:reorder', ((function(_this) {
-        return function(e) {
-          var $targetForm, newTargetFormPosition, nextForm, nextFormPosition, prevForm, prevFormPosition, targetForm;
-          targetForm = _this._find_form_by_target(e.target);
-          if (targetForm) {
-            e.target.parentNode.insertBefore(e.target, e.detail.insertBefore);
-            $targetForm = $(e.target);
-            prevForm = _this._find_form_by_target($targetForm.prev().get(0));
-            nextForm = _this._find_form_by_target($targetForm.next().get(0));
-            prevFormPosition = prevForm ? prevForm.inputs[_this.config.sortBy].value : 0;
-            nextFormPosition = nextForm ? nextForm.inputs[_this.config.sortBy].value : 0;
-            newTargetFormPosition = prevFormPosition + Math.abs(nextFormPosition - prevFormPosition) / 2.0;
-            targetForm.inputs[_this.config.sortBy].updateValue(newTargetFormPosition);
-          }
-          return false;
-        };
-      })(this)), false);
-      ref = this.forms;
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        form = ref[i];
-        results.push(this._add_form_reorder_button(form));
-      }
-      return results;
-    }
-  },
-  _add_form_reorder_button: function(form) {
-    return form.$el.append("<div class='icon-reorder' data-container-class='" + this.reorderContainerClass + "'></div>").addClass('reorderable');
-  },
-  _find_form_by_target: function(el) {
-    var form, i, len, ref;
-    if (el) {
-      ref = this.forms;
-      for (i = 0, len = ref.length; i < len; i++) {
-        form = ref[i];
-        if (form.$el.get(0) === el) {
-          return form;
-        }
-      }
-    }
-    return null;
-  }
-};
-
-this.InputForm = (function() {
-  function InputForm(name1, nestedObjects, config1, object1) {
-    var base;
-    this.name = name1;
-    this.nestedObjects = nestedObjects;
-    this.config = config1;
-    this.object = object1;
-    this.forms = [];
-    (base = this.config).namePrefix || (base.namePrefix = name);
-    this.config.removeButton = true;
-    this.config.formSchema._id = {
-      type: 'hidden',
-      name: 'id'
-    };
-    this.reorderContainerClass = "nested-forms-" + this.config.klassName;
-    this._create_el();
-    this._add_label();
-    this._add_forms();
-    this._add_new_button();
-    return this;
-  }
-
-  InputForm.prototype._create_el = function() {
-    return this.$el = $("<div class='input-stacked nested-forms input-" + this.config.klassName + "'>");
-  };
-
-  InputForm.prototype._add_label = function() {
-    this.$label = $("<span class='label'>" + this.config.label + "</span>");
-    this.$errorMessage = $("<span class='error-message'></span>");
-    this.$label.append(this.$errorMessage);
-    return this.$el.append(this.$label);
-  };
-
-  InputForm.prototype._add_forms = function() {
-    var i, namePrefix, object, ref;
-    this.$forms = $("<ul>");
-    this.$label.after(this.$forms);
-    if (this.nestedObjects !== '') {
-      this._sort_nested_objects();
-      ref = this.nestedObjects;
-      for (i in ref) {
-        object = ref[i];
-        namePrefix = this.config.namePrefix + "[" + i + "]";
-        this.forms.push(this._render_form(object, namePrefix, this.config));
-      }
-      return this._bind_forms_reorder();
-    }
-  };
-
-  InputForm.prototype._sort_nested_objects = function() {
-    var i, o, ref, results;
-    if (this.config.sortBy) {
-      this.config.formSchema[this.config.sortBy] = {
-        type: 'hidden'
-      };
-      if (this.nestedObjects) {
-        this.nestedObjects.sort((function(_this) {
-          return function(a, b) {
-            return parseFloat(a[_this.config.sortBy]) - parseFloat(b[_this.config.sortBy]);
-          };
-        })(this));
-        ref = this.nestedObjects;
-        results = [];
-        for (i in ref) {
-          o = ref[i];
-          results.push(o[this.config.sortBy] = parseInt(i) + 1);
-        }
-        return results;
-      }
-    }
-  };
-
-  InputForm.prototype._render_form = function(object, namePrefix, config) {
-    var form, formConfig;
-    formConfig = $.extend({}, config, {
-      namePrefix: namePrefix,
-      rootEl: "<li>"
-    });
-    form = new Form(object, formConfig);
-    this.$forms.append(form.$el);
-    return form;
-  };
-
-  InputForm.prototype._add_new_button = function() {
-    var label;
-    label = this.config.newButtonLabel || "Add";
-    this.$newButton = $("<a href='#' class='nested-form-new'>" + label + "</a>");
-    this.$el.append(this.$newButton);
-    return this.$newButton.on('click', (function(_this) {
-      return function(e) {
-        e.preventDefault();
-        return _this.addNewForm();
-      };
-    })(this));
-  };
-
-  InputForm.prototype.initialize = function() {
-    var base, j, len, nestedForm, ref;
-    ref = this.forms;
-    for (j = 0, len = ref.length; j < len; j++) {
-      nestedForm = ref[j];
-      nestedForm.initializePlugins();
-    }
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
-  };
-
-  InputForm.prototype.hash = function(hash) {
-    var form, j, len, objects, ref;
-    if (hash == null) {
-      hash = {};
-    }
-    objects = [];
-    ref = this.forms;
-    for (j = 0, len = ref.length; j < len; j++) {
-      form = ref[j];
-      objects.push(form.hash());
-    }
-    hash[this.config.fieldName] = objects;
-    return hash;
-  };
-
-  InputForm.prototype.showErrorMessage = function(message) {
-    this.$el.addClass('error');
-    return this.$errorMessage.html(message);
-  };
-
-  InputForm.prototype.hideErrorMessage = function() {
-    this.$el.removeClass('error');
-    return this.$errorMessage.html('');
-  };
-
-  InputForm.prototype.addNewForm = function(object) {
-    var base, form, namePrefix, newFormConfig, position, prevForm;
-    if (object == null) {
-      object = null;
-    }
-    namePrefix = this.config.namePrefix + "[" + (Date.now()) + "]";
-    newFormConfig = $.extend({}, this.config);
-    delete newFormConfig.formSchema._id;
-    form = this._render_form(object, namePrefix, newFormConfig);
-    form.initializePlugins();
-    if (this.config.sortBy) {
-      this._add_form_reorder_button(form);
-      prevForm = _last(this.forms);
-      position = prevForm ? prevForm.inputs[this.config.sortBy].value + 1 : 1;
-      console.log(this.config);
-      console.log(this.config.sortBy);
-      console.log(form.inputs);
-      form.inputs[this.config.sortBy].updateValue(position);
-    }
-    this.forms.push(form);
-    if (typeof (base = this.config).onNew === "function") {
-      base.onNew(form);
-    }
-    return form;
-  };
-
-  InputForm.prototype.updateValue = function(nestedObjects, object1) {
-    this.nestedObjects = nestedObjects;
-    this.object = object1;
-    this.$forms.remove();
-    this.forms = [];
-    return this._add_forms();
-  };
-
-  return InputForm;
-
-})();
-
-include(InputForm, inputFormReorder);
-
-chr.formInputs['form'] = InputForm;
-
-this.InputString = (function() {
-  function InputString(name, value, config, object) {
-    this.name = name;
-    this.value = value;
-    this.config = config;
-    this.object = object;
-    this._create_el();
-    this._add_label();
-    this._add_input();
-    this._add_placeholder();
-    this._add_disabled();
-    this._add_required();
-    return this;
-  }
-
-  InputString.prototype._safe_value = function() {
-    if (typeof this.value === 'object') {
-      return JSON.stringify(this.value);
-    } else {
-      return _escapeHtml(this.value);
-    }
-  };
-
-  InputString.prototype._create_el = function() {
-    return this.$el = $("<label for='" + this.name + "' class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
-  };
-
-  InputString.prototype._add_label = function() {
-    this.$label = $("<span class='label'>" + this.config.label + "</span>");
-    this.$errorMessage = $("<span class='error-message'></span>");
-    this.$label.append(this.$errorMessage);
-    return this.$el.append(this.$label);
-  };
-
-  InputString.prototype._add_input = function() {
-    var data;
-    this.$input = $("<input type='text' name='" + this.name + "' value='" + (this._safe_value()) + "' />");
-    this.$input.on('keyup', (function(_this) {
-      return function(e) {
-        return _this.$input.trigger('change');
-      };
-    })(this));
-    this.$el.append(this.$input);
-    if (this.config.options && $.isArray(this.config.options)) {
-      data = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: $.map(this.config.options, function(opt) {
-          return {
-            value: opt
-          };
-        })
-      });
-      data.initialize();
-      return this.$input.typeahead({
-        hint: true,
-        highlight: true,
-        minLength: 1
-      }, {
-        name: 'options',
-        displayKey: 'value',
-        source: data.ttAdapter()
-      });
-    }
-  };
-
-  InputString.prototype._add_placeholder = function() {
-    var ref;
-    if ((ref = this.config.klass) === 'placeholder' || ref === 'stacked') {
-      this.$input.attr('placeholder', this.config.label);
-    }
-    if (this.config.placeholder) {
-      return this.$input.attr('placeholder', this.config.placeholder);
-    }
-  };
-
-  InputString.prototype._add_disabled = function() {
-    if (this.config.disabled) {
-      this.$input.prop('disabled', true);
-      return this.$el.addClass('input-disabled');
-    }
-  };
-
-  InputString.prototype._add_required = function() {
-    if (this.config.required) {
-      return this.$el.addClass('input-required');
-    }
-  };
-
-  InputString.prototype.initialize = function() {
-    var base;
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
-  };
-
-  InputString.prototype.hash = function(hash) {
-    if (hash == null) {
-      hash = {};
-    }
-    hash[this.config.klassName] = this.$input.val();
-    return hash;
-  };
-
-  InputString.prototype.updateValue = function(value) {
-    this.value = value;
-    return this.$input.val(this.value);
-  };
-
-  InputString.prototype.showErrorMessage = function(message) {
-    this.$el.addClass('error');
-    return this.$errorMessage.html(message);
-  };
-
-  InputString.prototype.hideErrorMessage = function() {
-    this.$el.removeClass('error');
-    return this.$errorMessage.html('');
-  };
-
-  return InputString;
-
-})();
-
-chr.formInputs['string'] = InputString;
-
-this.InputHidden = (function() {
-  function InputHidden(name, value, config, object) {
-    this.name = name;
-    this.value = value;
-    this.config = config;
-    this.object = object;
-    this._create_el();
-    return this;
-  }
-
-  InputHidden.prototype._create_el = function() {
-    return this.$el = $("<input type='hidden' name='" + this.name + "' value='" + (this._safe_value()) + "' />");
-  };
-
-  InputHidden.prototype._safe_value = function() {
-    if (typeof this.value === 'object') {
-      return JSON.stringify(this.value);
-    } else {
-      return _escapeHtml(this.value);
-    }
-  };
-
-  InputHidden.prototype.showErrorMessage = function(message) {};
-
-  InputHidden.prototype.hideErrorMessage = function() {};
-
-  InputHidden.prototype.initialize = function() {
-    var base;
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
-  };
-
-  InputHidden.prototype.hash = function(hash) {
-    if (hash == null) {
-      hash = {};
-    }
-    hash[this.config.klassName] = this.$el.val();
-    return hash;
-  };
-
-  InputHidden.prototype.updateValue = function(value) {
-    this.value = value;
-    return this.$el.val(this.value);
-  };
-
-  return InputHidden;
-
-})();
-
-chr.formInputs['hidden'] = InputHidden;
-
-var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
-
-this.InputCheckbox = (function(superClass) {
-  extend(InputCheckbox, superClass);
-
-  function InputCheckbox(name, value, config, object) {
-    this.name = name;
-    this.value = value;
-    this.config = config;
-    this.object = object;
-    this._create_el();
-    this._add_input();
-    this._add_label();
-    return this;
-  }
-
-  InputCheckbox.prototype._create_el = function() {
-    return this.$el = $("<label for='" + this.name + "' class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
-  };
-
-  InputCheckbox.prototype._safe_value = function() {
-    if (!this.value || this.value === 'false' || this.value === 0 || this.value === '0') {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  InputCheckbox.prototype._add_input = function() {
-    this.$false_hidden_input = $("<input type='hidden' name='" + this.name + "' value='false' />");
-    this.$el.append(this.$false_hidden_input);
-    this.$input = $("<input type='checkbox' id='" + this.name + "' name='" + this.name + "' value='true' " + (this._safe_value() ? 'checked' : '') + " />");
-    return this.$el.append(this.$input);
-  };
-
-  InputCheckbox.prototype.updateValue = function(value) {
-    this.value = value;
-    return this.$input.prop('checked', this._safe_value());
-  };
-
-  InputCheckbox.prototype.hash = function(hash) {
-    if (hash == null) {
-      hash = {};
-    }
-    hash[this.config.klassName] = this.$input.prop('checked');
-    return hash;
-  };
-
-  return InputCheckbox;
-
-})(InputString);
-
-chr.formInputs['checkbox'] = InputCheckbox;
-
-this.InputCheckboxSwitch = (function(superClass) {
-  extend(InputCheckboxSwitch, superClass);
-
-  function InputCheckboxSwitch() {
-    return InputCheckboxSwitch.__super__.constructor.apply(this, arguments);
-  }
-
-  InputCheckboxSwitch.prototype._add_input = function() {
-    this.$switch = $("<div class='switch'>");
-    this.$el.append(this.$switch);
-    this.$false_hidden_input = $("<input type='hidden' name='" + this.name + "' value='false' />");
-    this.$switch.append(this.$false_hidden_input);
-    this.$input = $("<input type='checkbox' id='" + this.name + "' name='" + this.name + "' value='true' " + (this._safe_value() ? 'checked' : '') + " />");
-    this.$switch.append(this.$input);
-    this.$checkbox = $("<div class='checkbox'>");
-    return this.$switch.append(this.$checkbox);
-  };
-
-  return InputCheckboxSwitch;
-
-})(InputCheckbox);
-
-chr.formInputs['switch'] = InputCheckboxSwitch;
-
-var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
-
-this.InputColor = (function(superClass) {
-  extend(InputColor, superClass);
-
-  function InputColor() {
-    return InputColor.__super__.constructor.apply(this, arguments);
-  }
-
-  InputColor.prototype._add_color_preview = function() {
-    this.$colorPreview = $("<div class='preview'>");
-    return this.$el.append(this.$colorPreview);
-  };
-
-  InputColor.prototype._update_color_preview = function() {
-    return this.$colorPreview.css({
-      'background-color': "#" + (this.$input.val())
-    });
-  };
-
-  InputColor.prototype._validate_input_value = function() {
-    if (/^(?:[0-9a-f]{3}){1,2}$/i.test(this.$input.val())) {
-      return this.hideErrorMessage();
-    } else {
-      return this.showErrorMessage('Invalid hex value');
-    }
-  };
-
-  InputColor.prototype.initialize = function() {
-    var base;
-    this.$input.attr('placeholder', this.config.placeholder || 'e.g. #eee');
-    this._add_color_preview();
-    this._update_color_preview();
-    this.$input.on('change keyup', (function(_this) {
-      return function(e) {
-        _this.hideErrorMessage();
-        _this._validate_input_value();
-        return _this._update_color_preview();
-      };
-    })(this));
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
-  };
-
-  return InputColor;
-
-})(InputString);
-
-chr.formInputs['color'] = InputColor;
-
-
-
-var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
-
-this.InputFile = (function(superClass) {
-  extend(InputFile, superClass);
-
-  function InputFile(name, value, config, object) {
-    this.name = name;
-    this.value = value;
-    this.config = config;
-    this.object = object;
-    this._create_el();
-    this._add_label();
-    this._add_input();
-    this._update_state();
-    this._add_required();
-    return this;
-  }
-
-  InputFile.prototype._create_el = function() {
-    return this.$el = $("<div class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
-  };
-
-  InputFile.prototype._add_input = function() {
-    this.$link = $("<a href='#' target='_blank' title=''></a>");
-    this.$el.append(this.$link);
-    this.$input = $("<input type='file' name='" + this.name + "' id='" + this.name + "'>");
-    this.$el.append(this.$input);
-    return this._add_remove_checkbox();
-  };
-
-  InputFile.prototype._add_remove_checkbox = function() {
-    var removeInputName;
-    removeInputName = this.removeName();
-    this.$removeLabel = $("<label for='" + removeInputName + "'>Remove</label>");
-    this.$hiddenRemoveInput = $("<input type='hidden' name='" + removeInputName + "' value='false'>");
-    this.$removeInput = $("<input type='checkbox' name='" + removeInputName + "' id='" + removeInputName + "' value='true'>");
-    this.$link.after(this.$removeLabel);
-    this.$link.after(this.$removeInput);
-    return this.$link.after(this.$hiddenRemoveInput);
-  };
-
-  InputFile.prototype._update_inputs = function() {
-    return this.$link.html(this.filename).attr('title', this.filename).attr('href', this.value.url);
-  };
-
-  InputFile.prototype._update_state = function(filename) {
-    this.filename = filename != null ? filename : null;
-    this.$input.val('');
-    this.$removeInput.prop('checked', false);
-    if (this.value.url) {
-      this.filename = _last(this.value.url.split('/'));
-      if (this.filename === '_old_') {
-        this.filename = null;
-      }
-    }
-    if (this.filename) {
-      this.$el.removeClass('empty');
-      return this._update_inputs();
-    } else {
-      return this.$el.addClass('empty');
-    }
-  };
-
-  InputFile.prototype.isEmpty = function() {
-    return !this.$input.get()[0].files[0] && !this.filename;
-  };
-
-  InputFile.prototype.removeName = function() {
-    return this.name.reverse().replace('[', '[remove_'.reverse()).reverse();
-  };
-
-  InputFile.prototype.updateValue = function(value, object) {
-    this.value = value;
-    this.object = object;
-    return this._update_state();
-  };
-
-  InputFile.prototype.hash = function(hash) {
-    if (hash == null) {
-      hash = {};
-    }
-    return hash;
-  };
-
-  return InputFile;
-
-})(InputString);
-
-chr.formInputs['file'] = InputFile;
-
-this.InputFileImage = (function(superClass) {
-  extend(InputFileImage, superClass);
-
-  function InputFileImage() {
-    return InputFileImage.__super__.constructor.apply(this, arguments);
-  }
-
-  InputFileImage.prototype._add_input = function() {
-    this.$link = $("<a href='#' target='_blank' title=''></a>");
-    this.$el.append(this.$link);
-    this.$thumb = $("<img src='' />");
-    this.$el.append(this.$thumb);
-    this.$input = $("<input type='file' name='" + this.name + "' id='" + this.name + "' />");
-    this.$el.append(this.$input);
-    return this._add_remove_checkbox();
-  };
-
-  InputFileImage.prototype._update_inputs = function() {
-    var image_thumb_url;
-    this.$link.html(this.filename).attr('title', this.filename).attr('href', this.value.url);
-    image_thumb_url = this.config.thumbnail ? this.config.thumbnail(this.object) : this.value.url;
-    return this.$thumb.attr('src', image_thumb_url).attr('alt', this.filename);
-  };
-
-  return InputFileImage;
-
-})(InputFile);
-
-chr.formInputs['image'] = InputFileImage;
-
-this.inputListTypeahead = {
-  _create_typeahead_el: function(placeholder) {
-    this.typeaheadInput = $("<input type='text' placeholder='" + placeholder + "' />");
-    return this.$el.append(this.typeaheadInput);
-  },
-  _bind_typeahead: function() {
-    var dataSource, limit;
-    limit = this.config.typeahead.limit || 5;
-    dataSource = new Bloodhound({
-      datumTokenizer: Bloodhound.tokenizers.obj.whitespace(this.config.titleFieldName),
-      queryTokenizer: Bloodhound.tokenizers.whitespace,
-      remote: {
-        url: this.config.typeahead.url,
-        filter: (function(_this) {
-          return function(parsedResponse) {
-            var data, i, len, o;
-            data = [];
-            for (i = 0, len = parsedResponse.length; i < len; i++) {
-              o = parsedResponse[i];
-              _this._normalize_object(o);
-              if (!_this.objects[o._id]) {
-                data.push(o);
-              }
-            }
-            return data;
-          };
-        })(this)
-      },
-      limit: limit
-    });
-    dataSource.initialize();
-    this.typeaheadInput.typeahead({
-      hint: false,
-      highlight: true
-    }, {
-      name: this.config.klassName,
-      displayKey: this.config.titleFieldName,
-      source: dataSource.ttAdapter()
-    });
-    return this.typeaheadInput.on('typeahead:selected', (function(_this) {
-      return function(e, object, dataset) {
-        _this._render_item(object);
-        return _this.typeaheadInput.typeahead('val', '');
-      };
-    })(this));
-  }
-};
-
-this.inputListReorder = {
-  _bind_reorder: function() {
-    var list;
-    list = this.$items.get(0);
-    new Slip(list);
-    list.addEventListener('slip:beforeswipe', function(e) {
-      return e.preventDefault();
-    });
-    list.addEventListener('slip:beforewait', (function(e) {
-      if ($(e.target).hasClass("icon-reorder")) {
-        return e.preventDefault();
-      }
-    }), false);
-    list.addEventListener('slip:beforereorder', (function(e) {
-      if (!$(e.target).hasClass("icon-reorder")) {
-        return e.preventDefault();
-      }
-    }), false);
-    return list.addEventListener('slip:reorder', ((function(_this) {
-      return function(e) {
-        e.target.parentNode.insertBefore(e.target, e.detail.insertBefore);
-        _this._update_input_value();
-        return false;
-      };
-    })(this)), false);
-  }
-};
-
-var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
-
-this.InputList = (function(superClass) {
-  extend(InputList, superClass);
-
-  function InputList() {
-    return InputList.__super__.constructor.apply(this, arguments);
-  }
-
-  InputList.prototype._add_input = function() {
-    var name;
-    name = this.config.namePrefix ? this.config.namePrefix + "[__LIST__" + this.config.target + "]" : "[__LIST__" + this.config.target + "]";
-    this.$input = $("<input type='hidden' name='" + name + "' value='' />");
-    this.$el.append(this.$input);
-    this.reorderContainerClass = this.config.klassName;
-    this.$items = $("<ul class='" + this.reorderContainerClass + "'></ul>");
-    this.$el.append(this.$items);
-    this._create_typeahead_el(this.config.typeahead.placeholder);
-    this._render_items();
-    return this._update_input_value();
-  };
-
-  InputList.prototype._update_input_value = function() {
-    var ids, value;
-    ids = [];
-    this.$items.children('li').each(function(i, el) {
-      return ids.push($(el).attr('data-id'));
-    });
-    value = ids.join(',');
-    this.$input.val(value);
-    return this.$input.trigger('change');
-  };
-
-  InputList.prototype._remove_item = function($el) {
-    var id;
-    id = $el.attr('data-id');
-    delete this.objects[id];
-    $el.parent().remove();
-    return this._update_input_value();
-  };
-
-  InputList.prototype._ordered_ids = function() {
-    var ids;
-    ids = this.$input.val().split(',');
-    if (ids[0] === '') {
-      ids = [];
-    }
-    return ids;
-  };
-
-  InputList.prototype._render_items = function() {
-    var j, len, o, ref, results;
-    this.$items.html('');
-    this.objects = {};
-    ref = this.value;
-    results = [];
-    for (j = 0, len = ref.length; j < len; j++) {
-      o = ref[j];
-      results.push(this._render_item(o));
-    }
-    return results;
-  };
-
-  InputList.prototype._render_item = function(o) {
-    var item, listItem;
-    this._add_object(o);
-    if (this.config.itemTemplate) {
-      item = this.config.itemTemplate(o);
-    } else {
-      item = o[this.config.titleFieldName];
-    }
-    listItem = $("<li data-id='" + o._id + "'>\n  <span class='icon-reorder' data-container-class='" + this.reorderContainerClass + "'></span>\n  " + item + "\n  <a href='#' class='action_remove'>Remove</a>\n</li>");
-    this.$items.append(listItem);
-    return this._update_input_value();
-  };
-
-  InputList.prototype._add_object = function(o) {
-    this._normalize_object(o);
-    return this.objects[o._id] = o;
-  };
-
-  InputList.prototype._normalize_object = function(o) {
-    if (o._id == null) {
-      o._id = o.id;
-    }
-    if (!o._id) {
-      return console.log("::: list item is missing an 'id' or '_id' :::");
-    }
-  };
-
-  InputList.prototype.initialize = function() {
-    var base;
-    this._bind_typeahead();
-    this.$items.on('click', '.action_remove', (function(_this) {
-      return function(e) {
-        e.preventDefault();
-        if (confirm('Are you sure?')) {
-          return _this._remove_item($(e.currentTarget));
-        }
-      };
-    })(this));
-    this._bind_reorder();
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
-  };
-
-  InputList.prototype.updateValue = function(value1) {
-    this.value = value1;
-    return this._render_items();
-  };
-
-  InputList.prototype.hash = function(hash) {
-    var id, j, len, ordered_objects, ref;
-    if (hash == null) {
-      hash = {};
-    }
-    hash[this.config.target] = this.$input.val();
-    ordered_objects = [];
-    ref = this._ordered_ids();
-    for (j = 0, len = ref.length; j < len; j++) {
-      id = ref[j];
-      ordered_objects.push(this.objects[id]);
-    }
-    hash[this.config.klassName] = ordered_objects;
-    return hash;
-  };
-
-  return InputList;
-
-})(InputString);
-
-include(InputList, inputListReorder);
-
-include(InputList, inputListTypeahead);
-
-chr.formInputs['list'] = InputList;
-
-var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
-
-this.InputPassword = (function(superClass) {
-  extend(InputPassword, superClass);
-
-  function InputPassword() {
-    return InputPassword.__super__.constructor.apply(this, arguments);
-  }
-
-  InputPassword.prototype._add_input = function() {
-    this.$input = $("<input type='password' name='" + this.name + "' value='" + this.value + "' />");
-    return this.$el.append(this.$input);
-  };
-
-  InputPassword.prototype.updateValue = function(value) {
-    this.value = value;
-    return this.$input.val(this.value);
-  };
-
-  return InputPassword;
-
-})(InputString);
-
-chr.formInputs['password'] = InputPassword;
-
-var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
-
-this.InputSelect = (function(superClass) {
-  extend(InputSelect, superClass);
-
-  function InputSelect() {
-    return InputSelect.__super__.constructor.apply(this, arguments);
-  }
-
-  InputSelect.prototype._create_el = function() {
-    return this.$el = $("<div class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
-  };
-
-  InputSelect.prototype._add_input = function() {
-    this.$input = $("<select name='" + this.name + "'></select>");
-    this.$el.append(this.$input);
-    return this._add_options();
-  };
-
-  InputSelect.prototype._add_options = function() {
-    if (this.config.optionsHashFieldName) {
-      this.value = String(this.value);
-      if (this.object) {
-        this.config.optionsHash = this.object[this.config.optionsHashFieldName];
-      } else {
-        this.config.optionsHash = {
-          '': '--'
-        };
-      }
-    }
-    if (this.config.collection) {
-      return this._add_collection_options();
-    } else if (this.config.optionsList) {
-      return this._add_list_options();
-    } else if (this.config.optionsHash) {
-      return this._add_hash_options();
-    }
-  };
-
-  InputSelect.prototype._add_collection_options = function() {
-    var i, len, o, ref, results, title, value;
-    ref = this.config.collection.data;
-    results = [];
-    for (i = 0, len = ref.length; i < len; i++) {
-      o = ref[i];
-      title = o[this.config.collection.titleField];
-      value = o[this.config.collection.valueField];
-      results.push(this._add_option(title, value));
-    }
-    return results;
-  };
-
-  InputSelect.prototype._add_list_options = function() {
-    var data, i, len, o, results;
-    data = this.config.optionsList;
-    results = [];
-    for (i = 0, len = data.length; i < len; i++) {
-      o = data[i];
-      results.push(this._add_option(o, o));
-    }
-    return results;
-  };
-
-  InputSelect.prototype._add_hash_options = function() {
-    var data, results, title, value;
-    data = this.config.optionsHash;
-    results = [];
-    for (value in data) {
-      title = data[value];
-      results.push(this._add_option(title, value));
-    }
-    return results;
-  };
-
-  InputSelect.prototype._add_option = function(title, value) {
-    var $option, selected;
-    selected = this.value === value ? 'selected' : '';
-    $option = $("<option value='" + value + "' " + selected + ">" + title + "</option>");
-    return this.$input.append($option);
-  };
-
-  InputSelect.prototype.updateValue = function(value1, object) {
-    this.value = value1;
-    this.object = object;
-    this.$input.html('');
-    this._add_options();
-    return this.$input.val(this.value).prop('selected', true);
-  };
-
-  return InputSelect;
-
-})(InputString);
-
-chr.formInputs['select'] = InputSelect;
-
-var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
-
-this.InputText = (function(superClass) {
-  extend(InputText, superClass);
-
-  function InputText() {
-    return InputText.__super__.constructor.apply(this, arguments);
-  }
-
-  InputText.prototype._add_input = function() {
-    this.$input = $("<textarea class='autosize' name='" + this.name + "' rows=1>" + (this._safe_value()) + "</textarea>");
-    this.$input.on('keyup', (function(_this) {
-      return function(e) {
-        return _this.$input.trigger('change');
-      };
-    })(this));
-    return this.$el.append(this.$input);
-  };
-
-  InputText.prototype.initialize = function() {
-    var base;
-    this.$input.textareaAutoSize();
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
-  };
-
-  return InputText;
-
-})(InputString);
-
-chr.formInputs['text'] = InputText;
-
 this.ArrayStore = (function() {
   function ArrayStore(config) {
     var ref, ref1, ref2;
@@ -5887,3 +4549,1391 @@ this.RailsObjectStore = (function(superClass) {
 })(RestObjectStore);
 
 include(RailsObjectStore, railsFormObjectParser);
+
+this.Form = (function() {
+  function Form(object1, config1) {
+    this.object = object1;
+    this.config = config1;
+    this.groups = [];
+    this.inputs = {};
+    this.$el = $(this.config.rootEl || "<form class='form'>");
+    this.schema = this._get_schema();
+    this.isRemoved = false;
+    this._build_schema(this.schema, this.$el);
+    this._add_nested_form_remove_button();
+  }
+
+  Form.prototype._get_schema = function() {
+    var schema;
+    schema = this.config.formSchema;
+    if (this.object) {
+      if (schema == null) {
+        schema = this._generate_default_schema();
+      }
+    }
+    return schema;
+  };
+
+  Form.prototype._generate_default_schema = function() {
+    var key, ref, schema, value;
+    schema = {};
+    ref = this.object;
+    for (key in ref) {
+      value = ref[key];
+      schema[key] = this._generate_default_input_config(key, value);
+    }
+    return schema;
+  };
+
+  Form.prototype._generate_default_input_config = function(fieldName, value) {
+    var config;
+    config = {};
+    if (fieldName[0] === '_') {
+      config.type = 'hidden';
+    } else if (value === true || value === false) {
+      config.type = 'checkbox';
+    } else if (value) {
+      if (value.hasOwnProperty('url')) {
+        config.type = 'file';
+      } else if (value.length > 60) {
+        config.type = 'text';
+      }
+    }
+    return config;
+  };
+
+  Form.prototype._build_schema = function(schema, $el) {
+    var config, fieldName, group, input, results;
+    results = [];
+    for (fieldName in schema) {
+      config = schema[fieldName];
+      config.fieldName = fieldName;
+      if (config.type === 'group') {
+        group = this._generate_inputs_group(fieldName, config);
+        results.push($el.append(group.$el));
+      } else {
+        input = this._generate_input(fieldName, config);
+        results.push($el.append(input.$el));
+      }
+    }
+    return results;
+  };
+
+  Form.prototype._generate_inputs_group = function(klassName, groupConfig) {
+    var $group, group;
+    $group = $("<div class='group " + klassName + "' />");
+    if (groupConfig.inputs) {
+      this._build_schema(groupConfig.inputs, $group);
+    }
+    group = {
+      $el: $group,
+      klassName: klassName,
+      onInitialize: groupConfig.onInitialize
+    };
+    this.groups.push(group);
+    return group;
+  };
+
+  Form.prototype._generate_input = function(fieldName, inputConfig) {
+    var input, inputName, value;
+    if (this.object) {
+      value = this.object[fieldName];
+    } else {
+      value = inputConfig["default"];
+    }
+    if (value == null) {
+      value = '';
+    }
+    inputName = inputConfig.name || fieldName;
+    input = this._render_input(inputName, inputConfig, value);
+    this.inputs[fieldName] = input;
+    return input;
+  };
+
+  Form.prototype._render_input = function(name, config, value) {
+    var inputClass, inputConfig, inputName;
+    inputConfig = $.extend({}, config);
+    if (inputConfig.label == null) {
+      inputConfig.label = name.titleize();
+    }
+    if (inputConfig.type == null) {
+      inputConfig.type = 'string';
+    }
+    if (inputConfig.klass == null) {
+      inputConfig.klass = 'stacked';
+    }
+    inputConfig.klassName = name;
+    inputClass = chr.formInputs[inputConfig.type];
+    if (inputClass == null) {
+      inputClass = chr.formInputs['string'];
+    }
+    inputName = this.config.namePrefix ? this.config.namePrefix + "[" + name + "]" : "[" + name + "]";
+    if (inputConfig.type === 'form') {
+      inputConfig.namePrefix = inputName.replace("[" + name + "]", "[" + name + "_attributes]");
+    } else {
+      inputConfig.namePrefix = this.config.namePrefix;
+    }
+    return new inputClass(inputName, value, inputConfig, this.object);
+  };
+
+  Form.prototype._add_nested_form_remove_button = function() {
+    var fieldName, input;
+    if (this.config.removeButton) {
+      fieldName = '_destroy';
+      input = this._render_input(fieldName, {
+        type: 'hidden'
+      }, false);
+      this.inputs[fieldName] = input;
+      this.$el.append(input.$el);
+      this.$removeButton = $("<a href='#' class='nested-form-delete'>Delete</a>");
+      this.$el.append(this.$removeButton);
+      return this.$removeButton.on('click', (function(_this) {
+        return function(e) {
+          var base;
+          e.preventDefault();
+          if (confirm('Are you sure?')) {
+            input.updateValue('true');
+            _this.$el.hide();
+            _this.isRemoved = true;
+            return typeof (base = _this.config).onRemove === "function" ? base.onRemove(_this) : void 0;
+          }
+        };
+      })(this));
+    }
+  };
+
+  Form.prototype._forms = function() {
+    var addNestedForms, forms;
+    forms = [this];
+    addNestedForms = function(form) {
+      var input, name, ref, results;
+      ref = form.inputs;
+      results = [];
+      for (name in ref) {
+        input = ref[name];
+        if (input.config.type === 'form') {
+          forms = forms.concat(input.forms);
+          results.push((function() {
+            var i, len, ref1, results1;
+            ref1 = input.forms;
+            results1 = [];
+            for (i = 0, len = ref1.length; i < len; i++) {
+              form = ref1[i];
+              results1.push(addNestedForms(form));
+            }
+            return results1;
+          })());
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    };
+    addNestedForms(this);
+    return forms;
+  };
+
+  Form.prototype.destroy = function() {
+    var group, i, input, len, name, ref, ref1;
+    ref = this.groups;
+    for (i = 0, len = ref.length; i < len; i++) {
+      group = ref[i];
+      if (typeof group.destroy === "function") {
+        group.destroy();
+      }
+    }
+    ref1 = this.inputs;
+    for (name in ref1) {
+      input = ref1[name];
+      if (typeof input.destroy === "function") {
+        input.destroy();
+      }
+    }
+    return this.$el.remove();
+  };
+
+  Form.prototype.serialize = function(obj) {
+    var file, form, i, input, j, len, len1, name, ref, ref1, ref2, ref3;
+    if (obj == null) {
+      obj = {};
+    }
+    ref = this.$el.serializeArray();
+    for (i = 0, len = ref.length; i < len; i++) {
+      input = ref[i];
+      obj[input.name] = input.value;
+    }
+    ref1 = this._forms();
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      form = ref1[j];
+      ref2 = form.inputs;
+      for (name in ref2) {
+        input = ref2[name];
+        if (input.config.type === 'file' || input.config.type === 'image') {
+          file = input.$input.get()[0].files[0];
+          obj["__FILE__" + input.name] = file;
+          if (input.isEmpty()) {
+            obj[input.removeName()] = 'true';
+          }
+        }
+      }
+      ref3 = form.inputs;
+      for (name in ref3) {
+        input = ref3[name];
+        if (input.config.ignoreOnSubmission) {
+          delete obj[name];
+        }
+      }
+    }
+    return obj;
+  };
+
+  Form.prototype.hash = function(hash) {
+    var input, name, ref;
+    if (hash == null) {
+      hash = {};
+    }
+    ref = this.inputs;
+    for (name in ref) {
+      input = ref[name];
+      input.hash(hash);
+    }
+    return hash;
+  };
+
+  Form.prototype.initializePlugins = function() {
+    var group, i, input, len, name, ref, ref1, results;
+    ref = this.groups;
+    for (i = 0, len = ref.length; i < len; i++) {
+      group = ref[i];
+      if (typeof group.onInitialize === "function") {
+        group.onInitialize(this, group);
+      }
+    }
+    ref1 = this.inputs;
+    results = [];
+    for (name in ref1) {
+      input = ref1[name];
+      results.push(input.initialize());
+    }
+    return results;
+  };
+
+  Form.prototype.showValidationErrors = function(errors) {
+    var firstMessage, input, inputName, messages, results;
+    this.hideValidationErrors();
+    results = [];
+    for (inputName in errors) {
+      messages = errors[inputName];
+      input = this.inputs[inputName];
+      firstMessage = messages[0];
+      results.push(input.showErrorMessage(firstMessage));
+    }
+    return results;
+  };
+
+  Form.prototype.hideValidationErrors = function() {
+    var input, inputName, ref, results;
+    ref = this.inputs;
+    results = [];
+    for (inputName in ref) {
+      input = ref[inputName];
+      results.push(input.hideErrorMessage());
+    }
+    return results;
+  };
+
+  Form.prototype.updateValues = function(object) {
+    var name, results, value;
+    results = [];
+    for (name in object) {
+      value = object[name];
+      if (this.inputs[name]) {
+        results.push(this.inputs[name].updateValue(value, object));
+      } else {
+        results.push(void 0);
+      }
+    }
+    return results;
+  };
+
+  return Form;
+
+})();
+
+this.inputFormReorder = {
+  _bind_forms_reorder: function() {
+    var form, i, len, list, ref, results;
+    if (this.config.sortBy) {
+      list = this.$forms.addClass(this.reorderContainerClass).get(0);
+      new Slip(list);
+      list.addEventListener('slip:beforeswipe', function(e) {
+        return e.preventDefault();
+      });
+      list.addEventListener('slip:beforewait', (function(e) {
+        if ($(e.target).hasClass("icon-reorder")) {
+          return e.preventDefault();
+        }
+      }), false);
+      list.addEventListener('slip:beforereorder', (function(e) {
+        if (!$(e.target).hasClass("icon-reorder")) {
+          return e.preventDefault();
+        }
+      }), false);
+      list.addEventListener('slip:reorder', ((function(_this) {
+        return function(e) {
+          var $targetForm, newTargetFormPosition, nextForm, nextFormPosition, prevForm, prevFormPosition, targetForm;
+          targetForm = _this._find_form_by_target(e.target);
+          if (targetForm) {
+            e.target.parentNode.insertBefore(e.target, e.detail.insertBefore);
+            $targetForm = $(e.target);
+            prevForm = _this._find_form_by_target($targetForm.prev().get(0));
+            nextForm = _this._find_form_by_target($targetForm.next().get(0));
+            prevFormPosition = prevForm ? prevForm.inputs[_this.config.sortBy].value : 0;
+            nextFormPosition = nextForm ? nextForm.inputs[_this.config.sortBy].value : 0;
+            newTargetFormPosition = prevFormPosition + Math.abs(nextFormPosition - prevFormPosition) / 2.0;
+            targetForm.inputs[_this.config.sortBy].updateValue(newTargetFormPosition);
+          }
+          return false;
+        };
+      })(this)), false);
+      ref = this.forms;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        form = ref[i];
+        results.push(this._add_form_reorder_button(form));
+      }
+      return results;
+    }
+  },
+  _add_form_reorder_button: function(form) {
+    return form.$el.append("<div class='icon-reorder' data-container-class='" + this.reorderContainerClass + "'></div>").addClass('reorderable');
+  },
+  _find_form_by_target: function(el) {
+    var form, i, len, ref;
+    if (el) {
+      ref = this.forms;
+      for (i = 0, len = ref.length; i < len; i++) {
+        form = ref[i];
+        if (form.$el.get(0) === el) {
+          return form;
+        }
+      }
+    }
+    return null;
+  }
+};
+
+this.InputForm = (function() {
+  function InputForm(name1, nestedObjects, config1, object1) {
+    var base;
+    this.name = name1;
+    this.nestedObjects = nestedObjects;
+    this.config = config1;
+    this.object = object1;
+    this.forms = [];
+    (base = this.config).namePrefix || (base.namePrefix = name);
+    this.config.removeButton = true;
+    this.config.formSchema._id = {
+      type: 'hidden',
+      name: 'id'
+    };
+    this.reorderContainerClass = "nested-forms-" + this.config.klassName;
+    this._create_el();
+    this._add_label();
+    this._add_forms();
+    this._add_new_button();
+    return this;
+  }
+
+  InputForm.prototype._create_el = function() {
+    return this.$el = $("<div class='input-stacked nested-forms input-" + this.config.klassName + "'>");
+  };
+
+  InputForm.prototype._add_label = function() {
+    this.$label = $("<span class='label'>" + this.config.label + "</span>");
+    this.$errorMessage = $("<span class='error-message'></span>");
+    this.$label.append(this.$errorMessage);
+    return this.$el.append(this.$label);
+  };
+
+  InputForm.prototype._add_forms = function() {
+    var i, namePrefix, object, ref;
+    this.$forms = $("<ul>");
+    this.$label.after(this.$forms);
+    if (this.nestedObjects !== '') {
+      this._sort_nested_objects();
+      ref = this.nestedObjects;
+      for (i in ref) {
+        object = ref[i];
+        namePrefix = this.config.namePrefix + "[" + i + "]";
+        this.forms.push(this._render_form(object, namePrefix, this.config));
+      }
+      return this._bind_forms_reorder();
+    }
+  };
+
+  InputForm.prototype._sort_nested_objects = function() {
+    var i, o, ref, results;
+    if (this.config.sortBy) {
+      this.config.formSchema[this.config.sortBy] = {
+        type: 'hidden'
+      };
+      if (this.nestedObjects) {
+        this.nestedObjects.sort((function(_this) {
+          return function(a, b) {
+            return parseFloat(a[_this.config.sortBy]) - parseFloat(b[_this.config.sortBy]);
+          };
+        })(this));
+        ref = this.nestedObjects;
+        results = [];
+        for (i in ref) {
+          o = ref[i];
+          results.push(o[this.config.sortBy] = parseInt(i) + 1);
+        }
+        return results;
+      }
+    }
+  };
+
+  InputForm.prototype._render_form = function(object, namePrefix, config) {
+    var form, formConfig;
+    formConfig = $.extend({}, config, {
+      namePrefix: namePrefix,
+      rootEl: "<li>"
+    });
+    form = new Form(object, formConfig);
+    this.$forms.append(form.$el);
+    return form;
+  };
+
+  InputForm.prototype._add_new_button = function() {
+    var label;
+    label = this.config.newButtonLabel || "Add";
+    this.$newButton = $("<a href='#' class='nested-form-new'>" + label + "</a>");
+    this.$el.append(this.$newButton);
+    return this.$newButton.on('click', (function(_this) {
+      return function(e) {
+        e.preventDefault();
+        return _this.addNewForm();
+      };
+    })(this));
+  };
+
+  InputForm.prototype.initialize = function() {
+    var base, j, len, nestedForm, ref;
+    ref = this.forms;
+    for (j = 0, len = ref.length; j < len; j++) {
+      nestedForm = ref[j];
+      nestedForm.initializePlugins();
+    }
+    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+  };
+
+  InputForm.prototype.hash = function(hash) {
+    var form, j, len, objects, ref;
+    if (hash == null) {
+      hash = {};
+    }
+    objects = [];
+    ref = this.forms;
+    for (j = 0, len = ref.length; j < len; j++) {
+      form = ref[j];
+      objects.push(form.hash());
+    }
+    hash[this.config.fieldName] = objects;
+    return hash;
+  };
+
+  InputForm.prototype.showErrorMessage = function(message) {
+    this.$el.addClass('error');
+    return this.$errorMessage.html(message);
+  };
+
+  InputForm.prototype.hideErrorMessage = function() {
+    this.$el.removeClass('error');
+    return this.$errorMessage.html('');
+  };
+
+  InputForm.prototype.addNewForm = function(object) {
+    var base, form, namePrefix, newFormConfig, position, prevForm;
+    if (object == null) {
+      object = null;
+    }
+    namePrefix = this.config.namePrefix + "[" + (Date.now()) + "]";
+    newFormConfig = $.extend({}, this.config);
+    delete newFormConfig.formSchema._id;
+    form = this._render_form(object, namePrefix, newFormConfig);
+    form.initializePlugins();
+    if (this.config.sortBy) {
+      this._add_form_reorder_button(form);
+      prevForm = _last(this.forms);
+      position = prevForm ? prevForm.inputs[this.config.sortBy].value + 1 : 1;
+      console.log(this.config);
+      console.log(this.config.sortBy);
+      console.log(form.inputs);
+      form.inputs[this.config.sortBy].updateValue(position);
+    }
+    this.forms.push(form);
+    if (typeof (base = this.config).onNew === "function") {
+      base.onNew(form);
+    }
+    return form;
+  };
+
+  InputForm.prototype.updateValue = function(nestedObjects, object1) {
+    this.nestedObjects = nestedObjects;
+    this.object = object1;
+    this.$forms.remove();
+    this.forms = [];
+    return this._add_forms();
+  };
+
+  return InputForm;
+
+})();
+
+include(InputForm, inputFormReorder);
+
+chr.formInputs['form'] = InputForm;
+
+this.InputString = (function() {
+  function InputString(name, value, config, object) {
+    this.name = name;
+    this.value = value;
+    this.config = config;
+    this.object = object;
+    this._create_el();
+    this._add_label();
+    this._add_input();
+    this._add_placeholder();
+    this._add_disabled();
+    this._add_required();
+    this._add_limit();
+    return this;
+  }
+
+  InputString.prototype._safe_value = function() {
+    if (typeof this.value === 'object') {
+      return JSON.stringify(this.value);
+    } else {
+      return _escapeHtml(this.value);
+    }
+  };
+
+  InputString.prototype._create_el = function() {
+    return this.$el = $("<label for='" + this.name + "' class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
+  };
+
+  InputString.prototype._add_label = function() {
+    this.$label = $("<span class='label'>" + this.config.label + "</span>");
+    this.$errorMessage = $("<span class='error-message'></span>");
+    this.$label.append(this.$errorMessage);
+    return this.$el.append(this.$label);
+  };
+
+  InputString.prototype._add_input = function() {
+    var data;
+    this.$input = $("<input type='text' name='" + this.name + "' value='" + (this._safe_value()) + "' />");
+    this.$input.on('keyup', (function(_this) {
+      return function(e) {
+        return _this.$input.trigger('change');
+      };
+    })(this));
+    this.$el.append(this.$input);
+    if (this.config.options && $.isArray(this.config.options)) {
+      data = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: $.map(this.config.options, function(opt) {
+          return {
+            value: opt
+          };
+        })
+      });
+      data.initialize();
+      return this.$input.typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1
+      }, {
+        name: 'options',
+        displayKey: 'value',
+        source: data.ttAdapter()
+      });
+    }
+  };
+
+  InputString.prototype._add_placeholder = function() {
+    var ref;
+    if ((ref = this.config.klass) === 'placeholder' || ref === 'stacked') {
+      this.$input.attr('placeholder', this.config.label);
+    }
+    if (this.config.placeholder) {
+      return this.$input.attr('placeholder', this.config.placeholder);
+    }
+  };
+
+  InputString.prototype._add_disabled = function() {
+    if (this.config.disabled) {
+      this.$input.prop('disabled', true);
+      return this.$el.addClass('input-disabled');
+    }
+  };
+
+  InputString.prototype._add_required = function() {
+    if (this.config.required) {
+      return this.$el.addClass('input-required');
+    }
+  };
+
+  InputString.prototype._add_limit = function() {
+    if (this.config.limit) {
+      this.$charCounter = $("<span class='input-character-counter'></span>");
+      this.$errorMessage.before(this.$charCounter);
+      this.$input.on('keyup', (function(_this) {
+        return function() {
+          return _this._update_character_counter();
+        };
+      })(this));
+      return this._update_character_counter();
+    }
+  };
+
+  InputString.prototype._update_character_counter = function() {
+    var characters, left;
+    characters = this.$input.val().length;
+    left = this.config.limit - characters;
+    if (left >= 0) {
+      this.$charCounter.html("(" + left + " left)");
+    } else {
+      this.$charCounter.html("(" + left + ")");
+    }
+    if (characters > this.config.limit) {
+      return this.$charCounter.addClass('exceeds');
+    } else {
+      return this.$charCounter.removeClass('exceeds');
+    }
+  };
+
+  InputString.prototype.initialize = function() {
+    var base;
+    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+  };
+
+  InputString.prototype.hash = function(hash) {
+    if (hash == null) {
+      hash = {};
+    }
+    hash[this.config.klassName] = this.$input.val();
+    return hash;
+  };
+
+  InputString.prototype.updateValue = function(value) {
+    this.value = value;
+    return this.$input.val(this.value);
+  };
+
+  InputString.prototype.showErrorMessage = function(message) {
+    this.$el.addClass('error');
+    return this.$errorMessage.html(message);
+  };
+
+  InputString.prototype.hideErrorMessage = function() {
+    this.$el.removeClass('error');
+    return this.$errorMessage.html('');
+  };
+
+  return InputString;
+
+})();
+
+chr.formInputs['string'] = InputString;
+
+this.InputHidden = (function() {
+  function InputHidden(name, value, config, object) {
+    this.name = name;
+    this.value = value;
+    this.config = config;
+    this.object = object;
+    this._create_el();
+    return this;
+  }
+
+  InputHidden.prototype._create_el = function() {
+    return this.$el = $("<input type='hidden' name='" + this.name + "' value='" + (this._safe_value()) + "' />");
+  };
+
+  InputHidden.prototype._safe_value = function() {
+    if (typeof this.value === 'object') {
+      return JSON.stringify(this.value);
+    } else {
+      return _escapeHtml(this.value);
+    }
+  };
+
+  InputHidden.prototype.showErrorMessage = function(message) {};
+
+  InputHidden.prototype.hideErrorMessage = function() {};
+
+  InputHidden.prototype.initialize = function() {
+    var base;
+    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+  };
+
+  InputHidden.prototype.hash = function(hash) {
+    if (hash == null) {
+      hash = {};
+    }
+    hash[this.config.klassName] = this.$el.val();
+    return hash;
+  };
+
+  InputHidden.prototype.updateValue = function(value) {
+    this.value = value;
+    return this.$el.val(this.value);
+  };
+
+  return InputHidden;
+
+})();
+
+chr.formInputs['hidden'] = InputHidden;
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.InputCheckbox = (function(superClass) {
+  extend(InputCheckbox, superClass);
+
+  function InputCheckbox(name, value, config, object) {
+    this.name = name;
+    this.value = value;
+    this.config = config;
+    this.object = object;
+    this._create_el();
+    this._add_input();
+    this._add_label();
+    return this;
+  }
+
+  InputCheckbox.prototype._create_el = function() {
+    return this.$el = $("<label for='" + this.name + "' class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
+  };
+
+  InputCheckbox.prototype._safe_value = function() {
+    if (!this.value || this.value === 'false' || this.value === 0 || this.value === '0') {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  InputCheckbox.prototype._add_input = function() {
+    this.$false_hidden_input = $("<input type='hidden' name='" + this.name + "' value='false' />");
+    this.$el.append(this.$false_hidden_input);
+    this.$input = $("<input type='checkbox' id='" + this.name + "' name='" + this.name + "' value='true' " + (this._safe_value() ? 'checked' : '') + " />");
+    return this.$el.append(this.$input);
+  };
+
+  InputCheckbox.prototype.updateValue = function(value) {
+    this.value = value;
+    return this.$input.prop('checked', this._safe_value());
+  };
+
+  InputCheckbox.prototype.hash = function(hash) {
+    if (hash == null) {
+      hash = {};
+    }
+    hash[this.config.klassName] = this.$input.prop('checked');
+    return hash;
+  };
+
+  return InputCheckbox;
+
+})(InputString);
+
+chr.formInputs['checkbox'] = InputCheckbox;
+
+this.InputCheckboxSwitch = (function(superClass) {
+  extend(InputCheckboxSwitch, superClass);
+
+  function InputCheckboxSwitch() {
+    return InputCheckboxSwitch.__super__.constructor.apply(this, arguments);
+  }
+
+  InputCheckboxSwitch.prototype._add_input = function() {
+    this.$switch = $("<div class='switch'>");
+    this.$el.append(this.$switch);
+    this.$false_hidden_input = $("<input type='hidden' name='" + this.name + "' value='false' />");
+    this.$switch.append(this.$false_hidden_input);
+    this.$input = $("<input type='checkbox' id='" + this.name + "' name='" + this.name + "' value='true' " + (this._safe_value() ? 'checked' : '') + " />");
+    this.$switch.append(this.$input);
+    this.$checkbox = $("<div class='checkbox'>");
+    return this.$switch.append(this.$checkbox);
+  };
+
+  return InputCheckboxSwitch;
+
+})(InputCheckbox);
+
+chr.formInputs['switch'] = InputCheckboxSwitch;
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.InputColor = (function(superClass) {
+  extend(InputColor, superClass);
+
+  function InputColor() {
+    return InputColor.__super__.constructor.apply(this, arguments);
+  }
+
+  InputColor.prototype._add_color_preview = function() {
+    this.$colorPreview = $("<div class='preview'>");
+    return this.$el.append(this.$colorPreview);
+  };
+
+  InputColor.prototype._update_color_preview = function() {
+    return this.$colorPreview.css({
+      'background-color': "#" + (this.$input.val())
+    });
+  };
+
+  InputColor.prototype._validate_input_value = function() {
+    if (/^(?:[0-9a-f]{3}){1,2}$/i.test(this.$input.val())) {
+      return this.hideErrorMessage();
+    } else {
+      return this.showErrorMessage('Invalid hex value');
+    }
+  };
+
+  InputColor.prototype.initialize = function() {
+    var base;
+    this.$input.attr('placeholder', this.config.placeholder || 'e.g. #eee');
+    this._add_color_preview();
+    this._update_color_preview();
+    this.$input.on('change keyup', (function(_this) {
+      return function(e) {
+        _this.hideErrorMessage();
+        _this._validate_input_value();
+        return _this._update_color_preview();
+      };
+    })(this));
+    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+  };
+
+  return InputColor;
+
+})(InputString);
+
+chr.formInputs['color'] = InputColor;
+
+
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.InputFile = (function(superClass) {
+  extend(InputFile, superClass);
+
+  function InputFile(name, value, config, object) {
+    this.name = name;
+    this.value = value;
+    this.config = config;
+    this.object = object;
+    this._create_el();
+    this._add_label();
+    this._add_input();
+    this._update_state();
+    this._add_required();
+    return this;
+  }
+
+  InputFile.prototype._create_el = function() {
+    return this.$el = $("<div class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
+  };
+
+  InputFile.prototype._add_input = function() {
+    this.$link = $("<a href='#' target='_blank' title=''></a>");
+    this.$el.append(this.$link);
+    this.$input = $("<input type='file' name='" + this.name + "' id='" + this.name + "'>");
+    this.$el.append(this.$input);
+    this._add_clear_button();
+    return this._add_remove_checkbox();
+  };
+
+  InputFile.prototype._add_clear_button = function() {
+    this.$clearButton = $("<a href='#' class='input-file-clear'></a>");
+    this.$input.after(this.$clearButton);
+    this.$clearButton.hide();
+    this.$clearButton.on('click', (function(_this) {
+      return function(e) {
+        _this.$input.replaceWith(_this.$input = _this.$input.clone(true));
+        _this.$clearButton.hide();
+        return e.preventDefault();
+      };
+    })(this));
+    return this.$input.on('change', (function(_this) {
+      return function(e) {
+        return _this.$clearButton.show();
+      };
+    })(this));
+  };
+
+  InputFile.prototype._add_remove_checkbox = function() {
+    var removeInputName;
+    removeInputName = this.removeName();
+    this.$removeLabel = $("<label for='" + removeInputName + "'>Remove</label>");
+    this.$hiddenRemoveInput = $("<input type='hidden' name='" + removeInputName + "' value='false'>");
+    this.$removeInput = $("<input type='checkbox' name='" + removeInputName + "' id='" + removeInputName + "' value='true'>");
+    this.$link.after(this.$removeLabel);
+    this.$link.after(this.$removeInput);
+    return this.$link.after(this.$hiddenRemoveInput);
+  };
+
+  InputFile.prototype._update_inputs = function() {
+    return this.$link.html(this.filename).attr('title', this.filename).attr('href', this.value.url);
+  };
+
+  InputFile.prototype._update_state = function(filename) {
+    this.filename = filename != null ? filename : null;
+    this.$input.val('');
+    this.$removeInput.prop('checked', false);
+    if (this.value.url) {
+      this.filename = _last(this.value.url.split('/'));
+      if (this.filename === '_old_') {
+        this.filename = null;
+      }
+    }
+    if (this.filename) {
+      this.$el.removeClass('empty');
+      return this._update_inputs();
+    } else {
+      return this.$el.addClass('empty');
+    }
+  };
+
+  InputFile.prototype.isEmpty = function() {
+    return !this.$input.get()[0].files[0] && !this.filename;
+  };
+
+  InputFile.prototype.removeName = function() {
+    return this.name.reverse().replace('[', '[remove_'.reverse()).reverse();
+  };
+
+  InputFile.prototype.updateValue = function(value, object) {
+    this.value = value;
+    this.object = object;
+    return this._update_state();
+  };
+
+  InputFile.prototype.hash = function(hash) {
+    if (hash == null) {
+      hash = {};
+    }
+    return hash;
+  };
+
+  return InputFile;
+
+})(InputString);
+
+chr.formInputs['file'] = InputFile;
+
+this.InputFileImage = (function(superClass) {
+  extend(InputFileImage, superClass);
+
+  function InputFileImage() {
+    return InputFileImage.__super__.constructor.apply(this, arguments);
+  }
+
+  InputFileImage.prototype._add_input = function() {
+    this.$link = $("<a href='#' target='_blank' title=''></a>");
+    this.$el.append(this.$link);
+    this.$thumb = $("<img src='' />");
+    this.$el.append(this.$thumb);
+    this.$input = $("<input type='file' name='" + this.name + "' id='" + this.name + "' />");
+    this.$el.append(this.$input);
+    this._add_clear_button();
+    return this._add_remove_checkbox();
+  };
+
+  InputFileImage.prototype._update_inputs = function() {
+    var image_thumb_url;
+    this.$link.html(this.filename).attr('title', this.filename).attr('href', this.value.url);
+    image_thumb_url = this.config.thumbnail ? this.config.thumbnail(this.object) : this.value.url;
+    return this.$thumb.attr('src', image_thumb_url).attr('alt', this.filename);
+  };
+
+  return InputFileImage;
+
+})(InputFile);
+
+chr.formInputs['image'] = InputFileImage;
+
+this.inputListTypeahead = {
+  _create_typeahead_el: function(placeholder) {
+    this.typeaheadInput = $("<input type='text' placeholder='" + placeholder + "' />");
+    return this.$el.append(this.typeaheadInput);
+  },
+  _bind_typeahead: function() {
+    var dataSource, limit;
+    limit = this.config.typeahead.limit || 5;
+    dataSource = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.obj.whitespace(this.config.titleFieldName),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      remote: {
+        url: this.config.typeahead.url,
+        filter: (function(_this) {
+          return function(parsedResponse) {
+            var data, i, len, o;
+            data = [];
+            for (i = 0, len = parsedResponse.length; i < len; i++) {
+              o = parsedResponse[i];
+              _this._normalize_object(o);
+              if (!_this.objects[o._id]) {
+                data.push(o);
+              }
+            }
+            return data;
+          };
+        })(this)
+      },
+      limit: limit
+    });
+    dataSource.initialize();
+    this.typeaheadInput.typeahead({
+      hint: false,
+      highlight: true
+    }, {
+      name: this.config.klassName,
+      displayKey: this.config.titleFieldName,
+      source: dataSource.ttAdapter()
+    });
+    return this.typeaheadInput.on('typeahead:selected', (function(_this) {
+      return function(e, object, dataset) {
+        _this._render_item(object);
+        return _this.typeaheadInput.typeahead('val', '');
+      };
+    })(this));
+  }
+};
+
+this.inputListReorder = {
+  _bind_reorder: function() {
+    var list;
+    list = this.$items.get(0);
+    new Slip(list);
+    list.addEventListener('slip:beforeswipe', function(e) {
+      return e.preventDefault();
+    });
+    list.addEventListener('slip:beforewait', (function(e) {
+      if ($(e.target).hasClass("icon-reorder")) {
+        return e.preventDefault();
+      }
+    }), false);
+    list.addEventListener('slip:beforereorder', (function(e) {
+      if (!$(e.target).hasClass("icon-reorder")) {
+        return e.preventDefault();
+      }
+    }), false);
+    return list.addEventListener('slip:reorder', ((function(_this) {
+      return function(e) {
+        e.target.parentNode.insertBefore(e.target, e.detail.insertBefore);
+        _this._update_input_value();
+        return false;
+      };
+    })(this)), false);
+  }
+};
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.InputList = (function(superClass) {
+  extend(InputList, superClass);
+
+  function InputList() {
+    return InputList.__super__.constructor.apply(this, arguments);
+  }
+
+  InputList.prototype._add_input = function() {
+    var name;
+    name = this.config.namePrefix ? this.config.namePrefix + "[__LIST__" + this.config.target + "]" : "[__LIST__" + this.config.target + "]";
+    this.$input = $("<input type='hidden' name='" + name + "' value='' />");
+    this.$el.append(this.$input);
+    this.reorderContainerClass = this.config.klassName;
+    this.$items = $("<ul class='" + this.reorderContainerClass + "'></ul>");
+    this.$el.append(this.$items);
+    this._create_typeahead_el(this.config.typeahead.placeholder);
+    this._render_items();
+    return this._update_input_value();
+  };
+
+  InputList.prototype._update_input_value = function() {
+    var ids, value;
+    ids = [];
+    this.$items.children('li').each(function(i, el) {
+      return ids.push($(el).attr('data-id'));
+    });
+    value = ids.join(',');
+    this.$input.val(value);
+    return this.$input.trigger('change');
+  };
+
+  InputList.prototype._remove_item = function($el) {
+    var id;
+    id = $el.attr('data-id');
+    delete this.objects[id];
+    $el.parent().remove();
+    return this._update_input_value();
+  };
+
+  InputList.prototype._ordered_ids = function() {
+    var ids;
+    ids = this.$input.val().split(',');
+    if (ids[0] === '') {
+      ids = [];
+    }
+    return ids;
+  };
+
+  InputList.prototype._render_items = function() {
+    var j, len, o, ref, results;
+    this.$items.html('');
+    this.objects = {};
+    ref = this.value;
+    results = [];
+    for (j = 0, len = ref.length; j < len; j++) {
+      o = ref[j];
+      results.push(this._render_item(o));
+    }
+    return results;
+  };
+
+  InputList.prototype._render_item = function(o) {
+    var item, listItem;
+    this._add_object(o);
+    if (this.config.itemTemplate) {
+      item = this.config.itemTemplate(o);
+    } else {
+      item = o[this.config.titleFieldName];
+    }
+    listItem = $("<li data-id='" + o._id + "'>\n  <span class='icon-reorder' data-container-class='" + this.reorderContainerClass + "'></span>\n  " + item + "\n  <a href='#' class='action_remove'>Remove</a>\n</li>");
+    this.$items.append(listItem);
+    return this._update_input_value();
+  };
+
+  InputList.prototype._add_object = function(o) {
+    this._normalize_object(o);
+    return this.objects[o._id] = o;
+  };
+
+  InputList.prototype._normalize_object = function(o) {
+    if (o._id == null) {
+      o._id = o.id;
+    }
+    if (!o._id) {
+      return console.log("::: list item is missing an 'id' or '_id' :::");
+    }
+  };
+
+  InputList.prototype.initialize = function() {
+    var base;
+    this._bind_typeahead();
+    this.$items.on('click', '.action_remove', (function(_this) {
+      return function(e) {
+        e.preventDefault();
+        if (confirm('Are you sure?')) {
+          return _this._remove_item($(e.currentTarget));
+        }
+      };
+    })(this));
+    this._bind_reorder();
+    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+  };
+
+  InputList.prototype.updateValue = function(value1) {
+    this.value = value1;
+    return this._render_items();
+  };
+
+  InputList.prototype.hash = function(hash) {
+    var id, j, len, ordered_objects, ref;
+    if (hash == null) {
+      hash = {};
+    }
+    hash[this.config.target] = this.$input.val();
+    ordered_objects = [];
+    ref = this._ordered_ids();
+    for (j = 0, len = ref.length; j < len; j++) {
+      id = ref[j];
+      ordered_objects.push(this.objects[id]);
+    }
+    hash[this.config.klassName] = ordered_objects;
+    return hash;
+  };
+
+  return InputList;
+
+})(InputString);
+
+include(InputList, inputListReorder);
+
+include(InputList, inputListTypeahead);
+
+chr.formInputs['list'] = InputList;
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.InputPassword = (function(superClass) {
+  extend(InputPassword, superClass);
+
+  function InputPassword() {
+    return InputPassword.__super__.constructor.apply(this, arguments);
+  }
+
+  InputPassword.prototype._add_input = function() {
+    this.$input = $("<input type='password' name='" + this.name + "' value='" + this.value + "' />");
+    return this.$el.append(this.$input);
+  };
+
+  InputPassword.prototype.updateValue = function(value) {
+    this.value = value;
+    return this.$input.val(this.value);
+  };
+
+  return InputPassword;
+
+})(InputString);
+
+chr.formInputs['password'] = InputPassword;
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.InputSelect = (function(superClass) {
+  extend(InputSelect, superClass);
+
+  function InputSelect() {
+    return InputSelect.__super__.constructor.apply(this, arguments);
+  }
+
+  InputSelect.prototype._create_el = function() {
+    return this.$el = $("<div class='input-" + this.config.type + " input-" + this.config.klass + " input-" + this.config.klassName + "'>");
+  };
+
+  InputSelect.prototype._add_input = function() {
+    this.$input = $("<select name='" + this.name + "'></select>");
+    this.$el.append(this.$input);
+    return this._add_options();
+  };
+
+  InputSelect.prototype._add_options = function() {
+    if (this.config.optionsHashFieldName) {
+      this.value = String(this.value);
+      if (this.object) {
+        this.config.optionsHash = this.object[this.config.optionsHashFieldName];
+      } else {
+        this.config.optionsHash = {
+          '': '--'
+        };
+      }
+    }
+    if (this.config.collection) {
+      return this._add_collection_options();
+    } else if (this.config.optionsList) {
+      return this._add_list_options();
+    } else if (this.config.optionsHash) {
+      return this._add_hash_options();
+    }
+  };
+
+  InputSelect.prototype._add_collection_options = function() {
+    var i, len, o, ref, results, title, value;
+    ref = this.config.collection.data;
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      o = ref[i];
+      title = o[this.config.collection.titleField];
+      value = o[this.config.collection.valueField];
+      results.push(this._add_option(title, value));
+    }
+    return results;
+  };
+
+  InputSelect.prototype._add_list_options = function() {
+    var data, i, len, o, results;
+    data = this.config.optionsList;
+    results = [];
+    for (i = 0, len = data.length; i < len; i++) {
+      o = data[i];
+      results.push(this._add_option(o, o));
+    }
+    return results;
+  };
+
+  InputSelect.prototype._add_hash_options = function() {
+    var data, results, title, value;
+    data = this.config.optionsHash;
+    results = [];
+    for (value in data) {
+      title = data[value];
+      results.push(this._add_option(title, value));
+    }
+    return results;
+  };
+
+  InputSelect.prototype._add_option = function(title, value) {
+    var $option, selected;
+    selected = this.value === value ? 'selected' : '';
+    $option = $("<option value='" + value + "' " + selected + ">" + title + "</option>");
+    return this.$input.append($option);
+  };
+
+  InputSelect.prototype.updateValue = function(value1, object) {
+    this.value = value1;
+    this.object = object;
+    this.$input.html('');
+    this._add_options();
+    return this.$input.val(this.value).prop('selected', true);
+  };
+
+  return InputSelect;
+
+})(InputString);
+
+chr.formInputs['select'] = InputSelect;
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.InputText = (function(superClass) {
+  extend(InputText, superClass);
+
+  function InputText() {
+    return InputText.__super__.constructor.apply(this, arguments);
+  }
+
+  InputText.prototype._add_input = function() {
+    this.$input = $("<textarea class='autosize' name='" + this.name + "' rows=1>" + (this._safe_value()) + "</textarea>");
+    this.$input.on('keyup', (function(_this) {
+      return function(e) {
+        return _this.$input.trigger('change');
+      };
+    })(this));
+    return this.$el.append(this.$input);
+  };
+
+  InputText.prototype.initialize = function() {
+    var base;
+    this.$input.textareaAutoSize();
+    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+  };
+
+  return InputText;
+
+})(InputString);
+
+chr.formInputs['text'] = InputText;

@@ -60,6 +60,9 @@
     }
   }
 
+  // character counter
+  .input-character-counter { font-size: .8em; margin-left: .5em; &.exceeds { color: $assertiveColor; } }
+
 
   // text
   .input-text { min-height: 82px;

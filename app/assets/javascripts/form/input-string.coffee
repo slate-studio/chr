@@ -20,7 +20,7 @@
 #   hideErrorMessage()        - hide error message
 #
 # Dependencies:
-#= require ../vendor/jquery.typeahead
+#= require ../chr/vendor/jquery.typeahead
 #
 # -----------------------------------------------------------------------------
 class @InputString
@@ -31,6 +31,7 @@ class @InputString
     @_add_placeholder()
     @_add_disabled()
     @_add_required()
+    @_add_limit()
 
     return this
 
@@ -98,6 +99,32 @@ class @InputString
   _add_required: ->
     if @config.required
       @$el.addClass('input-required')
+
+
+  _add_limit: ->
+    if @config.limit
+      @$charCounter =$ "<span class='input-character-counter'></span>"
+      @$errorMessage.before @$charCounter
+      @$input.on 'keyup', =>
+        @_update_character_counter()
+      @_update_character_counter()
+
+
+  _update_character_counter: ->
+    characters = @$input.val().length
+    left       = @config.limit - characters
+
+    if left >= 0
+      @$charCounter.html("(#{ left } left)")
+
+    else
+      @$charCounter.html("(#{ left })")
+
+
+    if characters > @config.limit
+      @$charCounter.addClass('exceeds')
+    else
+      @$charCounter.removeClass('exceeds')
 
 
   # PUBLIC ================================================
