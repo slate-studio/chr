@@ -2,6 +2,7 @@
   // label
   label { display: block; }
 
+
   // general
   .input-stacked {
     @include position(relative); padding: .5em 1em .9em;
@@ -36,7 +37,7 @@
   .nested-form-delete {
     @include position(absolute, .35em .3em null null); border-radius: 1em;
     @include hide-text; width: 1.5em; height: 1.5em;  background-color: rgba(0,0,0,.05);
-    &:before { content: '\00d7'; color: $stableColor; line-height: 1.35em; width: 1.5em; text-align: center; }
+    &:before { content: '\00d7'; color: $stableColor; line-height: 1.35em; @include position(absolute, null 7px null null); }
     &:hover  { background-color: $positiveColor; &:before { color: $white; } }
   }
 
@@ -137,7 +138,7 @@
     a { color: $positiveColor; @include truncate; }
     a:hover { text-decoration: underline; }
 
-    input[type=file] { margin-top: .5em; }
+    input[type=file] { margin-top: .5em; margin-left: 1.75em; }
     input[type=checkbox] { display: inline; width: auto; margin-right: .5em; margin-left: 1em; }
     label { display: inline; font-size: .8em; }
 
@@ -146,6 +147,14 @@
       input[type=file] { margin-top: .2em; }
     }
   }
+
+  .input-file-clear {
+    display: inline-block; width: 1.5em; height: 1.5em;  background-color: rgba(0,0,0,.05);
+    @include position(absolute); border-radius: 1em; margin-top: -22px;
+    &:before { content: '\00d7'; color: $stableColor; line-height: 1.35em; @include position(absolute, null 7px null null); }
+    &:hover  { background-color: $positiveColor; &:before { color: $white; } }
+  }
+
 
   // input
   .input-image { @extend .input-file; }

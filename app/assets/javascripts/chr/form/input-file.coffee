@@ -37,7 +37,24 @@ class @InputFile extends InputString
     @$input =$ "<input type='file' name='#{ @name }' id='#{ @name }'>"
     @$el.append @$input
 
+    @_add_clear_button()
     @_add_remove_checkbox()
+
+
+  _add_clear_button: ->
+    @$clearButton =$ "<a href='#' class='input-file-clear'></a>"
+    @$input.after @$clearButton
+    @$clearButton.hide()
+
+    @$clearButton.on 'click', (e) =>
+      # clear file input:
+      # http://stackoverflow.com/questions/1043957/clearing-input-type-file-using-jquery
+      @$input.replaceWith(@$input = @$input.clone(true))
+      @$clearButton.hide()
+      e.preventDefault()
+
+    @$input.on 'change', (e) =>
+      @$clearButton.show()
 
 
   _add_remove_checkbox: ->
@@ -110,6 +127,7 @@ class @InputFileImage extends InputFile
     @$input =$ "<input type='file' name='#{ @name }' id='#{ @name }' />"
     @$el.append @$input
 
+    @_add_clear_button()
     @_add_remove_checkbox()
 
 
