@@ -15,6 +15,7 @@ class @InputPassword extends InputString
 
   _add_input: ->
     @$input =$ "<input type='password' name='#{ @name }' value='#{ @value }' />"
+    @$input.on 'keyup', (e) => @$input.trigger('change')
     @$el.append @$input
 
 

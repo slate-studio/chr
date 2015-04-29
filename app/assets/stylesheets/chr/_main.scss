@@ -16,7 +16,7 @@ html a { text-decoration: none; }
   .new           { @include position(absolute, 0 0   null null); @extend .icon-plus;                   }
   .new + .search { @include position(absolute, 0 40px inherit inherit);                                }
   .spinner       { @include spinner; @include hide; position: absolute; margin: 6px 0 0 -36px;         }
-  .save          { @include position(absolute, 0 1em null null); @include header-button($stableColor); }
+  .save          { @include position(absolute, 0 1em null null); @include header-button($stableColor); font-weight: 500; }
 }
 
 .view.has-unsaved-changes .save { color: $positiveColor; }
