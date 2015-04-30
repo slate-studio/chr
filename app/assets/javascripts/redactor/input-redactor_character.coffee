@@ -24,7 +24,12 @@ $.fx.speeds.fast = 10
   _redactor_options: ->
     @_trigger_change = true
 
-    plugins = []
+    @config.redactorOptions ?= {}
+
+    # workaround plugins & custom configuration to include loft
+    # and optional fixedtoolbar
+    plugins = @config.redactorOptions.plugins || []
+    delete @config.redactorOptions.plugins
 
     if ! chr.isMobile()
       plugins.push('fixedtoolbar')
@@ -38,8 +43,6 @@ $.fx.speeds.fast = 10
       config.toolbarFixed = false
       # config.toolbarFixedTopOffset = 40
 
-
-    @config.redactorOptions ?= {}
     $.extend(config, @config.redactorOptions)
 
     return config
