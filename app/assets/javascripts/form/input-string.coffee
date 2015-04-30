@@ -20,7 +20,7 @@
 #   hideErrorMessage()        - hide error message
 #
 # Dependencies:
-#= require ../chr/vendor/jquery.typeahead
+#= require vendor/jquery.typeahead
 #
 # -----------------------------------------------------------------------------
 class @InputString

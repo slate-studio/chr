@@ -6,8 +6,8 @@
 #= require ./chr/core/item
 #= require ./chr/core/view
 
-#= require ./chr/store/_object-store
-#= require ./chr/store/_array-store
+#= require ./chr/store/object-store
+#= require ./chr/store/array-store
 #= require ./chr/store/rest-object-store
 #= require ./chr/store/rest-array-store
 #= require ./chr/store/rails-object-store
@@ -24,3 +24,5 @@
 #= require ./form/input-file
 #= require ./form/input-list
 #= require ./form/input-select
+#= require ./form/input-select2
+#= require ./form/expandable-group

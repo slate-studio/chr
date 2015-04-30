@@ -20,9 +20,9 @@
 #   body_md: { type: 'markdown', label: 'Article', htmlFieldName: 'body_html' }
 #
 # Dependencies:
-#= require chr/vendor/marked
-#= require chr/vendor/ace
-#= require chr/vendor/mode-markdown
+#= require vendor/marked
+#= require vendor/ace
+#= require vendor/mode-markdown
 #
 # -----------------------------------------------------------------------------
 

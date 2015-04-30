@@ -22,11 +22,11 @@ module.exports = (grunt) ->
             'app/assets/javascripts/chr/core/view_local-storage.coffee'
             'app/assets/javascripts/chr/core/view.coffee'
             # stores
-            'app/assets/javascripts/chr/store/_array-store.coffee'
-            'app/assets/javascripts/chr/store/_object-store.coffee'
+            'app/assets/javascripts/chr/store/array-store.coffee'
+            'app/assets/javascripts/chr/store/object-store.coffee'
             'app/assets/javascripts/chr/store/rest-array-store.coffee'
             'app/assets/javascripts/chr/store/rest-object-store.coffee'
-            'app/assets/javascripts/chr/store/_rails-form-object-parser.coffee'
+            'app/assets/javascripts/chr/store/rails-form-object-parser.coffee'
             'app/assets/javascripts/chr/store/rails-array-store.coffee'
             'app/assets/javascripts/chr/store/rails-object-store.coffee'
             # form
@@ -45,6 +45,8 @@ module.exports = (grunt) ->
             'app/assets/javascripts/form/input-password.coffee'
             'app/assets/javascripts/form/input-select.coffee'
             'app/assets/javascripts/form/input-text.coffee'
+            'app/assets/javascripts/form/input-select2.coffee'
+            'app/assets/javascripts/form/extendable-group.coffee'
           ]
 
           'build/input-ace.js': [
@@ -56,28 +58,23 @@ module.exports = (grunt) ->
             'app/assets/javascripts/input-redactor.coffee'
           ]
 
-          'build/expandable-group.js': [
-            'app/assets/javascripts/expandable-group.coffee'
-          ]
-
     concat:
       chr:
         src: [
-          'app/assets/javascripts/chr/vendor/slip.js'
-          'app/assets/javascripts/chr/vendor/jquery.scrollparent.js'
-          'app/assets/javascripts/chr/vendor/jquery.textarea_autosize.js'
-          'app/assets/javascripts/chr/vendor/jquery.typeahead.js'
-          'build/expandable-group.js'
+          'app/assets/javascripts/vendor/slip.js'
+          'app/assets/javascripts/vendor/jquery.scrollparent.js'
+          'app/assets/javascripts/vendor/jquery.textarea_autosize.js'
+          'app/assets/javascripts/vendor/jquery.typeahead.js'
           'build/chr.js'
         ]
         dest: 'dist/chr.js'
 
       ace:
         src: [
-          'app/assets/javascripts/chr/vendor/ace.js'
-          'app/assets/javascripts/chr/vendor/mode-html.js'
-          'app/assets/javascripts/chr/vendor/mode-markdown.js'
-          'app/assets/javascripts/chr/vendor/marked.js'
+          'app/assets/javascripts/vendor/ace.js'
+          'app/assets/javascripts/vendor/mode-html.js'
+          'app/assets/javascripts/vendor/mode-markdown.js'
+          'app/assets/javascripts/vendor/marked.js'
           'build/input-ace.js'
         ]
         dest: 'dist/input-ace.js'

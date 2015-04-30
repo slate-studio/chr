@@ -18,8 +18,8 @@
 #   body_html: { type: 'html', label: 'Article' }
 #
 # Dependencies:
-#= require chr/vendor/ace
-#= require chr/vendor/mode-html
+#= require vendor/ace
+#= require vendor/mode-html
 #
 # -----------------------------------------------------------------------------
 

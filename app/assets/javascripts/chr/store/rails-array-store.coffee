@@ -11,7 +11,7 @@
 # -----------------------------------------------------------------------------
 #
 # Dependencies:
-#= require ./_rails-form-object-parser
+#= require ./rails-form-object-parser
 #
 # -----------------------------------------------------------------------------
 class @RailsArrayStore extends RestArrayStore

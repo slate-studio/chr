@@ -7,28 +7,24 @@
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# RAILS OBJECT STORE
+# INPUT SELECT 2
 # -----------------------------------------------------------------------------
 #
 # Dependencies:
-#= require ./rails-form-object-parser
+#= require vendor/select2
 #
 # -----------------------------------------------------------------------------
-class @RailsObjectStore extends RestObjectStore
 
-  # PRIVATE ===============================================
+class @InputSelect2 extends InputSelect
+  initialize: ->
+    # https://select2.github.io/options.html
+    options = @config.pluginOptions || {}
 
-  _configure_store: ->
-    @ajaxConfig =
-      processData: false
-      contentType: false
-
-
-  _resource_url: ->
-    "#{ @config.path }.json"
+    @$input.select2(options)
+    @config.onInitialize?(this)
 
 
-include(RailsObjectStore, railsFormObjectParser)
+chr.formInputs['select2'] = InputSelect2
 
 
 

@@ -12,7 +12,7 @@
 #
 # Dependencies:
 #= require redactor
-#= require chr/vendor/redactor.fixedtoolbar
+#= require vendor/redactor.fixedtoolbar
 #= require ./input-redactor_character
 # -----------------------------------------------------------------------------
 

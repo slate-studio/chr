@@ -30,6 +30,7 @@ class @Item
   _render_title: ->
     title  = @object.__title__ # title for @config.items
     title ?= @object[@config.itemTitleField]
+    title ?= @object['_list_item_title']
     title ?= _firstNonEmptyValue(@object)
     title ?= "No Title"
     title  = title.plainText()
@@ -44,6 +45,8 @@ class @Item
     if @config.itemSubtitleField
       subtitle ?= @object[@config.itemSubtitleField]
 
+    subtitle ?= @object['_list_item_subtitle']
+
     if subtitle
       @$subtitle =$ "<div class='item-subtitle'>#{ subtitle }</div>"
       @$el.append(@$subtitle)
@@ -51,11 +54,13 @@ class @Item
 
 
   _render_thumbnail: ->
-    if @config.itemThumbnail
-      imageUrl = @config.itemThumbnail?(@object) ? @object[@config.itemThumbnail]
+    imageUrl  = @config.itemThumbnail?(@object)
+    imageUrl ?= @object[@config.itemThumbnail]
+    imageUrl ?= @object['_list_item_thumbnail']
 
+    if imageUrl
       # RAILS carrierwave fix, check if still required
-      if imageUrl != '' and not imageUrl.endsWith('_old_')
+      if not imageUrl.endsWith('_old_')
         @$thumbnail =$ "<div class='item-thumbnail'><img src='#{ imageUrl }' /></div>"
         @$el.append(@$thumbnail)
         @$el.addClass 'has-thumbnail'

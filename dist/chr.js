@@ -2654,56 +2654,6 @@ jQuery.fn.scrollParent = function() {
         };
     })();
 })(window.jQuery);
-this._expandableGroupStateCache = {};
-
-this.ExpandableGroup = (function() {
-  function ExpandableGroup(form, group, name) {
-    this.form = form;
-    this.group = group;
-    this.$expander = $("<a href='#' class='group-edit hidden'>" + name + "</a>");
-    this.group.$el.before(this.$expander);
-    this._restore_expander_from_cache();
-    this.$expander.on('click', (function(_this) {
-      return function(e) {
-        _this._toggle_expander();
-        return e.preventDefault();
-      };
-    })(this));
-  }
-
-  ExpandableGroup.prototype._restore_expander_from_cache = function() {
-    if (_expandableGroupStateCache.__hash) {
-      if (_expandableGroupStateCache.__hash === window.location.hash) {
-        if (_expandableGroupStateCache[this._group_id()]) {
-          this.$expander.removeClass('hidden');
-        }
-      }
-      if (_expandableGroupStateCache.__hash.endsWith('new')) {
-        return this.$expander.removeClass('hidden');
-      }
-    }
-  };
-
-  ExpandableGroup.prototype._toggle_expander = function() {
-    this.$expander.toggleClass('hidden');
-    return this._cache_expander_state();
-  };
-
-  ExpandableGroup.prototype._cache_expander_state = function() {
-    _expandableGroupStateCache.__hash = window.location.hash;
-    return _expandableGroupStateCache[this._group_id()] = this.group.$el.is(':visible');
-  };
-
-  ExpandableGroup.prototype._group_id = function() {
-    var groupIndex;
-    groupIndex = $('form').find(".group." + this.group.klassName).index(this.group.$el);
-    return this.group.klassName + "-" + groupIndex;
-  };
-
-  return ExpandableGroup;
-
-})();
-
 this._any = function(array) {
   return array.length > 0;
 };
@@ -3494,6 +3444,9 @@ this.Item = (function() {
       title = this.object[this.config.itemTitleField];
     }
     if (title == null) {
+      title = this.object['_list_item_title'];
+    }
+    if (title == null) {
       title = _firstNonEmptyValue(this.object);
     }
     if (title == null) {
@@ -3512,6 +3465,9 @@ this.Item = (function() {
         subtitle = this.object[this.config.itemSubtitleField];
       }
     }
+    if (subtitle == null) {
+      subtitle = this.object['_list_item_subtitle'];
+    }
     if (subtitle) {
       this.$subtitle = $("<div class='item-subtitle'>" + subtitle + "</div>");
       this.$el.append(this.$subtitle);
@@ -3520,10 +3476,16 @@ this.Item = (function() {
   };
 
   Item.prototype._render_thumbnail = function() {
-    var base, imageUrl, ref;
-    if (this.config.itemThumbnail) {
-      imageUrl = (ref = typeof (base = this.config).itemThumbnail === "function" ? base.itemThumbnail(this.object) : void 0) != null ? ref : this.object[this.config.itemThumbnail];
-      if (imageUrl !== '' && !imageUrl.endsWith('_old_')) {
+    var base, imageUrl;
+    imageUrl = typeof (base = this.config).itemThumbnail === "function" ? base.itemThumbnail(this.object) : void 0;
+    if (imageUrl == null) {
+      imageUrl = this.object[this.config.itemThumbnail];
+    }
+    if (imageUrl == null) {
+      imageUrl = this.object['_list_item_thumbnail'];
+    }
+    if (imageUrl) {
+      if (!imageUrl.endsWith('_old_')) {
         this.$thumbnail = $("<div class='item-thumbnail'><img src='" + imageUrl + "' /></div>");
         this.$el.append(this.$thumbnail);
         return this.$el.addClass('has-thumbnail');
@@ -3654,6 +3616,9 @@ this.View = (function() {
         title = this.object[this.config.itemTitleField];
       }
       if (title == null) {
+        title = this.object['_list_item_title'];
+      }
+      if (title == null) {
         title = _firstNonEmptyValue(this.object);
       }
     }
@@ -3719,11 +3684,13 @@ this.View = (function() {
       return this.store.push(serializedFormObj, {
         onSuccess: (function(_this) {
           return function(object) {
+            var base;
             _this.object = object;
             _this._save_success();
             _this._add_delete_button();
             chr.updateHash(_this.closePath + "/view/" + _this.object._id, true);
-            return _this.path = window.location.hash;
+            _this.path = window.location.hash;
+            return typeof (base = _this.config).onViewShow === "function" ? base.onViewShow(_this) : void 0;
           };
         })(this),
         onError: (function(_this) {
@@ -5796,6 +5763,11 @@ this.InputPassword = (function(superClass) {
 
   InputPassword.prototype._add_input = function() {
     this.$input = $("<input type='password' name='" + this.name + "' value='" + this.value + "' />");
+    this.$input.on('keyup', (function(_this) {
+      return function(e) {
+        return _this.$input.trigger('change');
+      };
+    })(this));
     return this.$el.append(this.$input);
   };
 
@@ -5937,3 +5909,26 @@ this.InputText = (function(superClass) {
 })(InputString);
 
 chr.formInputs['text'] = InputText;
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.InputSelect2 = (function(superClass) {
+  extend(InputSelect2, superClass);
+
+  function InputSelect2() {
+    return InputSelect2.__super__.constructor.apply(this, arguments);
+  }
+
+  InputSelect2.prototype.initialize = function() {
+    var base, options;
+    options = this.config.pluginOptions || {};
+    this.$input.select2(options);
+    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+  };
+
+  return InputSelect2;
+
+})(InputSelect);
+
+chr.formInputs['select2'] = InputSelect2;

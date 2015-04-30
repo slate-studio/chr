@@ -70,6 +70,7 @@ class @View
     else
       if @config.itemTitleField
         title = @object[@config.itemTitleField]
+      title ?= @object['_list_item_title']
       title ?= _firstNonEmptyValue(@object)
 
     @$title.html(title.plainText())

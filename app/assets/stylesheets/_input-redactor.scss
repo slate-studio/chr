@@ -9,9 +9,6 @@
   .redactor-editor  { border: 0; padding: 1em .5em 0 .5em; }
 }
 
-// tooltip
-//.redactor-link-tooltip { z-index: 1023; }
-
 // toolbar
 .redactor-toolbar li a:hover { background-color: $positiveColor; }
 .redactor-dropdown a:hover { background-color: $positiveColor; }
@@ -34,6 +31,5 @@
     &:hover { background-color: $positiveColor;  opacity: .75; color: $white; } }
   &.redactor-modal-delete-btn { background-color: $assertiveColor;
     &:hover { background-color: $assertiveColor; opacity: .75; color: $white; } }
-
 }
 
