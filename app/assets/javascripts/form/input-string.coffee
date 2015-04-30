@@ -62,6 +62,7 @@ class @InputString
     @$input.on 'keyup', (e) => @$input.trigger('change')
     @$el.append @$input
 
+
     if @config.options and $.isArray(@config.options)
       data = new Bloodhound
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value')

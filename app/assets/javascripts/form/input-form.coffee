@@ -102,6 +102,8 @@ class @InputForm
   # PUBLIC ================================================
 
   initialize: ->
+    @config.beforeInitialize?(this)
+
     for nestedForm in @forms
       nestedForm.initializePlugins()
     @config.onInitialize?(this)

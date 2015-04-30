@@ -24833,7 +24833,10 @@ this.InputHtml = (function(superClass) {
   };
 
   InputHtml.prototype.initialize = function() {
-    var base;
+    var base, base1;
+    if (typeof (base = this.config).beforeInitialize === "function") {
+      base.beforeInitialize(this);
+    }
     this.editor = ace.edit(this.$editor.get(0));
     this.editor.$blockScrolling = Infinity;
     this.session = this.editor.getSession();
@@ -24854,7 +24857,7 @@ this.InputHtml = (function(superClass) {
         return _this._update_inputs();
       };
     })(this));
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+    return typeof (base1 = this.config).onInitialize === "function" ? base1.onInitialize(this) : void 0;
   };
 
   InputHtml.prototype.updateValue = function(value) {
@@ -24903,7 +24906,10 @@ this.InputMarkdown = (function(superClass) {
   };
 
   InputMarkdown.prototype.initialize = function() {
-    var base;
+    var base, base1;
+    if (typeof (base = this.config).beforeInitialize === "function") {
+      base.beforeInitialize(this);
+    }
     this.editor = ace.edit(this.$editor.get(0));
     this.editor.$blockScrolling = Infinity;
     this.session = this.editor.getSession();
@@ -24924,7 +24930,7 @@ this.InputMarkdown = (function(superClass) {
         return _this._update_inputs();
       };
     })(this));
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+    return typeof (base1 = this.config).onInitialize === "function" ? base1.onInitialize(this) : void 0;
   };
 
   InputMarkdown.prototype.updateValue = function(value) {

@@ -4987,13 +4987,16 @@ this.InputForm = (function() {
   };
 
   InputForm.prototype.initialize = function() {
-    var base, j, len, nestedForm, ref;
+    var base, base1, j, len, nestedForm, ref;
+    if (typeof (base = this.config).beforeInitialize === "function") {
+      base.beforeInitialize(this);
+    }
     ref = this.forms;
     for (j = 0, len = ref.length; j < len; j++) {
       nestedForm = ref[j];
       nestedForm.initializePlugins();
     }
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+    return typeof (base1 = this.config).onInitialize === "function" ? base1.onInitialize(this) : void 0;
   };
 
   InputForm.prototype.hash = function(hash) {
@@ -5375,7 +5378,10 @@ this.InputColor = (function(superClass) {
   };
 
   InputColor.prototype.initialize = function() {
-    var base;
+    var base, base1;
+    if (typeof (base = this.config).beforeInitialize === "function") {
+      base.beforeInitialize(this);
+    }
     this.$input.attr('placeholder', this.config.placeholder || 'e.g. #eee');
     this._add_color_preview();
     this._update_color_preview();
@@ -5386,7 +5392,7 @@ this.InputColor = (function(superClass) {
         return _this._update_color_preview();
       };
     })(this));
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+    return typeof (base1 = this.config).onInitialize === "function" ? base1.onInitialize(this) : void 0;
   };
 
   return InputColor;
@@ -5706,7 +5712,10 @@ this.InputList = (function(superClass) {
   };
 
   InputList.prototype.initialize = function() {
-    var base;
+    var base, base1;
+    if (typeof (base = this.config).beforeInitialize === "function") {
+      base.beforeInitialize(this);
+    }
     this._bind_typeahead();
     this.$items.on('click', '.action_remove', (function(_this) {
       return function(e) {
@@ -5717,7 +5726,7 @@ this.InputList = (function(superClass) {
       };
     })(this));
     this._bind_reorder();
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+    return typeof (base1 = this.config).onInitialize === "function" ? base1.onInitialize(this) : void 0;
   };
 
   InputList.prototype.updateValue = function(value1) {
@@ -5899,9 +5908,12 @@ this.InputText = (function(superClass) {
   };
 
   InputText.prototype.initialize = function() {
-    var base;
+    var base, base1;
+    if (typeof (base = this.config).beforeInitialize === "function") {
+      base.beforeInitialize(this);
+    }
     this.$input.textareaAutoSize();
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+    return typeof (base1 = this.config).onInitialize === "function" ? base1.onInitialize(this) : void 0;
   };
 
   return InputText;
@@ -5921,10 +5933,13 @@ this.InputSelect2 = (function(superClass) {
   }
 
   InputSelect2.prototype.initialize = function() {
-    var base, options;
+    var base, base1, options;
+    if (typeof (base = this.config).beforeInitialize === "function") {
+      base.beforeInitialize(this);
+    }
     options = this.config.pluginOptions || {};
     this.$input.select2(options);
-    return typeof (base = this.config).onInitialize === "function" ? base.onInitialize(this) : void 0;
+    return typeof (base1 = this.config).onInitialize === "function" ? base1.onInitialize(this) : void 0;
   };
 
   return InputSelect2;

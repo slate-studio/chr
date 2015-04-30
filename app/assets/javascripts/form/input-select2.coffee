@@ -17,10 +17,12 @@
 
 class @InputSelect2 extends InputSelect
   initialize: ->
+    @config.beforeInitialize?(this)
+
     # https://select2.github.io/options.html
     options = @config.pluginOptions || {}
-
     @$input.select2(options)
+
     @config.onInitialize?(this)
 
 

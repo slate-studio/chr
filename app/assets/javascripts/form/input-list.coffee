@@ -113,6 +113,8 @@ class @InputList extends InputString
   # PUBLIC ================================================
 
   initialize: ->
+    @config.beforeInitialize?(this)
+
     # typeahead
     @_bind_typeahead()
 

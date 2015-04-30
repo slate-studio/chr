@@ -29,6 +29,8 @@ class @InputRedactor extends InputString
   # PUBLIC ================================================
 
   initialize: ->
+    @config.beforeInitialize?(this)
+
     @$input.redactor(@_redactor_options())
 
     @$el.css('opacity', 1)

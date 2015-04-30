@@ -29,6 +29,8 @@ class @InputText extends InputString
   # PUBLIC ================================================
 
   initialize: ->
+    @config.beforeInitialize?(this)
+
     @$input.textareaAutoSize()
 
     @config.onInitialize?(this)

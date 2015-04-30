@@ -56,6 +56,8 @@ class @InputMarkdown extends InputString
   # PUBLIC ================================================
 
   initialize: ->
+    @config.beforeInitialize?(this)
+
     @editor = ace.edit(@$editor.get(0))
     @editor.$blockScrolling = Infinity
 

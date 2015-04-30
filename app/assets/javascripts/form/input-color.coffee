@@ -32,6 +32,8 @@ class @InputColor extends InputString
   # PUBLIC ================================================
 
   initialize: ->
+    @config.beforeInitialize?(this)
+
     @$input.attr('placeholder', @config.placeholder || 'e.g. #eee')
 
     @_add_color_preview()
