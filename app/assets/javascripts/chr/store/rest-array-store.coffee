@@ -220,12 +220,15 @@ class @RestArrayStore extends ArrayStore
 
       if @_is_pagination_edge_case() && d.positionHasChanged
         if d.position >= (@nextPage - 1) * @objectsPerPage - 1
+
+          console.log ':: reloading current page ::'
+          # @TODO: test this scenario
+
           # if object added to the end of the list reload page to
           # sync last item on the page
           @_reload_current_page(callbacks)
 
-      else
-        callbacks.onSuccess(data)
+      callbacks.onSuccess(data)
 
     ), callbacks.onError
 

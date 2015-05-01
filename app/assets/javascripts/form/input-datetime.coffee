@@ -19,74 +19,73 @@ class @InputDatetime extends InputDate
 
   # PRIVATE ===============================================
 
-  # _update_date_label: ->
-  #   time = @$input.val()
-  #   date_formatted = moment(time).format("dddd, MMMM Do, YYYY") #, h:mm:ss a")
-  #   @$dateLabel.html(date_formatted)
-
-
   _update_value: ->
-    time = moment(@$inputTime.val(), 'LT').format()
-    time = time.split('T')[1]
-    date = @$inputDate.val()
-    @$input.val([ date, time ].join('T'))
+    mt = moment(@$inputTime.val(), 'LT')
+    if ! mt.isValid()
+      mt = moment('1:00 pm', 'LT')
+
+    time_string = mt.utcOffset(@tzOffset).format().split('T')[1]
+    date_string = @$inputDate.val()
+
+    value = [ date_string, time_string ].join('T')
+
+    @$input.val(value)
 
 
   _update_date_input: ->
-    datetime = @$input.val()
-    date = moment(datetime).format('YYYY-M-DD')
-    if date == 'Invalid date'
-      @$inputDate.val('')
-    else
-      @$inputDate.val(date)
-
-
-  _update_date_label: ->
-    date = @$inputDate.val()
-    date_formatted = moment(date).format('dddd, MMM D, YYYY')
-    if date_formatted == 'Invalid date'
-      @$dateLabel.html('Pick a date')
-    else
-      @$dateLabel.html(date_formatted)
+    m = moment(@$input.val()).utcOffset(@tzOffset)
+    @$inputDate.val ( if m.isValid() then m.format('YYYY-MM-DD') else '' )
 
 
   _update_time_input: ->
-    datetime = @$input.val()
-    time = moment(datetime).format('h:mm a')
-    if time == 'Invalid date'
-      @$inputTime.val('')
-    else
-      @$inputTime.val(time)
+    m = moment(@$input.val()).utcOffset(@tzOffset)
+    @$inputTime.val ( if m.isValid() then m.format('h:mm a') else '' )
+
+
+  _update_date_label: ->
+    m = moment(@$inputDate.val()).utcOffset(@tzOffset)
+    @$dateLabel.html ( if m.isValid() then m.format('dddd, MMM D, YYYY') else 'Pick a date' )
+
+
+  _normalized_value: ->
+    # -- use local timezone to represent time
+    @tzOffset  = @config.timezoneOffset
+    @tzOffset ?= (new Date()).getTimezoneOffset() * -1
+
+    @value = moment(@value).utcOffset(@tzOffset).format()
 
 
   _add_input: ->
-    # hidden
-    @$input =$ "<input type='hidden' name='#{ @name }' value='#{ @_safe_value() }' />"
+    @_normalized_value()
+
+    # -- hidden
+    @$input =$ "<input type='hidden' name='#{ @name }' value='#{ @value }' />"
     @$el.append @$input
 
-    # date
+    # -- date
     @$inputDate =$ "<input type='text' class='input-datetime-date' />"
     @$el.append @$inputDate
     @$inputDate.on 'change', (e) =>
       @_update_date_label()
       @_update_value()
 
-    # date label
+    @_update_date_input()
+
+    # -- date label
     @$dateLabel =$ "<div class='input-date-label'>"
     @$el.append @$dateLabel
     @$dateLabel.on 'click', (e) => @$inputDate.trigger 'click'
 
-    # @
+    @_update_date_label()
+
+    # -- @
     @$el.append "<span class='input-timedate-at'>@</span>"
 
-    # time
-    @$inputTime =$ "<input type='text' class='input-datetime-time' placeholder='12:00 am' />"
+    # -- time
+    @$inputTime =$ "<input type='text' class='input-datetime-time' placeholder='1:00 pm' />"
     @$el.append @$inputTime
-    @$inputTime.on 'change', (e) => @_update_value()
-    @$inputTime.on 'keyup',  (e) => @$input.trigger('change')
+    @$inputTime.on 'change, keyup', (e) => @_update_value() ; @$input.trigger('change')
 
-    @_update_date_input()
-    @_update_date_label()
     @_update_time_input()
 
 
@@ -110,7 +109,9 @@ class @InputDatetime extends InputDate
 
 
   updateValue: (@value) ->
+    @_normalized_value()
     @$input.val(@value)
+
     @_update_date_input()
     @_update_date_label()
     @_update_time_input()
