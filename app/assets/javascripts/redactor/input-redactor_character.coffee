@@ -24,37 +24,31 @@ $.fx.speeds.fast = 10
   _redactor_options: ->
     @_trigger_change = true
 
+    config = @_get_default_config()
     @config.redactorOptions ?= {}
 
-    # workaround plugins & custom configuration to include loft
-    # and optional fixedtoolbar
-    plugins = @config.redactorOptions.plugins || []
-    delete @config.redactorOptions.plugins
+    $.extend(config, @config.redactorOptions)
 
-    if ! chr.isMobile()
-      plugins.push('fixedtoolbar')
+    if (! chr.isMobile()) && config.plugins.indexOf('fixedtoolbar') == -1
+      config.plugins.push('fixedtoolbar')
 
-    if Loft?
-      plugins.push('loft')
-
-    config = @_get_default_config(plugins)
+    if Loft? && config.plugins.indexOf('loft') == -1
+      config.plugins.push('loft')
 
     if chr.isMobile()
       config.toolbarFixed = false
       # config.toolbarFixedTopOffset = 40
 
-    $.extend(config, @config.redactorOptions)
-
     return config
 
 
-  _get_default_config: (plugins) ->
+  _get_default_config: () ->
     focus:            false
     imageFloatMargin: '20px'
     buttonSource:     true
     pastePlainText:   true
     scrollTarget:     chr.module.view.$content
-    plugins:          plugins
+    plugins:          []
     buttons:          [ 'html',
                         'formatting',
                         'bold',
@@ -64,7 +58,6 @@ $.fx.speeds.fast = 10
                         'orderedlist',
                         'link' ]
 
-
     # to have caching working we need to trigger 'change' event for textarea
     # when content got changed in redactor, but skip this when updating value
     # via `updateValue` method
@@ -72,7 +65,6 @@ $.fx.speeds.fast = 10
       if @_trigger_change
         @$input.trigger('change')
       @_trigger_change = true
-
 
     initCallback: ->
       new RedactorImages(this)
