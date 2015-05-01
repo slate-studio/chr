@@ -1,0 +1,16 @@
+@import "vendor/datedropper";
+
+.form .input-stacked input.input-datetime-date {
+  @include position(absolute); width: 7em; opacity: .0;
+}
+
+.input-date-label    { display: inline-block; min-width: 7em; }
+.input-timedate-at   { color: $stableColor; margin: 0 .25em; }
+
+.form .input-stacked input.input-datetime-time { width: auto; display: inline-block; }
+
+.dd_ .dd_sw_ .dd_nav_.dd_prev_  { background-image: image-url('datedropper/prev.png'); }
+.dd_ .dd_sw_ .dd_nav_.dd_next_  { background-image: image-url('datedropper/next.png'); }
+.dd_ .dd_submit                 { background-image: image-url('datedropper/done.png'); }
+
+

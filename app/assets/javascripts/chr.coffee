@@ -26,3 +26,6 @@
 #= require ./form/input-select
 #= require ./form/input-select2
 #= require ./form/expandable-group
+#= require ./form/input-date
+#= require ./form/input-datetime
+#= require ./form/input-time
