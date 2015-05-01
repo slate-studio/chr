@@ -4300,11 +4300,11 @@ this.RestArrayStore = (function(superClass) {
         d = _this._update_data_object(id, data);
         if (_this._is_pagination_edge_case() && d.positionHasChanged) {
           if (d.position >= (_this.nextPage - 1) * _this.objectsPerPage - 1) {
-            return _this._reload_current_page(callbacks);
+            console.log(':: reloading current page ::');
+            _this._reload_current_page(callbacks);
           }
-        } else {
-          return callbacks.onSuccess(data);
         }
+        return callbacks.onSuccess(data);
       };
     })(this)), callbacks.onError);
   };
@@ -5401,7 +5401,68 @@ this.InputColor = (function(superClass) {
 
 chr.formInputs['color'] = InputColor;
 
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
+this.InputDate = (function(superClass) {
+  extend(InputDate, superClass);
+
+  function InputDate() {
+    return InputDate.__super__.constructor.apply(this, arguments);
+  }
+
+  InputDate.prototype._update_date_label = function() {
+    var date, date_formatted;
+    date = this.$input.val();
+    date_formatted = moment(date).format("dddd, MMMM Do, YYYY");
+    return this.$dateLabel.html(date_formatted);
+  };
+
+  InputDate.prototype._add_input = function() {
+    this.$input = $("<input type='text' name='" + this.name + "' value='" + (this._safe_value()) + "' class='input-datetime-date' />");
+    this.$el.append(this.$input);
+    this.$input.on('change', (function(_this) {
+      return function(e) {
+        return _this._update_date_label();
+      };
+    })(this));
+    this.$dateLabel = $("<div class='input-date-label'>");
+    this.$el.append(this.$dateLabel);
+    this.$dateLabel.on('click', (function(_this) {
+      return function(e) {
+        return _this.$input.trigger('click');
+      };
+    })(this));
+    return this._update_date_label();
+  };
+
+  InputDate.prototype.initialize = function() {
+    var base, base1, base2, config;
+    if (typeof (base = this.config).beforeInitialize === "function") {
+      base.beforeInitialize(this);
+    }
+    if ((base1 = this.config).pluginConfig == null) {
+      base1.pluginConfig = {};
+    }
+    config = {
+      animation: 'fadein',
+      format: 'Y-m-d'
+    };
+    $.extend(config, this.config.pluginConfig);
+    this.$input.dateDropper(config);
+    return typeof (base2 = this.config).onInitialize === "function" ? base2.onInitialize(this) : void 0;
+  };
+
+  InputDate.prototype.updateValue = function(value) {
+    this.value = value;
+    return this.$input.val(this.value);
+  };
+
+  return InputDate;
+
+})(InputString);
+
+chr.formInputs['date'] = InputDate;
 
 var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -5947,3 +6008,116 @@ this.InputSelect2 = (function(superClass) {
 })(InputSelect);
 
 chr.formInputs['select2'] = InputSelect2;
+
+var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+this.InputDatetime = (function(superClass) {
+  extend(InputDatetime, superClass);
+
+  function InputDatetime() {
+    return InputDatetime.__super__.constructor.apply(this, arguments);
+  }
+
+  InputDatetime.prototype._update_value = function() {
+    var date_string, mt, time_string, value;
+    mt = moment(this.$inputTime.val(), 'LT');
+    if (!mt.isValid()) {
+      mt = moment('1:00 pm', 'LT');
+    }
+    time_string = mt.utcOffset(this.tzOffset).format().split('T')[1];
+    date_string = this.$inputDate.val();
+    value = [date_string, time_string].join('T');
+    return this.$input.val(value);
+  };
+
+  InputDatetime.prototype._update_date_input = function() {
+    var m;
+    m = moment(this.$input.val()).utcOffset(this.tzOffset);
+    return this.$inputDate.val((m.isValid() ? m.format('YYYY-MM-DD') : ''));
+  };
+
+  InputDatetime.prototype._update_time_input = function() {
+    var m;
+    m = moment(this.$input.val()).utcOffset(this.tzOffset);
+    return this.$inputTime.val((m.isValid() ? m.format('h:mm a') : ''));
+  };
+
+  InputDatetime.prototype._update_date_label = function() {
+    var m;
+    m = moment(this.$inputDate.val()).utcOffset(this.tzOffset);
+    return this.$dateLabel.html((m.isValid() ? m.format('dddd, MMM D, YYYY') : 'Pick a date'));
+  };
+
+  InputDatetime.prototype._normalized_value = function() {
+    this.tzOffset = this.config.timezoneOffset;
+    if (this.tzOffset == null) {
+      this.tzOffset = (new Date()).getTimezoneOffset() * -1;
+    }
+    return this.value = moment(this.value).utcOffset(this.tzOffset).format();
+  };
+
+  InputDatetime.prototype._add_input = function() {
+    this._normalized_value();
+    this.$input = $("<input type='hidden' name='" + this.name + "' value='" + this.value + "' />");
+    this.$el.append(this.$input);
+    this.$inputDate = $("<input type='text' class='input-datetime-date' />");
+    this.$el.append(this.$inputDate);
+    this.$inputDate.on('change', (function(_this) {
+      return function(e) {
+        _this._update_date_label();
+        return _this._update_value();
+      };
+    })(this));
+    this._update_date_input();
+    this.$dateLabel = $("<div class='input-date-label'>");
+    this.$el.append(this.$dateLabel);
+    this.$dateLabel.on('click', (function(_this) {
+      return function(e) {
+        return _this.$inputDate.trigger('click');
+      };
+    })(this));
+    this._update_date_label();
+    this.$el.append("<span class='input-timedate-at'>@</span>");
+    this.$inputTime = $("<input type='text' class='input-datetime-time' placeholder='1:00 pm' />");
+    this.$el.append(this.$inputTime);
+    this.$inputTime.on('change, keyup', (function(_this) {
+      return function(e) {
+        _this._update_value();
+        return _this.$input.trigger('change');
+      };
+    })(this));
+    return this._update_time_input();
+  };
+
+  InputDatetime.prototype.initialize = function() {
+    var base, base1, base2, config;
+    if (typeof (base = this.config).beforeInitialize === "function") {
+      base.beforeInitialize(this);
+    }
+    if ((base1 = this.config).pluginConfig == null) {
+      base1.pluginConfig = {};
+    }
+    config = {
+      animation: 'fadein',
+      format: 'Y-m-d'
+    };
+    $.extend(config, this.config.pluginConfig);
+    this.$inputDate.dateDropper(config);
+    return typeof (base2 = this.config).onInitialize === "function" ? base2.onInitialize(this) : void 0;
+  };
+
+  InputDatetime.prototype.updateValue = function(value1) {
+    this.value = value1;
+    this._normalized_value();
+    this.$input.val(this.value);
+    this._update_date_input();
+    this._update_date_label();
+    return this._update_time_input();
+  };
+
+  return InputDatetime;
+
+})(InputDate);
+
+chr.formInputs['datetime'] = InputDatetime;

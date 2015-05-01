@@ -47,6 +47,8 @@ module.exports = (grunt) ->
             'app/assets/javascripts/form/input-text.coffee'
             'app/assets/javascripts/form/input-select2.coffee'
             'app/assets/javascripts/form/extendable-group.coffee'
+            'app/assets/javascripts/form/input-date.coffee'
+            'app/assets/javascripts/form/input-datetime.coffee'
           ]
 
           'build/input-ace.js': [
