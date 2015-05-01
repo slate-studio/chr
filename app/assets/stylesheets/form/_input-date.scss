@@ -1,16 +1,35 @@
 @import "vendor/datedropper";
 
 .form .input-stacked input.input-datetime-date {
-  @include position(absolute); width: 7em; opacity: .0;
+  @include position(absolute); width: 7em; opacity: .0; cursor: pointer;
 }
 
-.input-date-label    { display: inline-block; min-width: 7em; }
-.input-timedate-at   { color: $stableColor; margin: 0 .25em; }
+.input-date-label  { display: inline-block; min-width: 7em; cursor: pointer; }
+.input-timedate-at { color: $stableColor; margin: 0 .25em;  }
 
 .form .input-stacked input.input-datetime-time { width: auto; display: inline-block; }
 
-.dd_ .dd_sw_ .dd_nav_.dd_prev_  { background-image: image-url('datedropper/prev.png'); }
-.dd_ .dd_sw_ .dd_nav_.dd_next_  { background-image: image-url('datedropper/next.png'); }
-.dd_ .dd_submit                 { background-image: image-url('datedropper/done.png'); }
+.dd_ .dd_sw_ .dd_nav_.dd_prev_ { background-image: image-url('datedropper/prev.png'); }
+.dd_ .dd_sw_ .dd_nav_.dd_next_ { background-image: image-url('datedropper/next.png'); }
+.dd_ .dd_submit                { background-image: image-url('datedropper/done.png'); }
 
+.dd_ { border: 0; }
+.dd_:after {
+  top: -6px!important;
+  border-left: 1px solid $contrastColor!important;
+  border-top:  1px solid $contrastColor !important;
+}
 
+.dd_ .dd_m_                         { font-size: 16px; }
+.dd_ .dd_d_                         { font-size: 38px; border-color: $neutralColor; }
+.dd_ .dd_d_ .dd_sl_ ul li em        { color: $stableColor!important; font-size: 13px; bottom: 4px; }
+.dd_ .dd_d_ .dd_sl_ ul li.dd_sunday { color: $assertiveColor!important; }
+.dd_ .dd_sw_ .dd_sl_ li:hover       { background-color: $neutralColor; }
+
+.dd_ .dd_m_ {
+  border-top-left-radius:  4px!important;
+  border-top-right-radius: 4px!important;
+}
+
+.dd_r_ { display: none; }
+.dd_ .dd_submit { background-color: $positiveColor!important; }

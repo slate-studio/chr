@@ -98,8 +98,14 @@ class @InputDatetime extends InputDate
     @config.pluginConfig ?= {}
 
     config =
-      animation: 'fadein'
-      format:    'Y-m-d'
+      animation:       'fadein'
+      format:          'Y-m-d'
+      animate_current: false
+      textColor:       '#333'
+      borderColor:     '#f6f6f6'
+      boxShadow:       '0 0 2px rgba(0, 0, 0, 0.2)'
+      borderRadius:    4
+      maxYear:         2020
 
     $.extend(config, @config.pluginConfig)
 
