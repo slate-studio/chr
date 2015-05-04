@@ -67,6 +67,9 @@ module.exports = (grunt) ->
           'app/assets/javascripts/vendor/jquery.scrollparent.js'
           'app/assets/javascripts/vendor/jquery.textarea_autosize.js'
           'app/assets/javascripts/vendor/jquery.typeahead.js'
+          'app/assets/javascripts/vendor/moment.js'
+          'app/assets/javascripts/vendor/datedropper.js'
+          'app/assets/javascripts/vendor/select2.js'
           'build/chr.js'
         ]
         dest: 'dist/chr.js'
