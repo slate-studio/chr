@@ -17,6 +17,7 @@
 #   disableSave      - do not add save button in header
 #   fullsizeView     — use fullsize layout in desktop mode
 #   onViewShow       - on show callback
+#   disableFormCache - do not cache form changes
 #
 # Public methods:
 #   show(objectId)
@@ -164,7 +165,8 @@ class @View
     @config.onViewShow?(@)
 
     # enable local storage caching
-    @_bind_form_change()
+    if ! @config.disableFormCache
+      @_bind_form_change()
 
 
   _show_error: ->

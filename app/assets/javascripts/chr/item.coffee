@@ -84,7 +84,8 @@ class @Item
         @$el.addClass('reorderable')
         @$el.append $("<div class='icon-reorder'></div>")
 
-    @config.onItemRender?(this)
+    if @type == 'object'
+      @config.onItemRender?(this)
 
 
   destroy: ->
