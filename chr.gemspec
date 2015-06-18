@@ -22,6 +22,7 @@ email client etc. It's responsive by default and designed to be data source inde
   s.files         = `git ls-files`.split("\n")
   s.require_paths = ['lib']
 
+  s.add_dependency('formagic',        '>= 0.1')
   s.add_dependency('bourbon',         '>= 3.2')
   s.add_dependency('coffee-rails',    '>= 4.0')
   s.add_dependency('normalize-rails', '>= 3.0')
