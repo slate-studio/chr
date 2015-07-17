@@ -16,11 +16,17 @@ html a { text-decoration: none; }
   .new           { @include position(absolute, 0 0   null null); @extend .icon-plus;                   }
   .new + .search { @include position(absolute, 0 40px inherit inherit);                                }
   .spinner       { @include spinner; @include hide; position: absolute; margin: 6px 0 0 -36px;         }
-  .save          { @include position(absolute, 0 1em null null); @include header-button($stableColor); font-weight: 500; }
+
+  // this is disabled until local storage is back
+  //.save          { @include position(absolute, 0 1em null null); @include header-button($stableColor); font-weight: 500; }
+  .save          { @include position(absolute, 0 1em null null); @include header-button($positiveColor); font-weight: 500; }
 }
 
+// these are ignored until local storage is back
 .view.has-unsaved-changes .save  { color: $positiveColor; }
 .view.has-unsaved-changes .title:after { content: ' (not saved)'; font-weight: 300; font-size: .8em; }
+// ------------------------------------------------------
+
 .show-spinner .spinner { display: inline-block; }
 
 

@@ -41,6 +41,10 @@ class @View
     if @config.fullsizeView
       @$el.addClass 'fullsize'
 
+    # disable local storage cache, as that has to be
+    # refactored to be more secure and obvious to user
+    @config.disableFormCache ||= true
+
     # header
     @$header  =$ "<header class='header'></header>"
     @$spinner =$ "<div class='spinner'></div>"
@@ -155,7 +159,8 @@ class @View
       @$header.append @$saveBtn
 
     # sync with local storage cache
-    @_update_object_from_local_storage()
+    if ! @config.disableFormCache
+      @_update_object_from_local_storage()
 
     # form
     object = @object || @config.defaultNewObject || null
