@@ -109,6 +109,9 @@ class @Chr
   showError: (message) ->
     alert 'Error: ' + message
 
+  showNotification: (message) ->
+    alert message
+
 
 include(Chr, chrRouter)
 

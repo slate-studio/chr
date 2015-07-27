@@ -17,6 +17,7 @@
 #   disableSave       - do not add save button in header
 #   fullsizeView      — use fullsize layout in desktop mode
 #   onViewShow        - on show callback
+#   onSaveSuccess     - on document succesfully saved callback
 #   defaultNewObject  - used to generate new form
 #   disableFormCache  - do not cache form changes
 #
@@ -95,6 +96,8 @@ class @View
     @form.hideValidationErrors()
     @form.updateValues(@object)
     @_clear_local_storage_cache()
+
+    @config.onSaveSuccess?(@)
 
 
   _save_error: (message, validationErrors) ->
