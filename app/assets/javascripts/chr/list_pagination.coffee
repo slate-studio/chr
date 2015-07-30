@@ -52,6 +52,18 @@ chr._bind_mobile_scroll = ->
     @_mobile_scroll_binded = true
 
 
+chr._list_height = ($items) ->
+  height = 0
+  offset = null
+
+  $items.children().each ->
+    if offset != $(this).position().top
+      offset  = $(this).position().top
+      height += $(this).height()
+
+  return height
+
+
 chr._load_next_page = ($viewport, list, scroll_top) ->
   $items = list.$items
   store  = list.config.arrayStore
@@ -61,11 +73,10 @@ chr._load_next_page = ($viewport, list, scroll_top) ->
   if store.lastPageLoaded then return
 
   # check if scroll is near bottom of the $viewport
-  viewport_height   = $viewport.height()
-  list_items_height = 0
-  $items.children().each -> list_items_height += $(this).height()
+  viewport_height = $viewport.height()
+  list_height     = chr._list_height($items)
 
-  if list_items_height - scroll_top - 100 > viewport_height
+  if list_height - scroll_top - 100 > viewport_height
     return
 
   list.showSpinner()
