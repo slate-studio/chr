@@ -5,7 +5,7 @@ html a { text-decoration: none; }
 
 
 /* Menu -------------------------------------------------------------------- */
-.menu { font-size: .8em; letter-spacing: 1px; text-transform: uppercase;  }
+.menu { font-size: .8em; }
 .menu:before { @include menu-title($contrastColor); content: 'CHARACTER'; }
 
 
