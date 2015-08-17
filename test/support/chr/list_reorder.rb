@@ -31,10 +31,11 @@ module CharacterReorderTest
       wait_for_ajax
       select_last_module_from_list(list_of_modules)
       wait_for_ajax
+      sleep(1.0)
       assert page.has_css?('div.item-title', count: @loaded_items)
-      scoll_to_bottom
+      scroll_to_bottom
       wait_for_ajax
-      scoll_to_bottom
+      scroll_to_bottom
       drag_item(@last_item, @first_item)
       title_second_item = find("a[data-id='#{@last_item.id}']+a").text
       assert page.has_css?('div.item-title', count: class_name.count)

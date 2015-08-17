@@ -174,7 +174,7 @@ module CharacterFrontEnd
     end
 
 
-    def scoll_to_bottom
+    def scroll_to_bottom
       page.execute_script(%Q{$("div.items").prop("scrollTop", 10000000).trigger('scroll')})
     end
 

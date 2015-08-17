@@ -8,8 +8,9 @@ module CharacterPaginationTest
       # Select Module
       select_last_module_from_list(list_of_modules)
       while @loaded_items < class_name.count do
+        sleep(2.0)
         assert page.has_css?('div.item-title', count: @loaded_items)
-        scoll_to_bottom
+        scroll_to_bottom
         wait_for_ajax
         @loaded_items += @items_per_page
       end
@@ -41,8 +42,9 @@ module CharacterPaginationTest
       wait_for_ajax
       select_last_module_from_list(list_of_modules)
       while @loaded_items < class_name.count do
+        sleep(1.0)
         assert page.has_css?('div.item-title', count: @loaded_items)
-        scoll_to_bottom
+        scroll_to_bottom
         wait_for_ajax
         drag_item(@instances_of_class[@loaded_items-5], @instances_of_class[@loaded_items-4])
         @loaded_items += @items_per_page
@@ -62,7 +64,7 @@ module CharacterPaginationTest
       sleep(1.0)
       assert page.has_css?('div.item-title', count: @loaded_items)
       assert_not page.has_css?("a[data-id='#{@first_item.id}']")
-      scoll_to_bottom
+      scroll_to_bottom
       assert page.has_css?('div.item-title', count: class_name.count)
     end
   end
@@ -80,7 +82,7 @@ module CharacterPaginationTest
       assert page.has_css?('div.item-title', count: @loaded_items)
       title_middle_item = find("a[data-id='#{@first_item.id}']+a").text
       title_moved_item = find("a[data-id='#{@before_middle_item.id}']+a").text
-      scoll_to_bottom
+      scroll_to_bottom
       assert page.has_css?('div.item-title', count: class_name.count)
       assert_equal @first_item.title, title_moved_item
       assert_equal @middle_item.title, title_middle_item
@@ -101,7 +103,7 @@ module CharacterPaginationTest
       assert page.has_css?('div.item-title', count: @loaded_items)
       assert page.has_css?("a[data-id='#{@last_item.id}']")
       assert_not page.has_css?("a[data-id='#{@last_item_on_first_page.id}']")
-      scoll_to_bottom
+      scroll_to_bottom
       assert page.has_css?('div.item-title', count: class_name.count)
     end
   end
@@ -126,7 +128,7 @@ module CharacterPaginationTest
       assert page.has_css?('div.item-title', count: @loaded_items)
       assert page.has_content?('10 ways to lose weight')
       assert_not page.has_css?("a[data-id='#{@last_item_on_first_page.id}']")
-      scoll_to_bottom
+      scroll_to_bottom
       assert page.has_css?('div.item-title', count: class_name.count)
       assert page.has_css?("a[data-id='#{@last_item_on_first_page.id}']")
     end
@@ -152,7 +154,7 @@ module CharacterPaginationTest
       assert page.has_css?('div.item-title', count: @loaded_items)
       assert page.has_content?('10 ways to lose weight')
       assert_not page.has_css?("a[data-id='#{@last_item_on_first_page.id}']")
-      scoll_to_bottom
+      scroll_to_bottom
       assert page.has_css?('div.item-title', count: class_name.count)
       assert page.has_css?("a[data-id='#{@last_item_on_first_page.id}']")
     end
