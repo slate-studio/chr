@@ -1,0 +1,60 @@
+/* Medium workaround for unordered lists */
+@mixin unordered-list($color)         { list-style: none;
+                                        list-style-image: none;
+                                        padding: 0;
+  li                                  { margin-left: 1.5em;
+    &:before                          { content: '•';
+                                        display: inline-block;
+                                        position: absolute;
+                                        list-style-type: none;
+                                        list-style-image: none;
+                                        font-size: 1em;
+                                        padding: 0;
+                                        margin-left: -1em;
+                                        color:$color;
+    }
+  }
+}
+
+@mixin helvetica-font { font-family: "Helvetica Neue", sans-serif !important; }
+
+.redactor-editor { @include helvetica-font; color: #555; }
+.redactor-editor {
+  h2, h3, h4 { @include proxima-font; color: #333; font-size: 16px; font-weight: 600; }
+  h2         { font-size: 20px; margin-bottom: 0; }
+  h3         { text-transform: uppercase; margin: 0; letter-spacing: 1px; }
+  h4         { margin: 0; }
+  a          { color: #ee7642; }
+  p, ul, ol,
+  blockquote { line-height: 1.85; font-size: 16px; margin: 0 0 20px; font-weight: 300; }
+  ul         { @include unordered-list(#ccc); }
+  ol         { padding-left: 2.5em; }
+  ul li      { margin-bottom: 0px; margin-left: 1.5em; padding-left: 1em; }
+  blockquote { font-style: italic; margin-left: 20px; margin-right: 20px; }
+  hr { margin: 0 0 30px 0; background-color: #e5e5e5; height: 1px; border: 0; }
+
+  table { font-size: 13px; color: #555; line-height: 1.5; width: 100%; margin-bottom: 30px; @include helvetica-font; font-weight: 300; }
+  table th, table td { border: none; }
+  table tr { border-bottom: 1px solid #e5e5e5; }
+  table tr:nth-child(even) { background-color: #fcfcfc; }
+  table th, table td { padding: 5px 10px; }
+  table th { font-size: 12px; font-weight: 500; text-transform: uppercase; text-align: left; vertical-align: bottom; letter-spacing: 1px; }
+  table td { vertical-align: top; }
+  table td h4 { font-size: 14px; @include helvetica-font; }
+
+  .responsive-video                     { position: relative;
+                                          padding-bottom: 56.25%;
+                                          max-width: 100%;
+                                          height: 0;
+                                          overflow: hidden;
+                                          height: auto;
+                                          margin: 0 0 30px;
+    iframe, object, embed               { position: absolute;
+                                          top: 0;
+                                          left: 0;
+                                          width: 100%;
+                                          height: 100%;
+    }
+  }
+  strong { color: #333; }
+}
