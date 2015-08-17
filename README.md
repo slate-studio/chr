@@ -1,5 +1,8 @@
 # Character
 
+[![Build Status](https://travis-ci.org/slate-studio/chr.svg?branch=master)](https://travis-ci.org/slate-studio/chr)
+[![Coverage Status](https://coveralls.io/repos/slate-studio/chr/badge.svg?branch=master&service=github)](https://coveralls.io/github/slate-studio/chr?branch=master)
+
 *Powerful responsive javascript CMS for apps.*
 
 
@@ -41,6 +44,7 @@ Styles setup:
 
 * [Rails Setup](docs/rails.md)
 * [Bootstrap Data](docs/bootstrap.md)
+* [Tests](docs/tests.md)
 
 More documentation and samples comming soon...
 

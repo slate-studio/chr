@@ -5,3 +5,7 @@ _site
 *swp
 Gemfile.lock
 tmp
+test/rails_app/tmp
+test/rails_app/log
+log
+coverage
