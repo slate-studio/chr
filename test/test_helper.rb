@@ -1,10 +1,3 @@
-# For get coverage local - uncomment 4-7 lines
-require 'coveralls'
-Coveralls.wear!('rails')
-# SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-#   SimpleCov::Formatter::HTMLFormatter,
-#   Coveralls::SimpleCov::Formatter
-# ]
 ENV['RAILS_ENV'] ||= 'test'
 $:.unshift File.dirname(__FILE__)
 
