@@ -1,0 +1,7 @@
+<body class='loading'>
+
+  <% admin_email = Rails.env.production? ? current_admin.email : 'developer@example.com' %>
+
+</body>
+
+<%= javascript_include_tag :admin %>

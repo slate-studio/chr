@@ -1,0 +1,442 @@
+
+
+Started GET "/" for 127.0.0.1 at 2015-08-17 09:12:14 +0300
+Processing by Rails::WelcomeController#index as HTML
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/railties-4.2.3/lib/rails/templates/rails/welcome/index.html.erb (4.4ms)
+Completed 200 OK in 143ms (Views: 142.9ms)
+
+
+Started GET "/admin" for 127.0.0.1 at 2015-08-17 09:12:20 +0300
+Processing by Admin::BaseController#index as HTML
+  Rendered admin/index.html.erb within layouts/admin (145.3ms)
+Completed 500 Internal Server Error in 147ms
+
+ActionView::Template::Error (couldn't find file 'jquery' with type 'application/javascript'):
+    4: 
+    5: </body>
+    6: 
+    7: <%= javascript_include_tag :admin %>
+  app/assets/javascripts/admin.coffee:1
+  app/views/admin/index.html.erb:7:in `_app_views_admin_index_html_erb___1640677158573780116_70254693409160'
+  app/controllers/admin/base_controller.rb:5:in `index'
+
+
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_source.erb (12.7ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (5.5ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (65.1ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (210.4ms)
+
+
+Started GET "/admin" for 127.0.0.1 at 2015-08-17 09:12:20 +0300
+Processing by Admin::BaseController#index as HTML
+  Rendered admin/index.html.erb within layouts/admin (3.8ms)
+Completed 500 Internal Server Error in 6ms
+
+ActionView::Template::Error (couldn't find file 'jquery' with type 'application/javascript'):
+    4: 
+    5: </body>
+    6: 
+    7: <%= javascript_include_tag :admin %>
+  app/assets/javascripts/admin.coffee:1
+  app/views/admin/index.html.erb:7:in `_app_views_admin_index_html_erb___1640677158573780116_70254693409160'
+  app/controllers/admin/base_controller.rb:5:in `index'
+
+
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_source.erb (11.4ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (4.6ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.4ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (30.1ms)
+
+
+Started GET "/admin" for 127.0.0.1 at 2015-08-17 09:13:16 +0300
+Processing by Admin::BaseController#index as HTML
+  Rendered admin/index.html.erb within layouts/admin (2.6ms)
+Completed 500 Internal Server Error in 4ms
+
+ActionView::Template::Error (couldn't find file 'jquery' with type 'application/javascript'):
+    4: 
+    5: </body>
+    6: 
+    7: <%= javascript_include_tag :admin %>
+  app/assets/javascripts/admin.coffee:1
+  app/views/admin/index.html.erb:7:in `_app_views_admin_index_html_erb___1640677158573780116_70254693409160'
+  app/controllers/admin/base_controller.rb:5:in `index'
+
+
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_source.erb (22.1ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (5.2ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.3ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (41.8ms)
+
+
+Started GET "/admin" for 127.0.0.1 at 2015-08-17 09:13:16 +0300
+Processing by Admin::BaseController#index as HTML
+  Rendered admin/index.html.erb within layouts/admin (6.2ms)
+Completed 500 Internal Server Error in 8ms
+
+ActionView::Template::Error (couldn't find file 'jquery' with type 'application/javascript'):
+    4: 
+    5: </body>
+    6: 
+    7: <%= javascript_include_tag :admin %>
+  app/assets/javascripts/admin.coffee:1
+  app/views/admin/index.html.erb:7:in `_app_views_admin_index_html_erb___1640677158573780116_70254693409160'
+  app/controllers/admin/base_controller.rb:5:in `index'
+
+
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_source.erb (11.6ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (4.3ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.3ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (29.3ms)
+
+
+Started GET "/admin" for 127.0.0.1 at 2015-08-17 09:14:08 +0300
+Processing by Admin::BaseController#index as HTML
+  Rendered admin/index.html.erb within layouts/admin (140.3ms)
+Completed 500 Internal Server Error in 157ms
+
+ActionView::Template::Error (couldn't find file 'jquery' with type 'application/javascript'):
+    4: 
+    5: </body>
+    6: 
+    7: <%= javascript_include_tag :admin %>
+  app/assets/javascripts/admin.coffee:1
+  app/views/admin/index.html.erb:7:in `_app_views_admin_index_html_erb__4003543493691081274_70275664536920'
+  app/controllers/admin/base_controller.rb:5:in `index'
+
+
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_source.erb (13.5ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (5.1ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (10.6ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (42.5ms)
+
+
+Started GET "/admin" for 127.0.0.1 at 2015-08-17 09:15:37 +0300
+Processing by Admin::BaseController#index as HTML
+  Rendered admin/index.html.erb within layouts/admin (133.9ms)
+Completed 500 Internal Server Error in 150ms
+
+ActionView::Template::Error (couldn't find file 'jquery' with type 'application/javascript'):
+    4: 
+    5: </body>
+    6: 
+    7: <%= javascript_include_tag :admin %>
+  app/assets/javascripts/admin.coffee:1
+  app/views/admin/index.html.erb:7:in `_app_views_admin_index_html_erb__4336635991579970510_70358275552140'
+  app/controllers/admin/base_controller.rb:5:in `index'
+
+
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_source.erb (12.1ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (12.0ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (10.4ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (45.9ms)
+
+
+Started GET "/admin" for 127.0.0.1 at 2015-08-17 09:18:16 +0300
+Processing by Admin::BaseController#index as HTML
+  Rendered admin/index.html.erb within layouts/admin (489.0ms)
+Completed 500 Internal Server Error in 496ms
+
+ActionView::Template::Error (couldn't find file 'formagic' with type 'application/javascript'):
+    4: 
+    5: </body>
+    6: 
+    7: <%= javascript_include_tag :admin %>
+  app/views/admin/index.html.erb:7:in `_app_views_admin_index_html_erb___2976662595355276865_69871367209760'
+  app/controllers/admin/base_controller.rb:5:in `index'
+
+
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_source.erb (13.6ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (5.2ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (10.2ms)
+  Rendered /home/denis/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.3/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (42.0ms)
+
+
+Started GET "/admin" for 127.0.0.1 at 2015-08-17 09:21:40 +0300
+Processing by Admin::BaseController#index as HTML
+  Rendered admin/index.html.erb within layouts/admin (8584.9ms)
+Completed 200 OK in 11046ms (Views: 11045.9ms)
+
+
+Started GET "/assets/admin.self-6101b57d834da8e8e19189f60617d52f9a42a810361c4b3aede3cd2380c776a6.css?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/chr_router.self-848a9b3fe9fb77566569f165cd19f7b7b5291a4c07dff91d3db6c7868e7b04c3.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/utils.self-dd4feb2c142884406c9a5186c5f0b7159ab0c1c73ea562b9035a3108c8860ac6.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/list_config.self-11c2d711be91c31ec27d4afddc19e954295773c46a9ef2eba1343921e6ed5b12.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/list_pagination.self-2e36a87fb079db9b95fef0e62a38930e049691ffc5d822f457ac8d60501d0190.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/module.self-a6c5427869a1c4ee2f176f3e42874dc3fcad2c6fc848acf8fbba19859359d115.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/chr.self-3da7e4a753d1a442b4480621fe4ec80dd52c485590781f66328980ac04aad2d1.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/vendor/slip.self-e3480ea2629c6a5a4b559efb1843d5bdd09d8b3697dbf67b9f740cf3f6d3966b.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/list_reorder.self-a8cfcaa40621116dce002808fe65627a8870b2683ce2968cd938edd735f5b657.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/list_search.self-7ab39a3cbbf7856b4dddc7defb854594a0616ac5e6304312370045f391b17774.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/item.self-30e456436bb317aeee97ebeea1d5ef8db50a3305611849737a9ad255c4d0a1b1.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/list.self-71c6d03e2b9a451f01d847fd6e5d755644b143b6752964d503f0caffe3a91277.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/view_local-storage.self-d3be4cdb65c860c9ad3e34fc7633474db554618dae6525b047a2c501f0529e60.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/chr/view.self-2c69450f4ccce8649e67f2887f7353cb6109c3976f64a825cbcff48379798ffb.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/stores/object.self-893adce9a9190e978844b20f840817ff8edcb35714413a4c23fd3b0229e55ca0.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/stores/array.self-a0021a3235438b9237c6569d983a7bfab6dc950e06289ba74f2489c9398ae14c.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/stores/rest-object.self-6c770fd946cfaad19e8cdc4891108f3896a9d93aaf6283db8310657af7413767.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/stores/rest-array.self-7eb176370fcad5c04bdea3fa487ab1db324b43b0f64f92c03565a4782f8d72d2.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/stores/rails-form-object-parser.self-d3d9d978028b0c814e91ea38922390ec88a67083f0df9dda6f8630d1fa4d7c0b.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/stores/rails-object.self-8bfc08b0500ba18b67a749d71d7867974a209c4d0656bdd46b18d651ff6fd9d4.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/stores/rails-array.self-ae005fc72e2cc1240be90dfd969082930069da3920e2855a658ff83506de0c22.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/formagic/form.self-864d2700286ce6e04f43d85f0877367689a0c88ed2d3ed55316c7475636ce414.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/formagic/group.self-4bdb3e2fc505da65cdbc9cf38de3dbebeeda9b49f0bd77a80894ba0f192cf0ce.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/formagic/inputs/hidden.self-1209fcf4854e6accf638f1f31af8a8027d638905f021b43b2e792c7aa06bd381.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/vendor/jquery.typeahead.self-2621ced336904d375bef144d46edd9d304889e09c6559d64df325bbd10f4ce8a.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/formagic/inputs/string.self-15bb8fb789a7159f4dd27b6c6bb874e4a94f9aa46d0ab6c7927c9af774a561f1.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/vendor/jquery.scrollparent.self-8abc737052b1ecd799ec7f19d973e0988647c4d2f8c38096ef5f81709a2f8a53.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/formagic/inputs/text.self-234ef041e6c44161178e8defdfbde0f6415a14c43ba00187409077b1d432a5be.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/vendor/jquery.textarea_autosize.self-c7a572c4eef627aea9c6b3f1d88f9ac1ebe7bed7b9acaa4423476f638b92bcd3.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:51 +0300
+
+
+Started GET "/assets/formagic/inputs/color.self-9c4c2542285ae3559afb46624ecef8b9246628c09d27bbb6ad5fb67e09b6322c.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/checkbox.self-74d6c26a9b35ddd32b07932a9276c9f3df57737501a04e36a111b9464c1d3169.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/vendor/datedropper.self-4126d61cc56958f22dae6c7bce2a91a28a25252d13f508a58fc009fe7c71ea93.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/vendor/moment.self-14a05e94cca93048a2a57289c5b322ce9bf419e4689a57a7b33fae4066d867e9.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/date.self-4fd1f0cf8ba31ac3c840117ceba081379f5d424e8ccb59502627e63ee0c29729.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/datetime.self-2db7abaa51d2d2f3659e4ec83d059bf77b0e7bb78babc7d07212a826281ab446.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/documents.self-b08c072a4a9dc0a43bdf3fce1995631e59b4f2cf936c7b8ce4a9e262e0ccd0bf.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/document.self-14edb155afe2bae730197293f33577e89b9f5e1c262cdf0cc849eca391b59443.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/documents_reorder.self-fa70a0c15358b1af36661c2dcffafc93eced4ff7a9cccd27e7f531a0aa3169c2.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/file.self-1573db575abe6f137f5f60a301a5a5b53db13378bc444f5c9e5286ec07a93a1a.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/vendor/ace.self-8ad335dfa1b6094f9e8d4f340a8db9b138dc72203c252cbec98cc5dffcbebd60.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/vendor/mode-html.self-f6dd89c6582f437ff201a1f373d78237ae05bcb006c4000f9618251da6e0a6a1.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/html.self-fd0a6eb1c32dfa7e358866fbea19c9a99827695d2b3bc807635991055f41fd6b.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/list_reorder.self-c8740c9e5d25297ad1edc26de37d7f942adfce8f4127c597394b7e7290f73ad5.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/list_typeahead.self-c38a0ad11aae4d9b5ade93bf7d82dd0999ff5532d79ba5985341aab28f7b046b.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/image.self-7550803b9baa1c68c069f23ee8be90ff13fc21363db3cccde202e71a7cd2a68d.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/list.self-3d3b3ed6de7df824c4bc7bb03efa4bf180020c12cd9b9b13e1af71ec8666fd85.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/vendor/marked.self-05bc854b5932cbf2953ef79487edf123224e321a895102ff224fa3fdc6a8696f.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/vendor/mode-markdown.self-2a461c8ef2243bf099c2b89119a364241321baa0a2e0819b6f779a9ab59b8cf3.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/markdown.self-40392b1a92439afb025ad5c98856ebf1ab7a54ac2f0af4892242542fdf3884f6.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/password.self-9b9821be1068c6205456faed3b7659dd5d26e0377f46e1ca2f66833c246ad5c4.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/redactor.self-dbc830075f8b510ce19769e69bb35a9c35568f7690c65e83b6ed7841419a74a1.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/vendor/redactor.table.self-0397630c28c58a63546efecb9e68c67a0be8d2e74f77c9beecbbcdcbdb4e478d.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/vendor/redactor.fixedtoolbar.self-fd7cdd152d509000eec5d0da26cedc4378223e9d7d65746df10a7306d8a92005.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/redactor_images.self-6be416e23158b9db0279e19216a43b098c092bf72e14a95ab770ed78bc50aaa6.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/redactor_character.self-41227ca63b8af4134983376243b22eeef77ace20fb2c0116e35d67d5fcb5f4e9.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/redactor.self-63a29a5033fe885f6b4bdc9e6e5c8d09b69a7c6595d85058adb34d01137881a8.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/select.self-7c41c74f588b26ba85c44745c2ce77692e7d6ed97cf51842971ee4dbbb8a5243.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/vendor/select2.self-c196265b4655fec7e3f590bb11b8d0672cba78167d6dc5a5060f2fd733de49f9.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/select2.self-798697935138184fcd6a1f2030bdbf481d246a3613283f79a657a30160047e13.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/time.self-877aef30ae1b040ab8a3aba4e3e309a11d7f2612f44dde450b5c157aa5f95c05.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic/inputs/url.self-7d636b560d363fab1d575a12887452c040506e5b90638ba42a5ff7c1dfdc3193.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/formagic.self-877aef30ae1b040ab8a3aba4e3e309a11d7f2612f44dde450b5c157aa5f95c05.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/chr.self-877aef30ae1b040ab8a3aba4e3e309a11d7f2612f44dde450b5c157aa5f95c05.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/assets/admin.self-8c6357d5fa0fdceeb847e89e5e719349a49d4d6bee4967e368bae6d77f9e32cd.js?body=1" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+
+
+Started GET "/admin/bootstrap.json" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+Processing by Admin::BaseController#bootstrap_data as */*
+Completed 200 OK in 1ms (Views: 0.2ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:21:52 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 COMMAND      database=admin command={:ismaster=>1} runtime: 0.9767ms
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.2658ms
+Completed 200 OK in 5ms (Views: 0.2ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:21:56 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.4850ms
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:21:57 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.4862ms
+Completed 200 OK in 2ms (Views: 0.2ms)
+
+
+Started GET "/admin/articles.json?sport_articles=true&page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:22:00 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"sport_articles"=>"true", "page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{"description"=>"Sport News"}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.5681ms
+Completed 200 OK in 3ms (Views: 0.2ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:22:04 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.6981ms
+Completed 200 OK in 3ms (Views: 0.2ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:22:05 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.5754ms
+Completed 200 OK in 2ms (Views: 0.2ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:22:06 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.5222ms
+Completed 200 OK in 3ms (Views: 0.2ms)
+
+
+Started POST "/admin/articles.json" for 127.0.0.1 at 2015-08-17 09:25:38 +0300
+Processing by Admin::ArticlesController#create as JSON
+  Parameters: {"article"=>{"title"=>"Test", "description"=>"first test item", "_position"=>"", "body_html"=>"", "remove_image"=>"true"}}
+  MOPED: 127.0.0.1:27017 COMMAND      database=admin command={:ismaster=>1} runtime: 0.4703ms
+  MOPED: 127.0.0.1:27017 INSERT       database=chr_develop collection=articles documents=[{"_id"=>BSON::ObjectId('55d17e62ed4c352967000000'), "title"=>"Test", "description"=>"first test item", "_position"=>nil, "body_html"=>"", "image"=>nil, "_keywords"=>["first", "item", "test"], "updated_at"=>2015-08-17 06:25:38 UTC, "created_at"=>2015-08-17 06:25:38 UTC}] flags=[]
+                         COMMAND      database=chr_develop command={:getlasterror=>1, :w=>1} runtime: 402.0564ms
+Completed 200 OK in 532ms (Views: 1.0ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:25:40 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.7942ms
+Completed 200 OK in 4ms (Views: 0.5ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:25:40 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.6236ms
+Completed 200 OK in 6ms (Views: 0.5ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:25:41 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.7433ms
+Completed 200 OK in 3ms (Views: 0.7ms)
+
+
+Started GET "/admin/articles.json?sport_articles=true&page=1&perPage=24" for 127.0.0.1 at 2015-08-17 09:25:43 +0300
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"sport_articles"=>"true", "page"=>"1", "perPage"=>"24"}
+  MOPED: 127.0.0.1:27017 QUERY        database=chr_develop collection=articles selector={"$query"=>{"description"=>"Sport News"}, "$orderby"=>{"_position"=>1}} flags=[] limit=24 skip=0 batch_size=nil fields=nil runtime: 0.6619ms
+Completed 200 OK in 3ms (Views: 0.2ms)

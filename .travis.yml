@@ -1,0 +1,22 @@
+# Travis CI will consult .ruby-version in the root of the repository and use the
+# indicated Ruby runtime
+language: ruby
+rvm:
+- 2.2.2
+
+# Make Travis CI to start the MongoDB service on boot
+services:
+  - mongodb
+
+notifications:
+  email: false
+
+before_install:
+  - wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2
+  - tar -xjf phantomjs-2.0.0-ubuntu-12.04.tar.bz2
+  - sudo rm -rf /usr/local/phantomjs/bin/phantomjs
+  - sudo mv phantomjs /usr/local/phantomjs/bin/phantomjs
+  - sh -c 'if [ -n "$QMAKE" ]; then sudo apt-add-repository -y ppa:ubuntu-sdk-team/ppa && sudo apt-get update && sudo apt-get install libqt5webkit5-dev qtdeclarative5-dev; fi'
+
+script: 
+  - xvfb-run rake test
