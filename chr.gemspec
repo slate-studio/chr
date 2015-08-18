@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
   s.homepage    = 'http://slatestudio.com'
   s.summary     = 'Powerful responsive javascript CMS for apps'
+  s.executables = ['chr']
   s.description = <<-DESC
 Character is a library written in CoffeeScript with a help of jQuery that allows to
 build data management web applications in a fast and flexible way, e.g. CMS, news reader,
@@ -26,24 +27,4 @@ email client etc. It's responsive by default and designed to be data source inde
   s.add_dependency('bourbon',         '>= 3.2')
   s.add_dependency('coffee-rails',    '>= 4.0')
   s.add_dependency('normalize-rails', '>= 3.0')
-
-  ## Automated tests
-
-  s.add_development_dependency 'rails', '~> 4.2.3'
-  s.add_development_dependency 'sass-rails'
-  s.add_development_dependency 'devise'
-  s.add_development_dependency 'mongosteen'
-  s.add_development_dependency 'ants'
-  s.add_development_dependency 'capybara'
-  s.add_development_dependency 'capybara-webkit'
-  s.add_development_dependency 'faker'
-  s.add_development_dependency 'capybara-screenshot'
-  s.add_development_dependency 'ruby-prof'
-  s.add_development_dependency 'database_cleaner'
-  s.add_development_dependency 'factory_girl_rails'
-  
-  s.add_development_dependency 'mongoid', '~> 4.0.0'
-  s.add_development_dependency 'mongoid-tree'
-  s.add_development_dependency 'mongoid_search'
-  s.add_development_dependency 'mongoid-history'
 end
