@@ -27,6 +27,7 @@ group :test do
   gem 'database_cleaner', '1.0.1'
   gem 'factory_girl_rails'
   gem 'capybara-webkit'
+  gem 'capybara-screenshot'
   gem 'faker'
   gem 'selenium-webdriver'
   gem 'minitest-reporters'

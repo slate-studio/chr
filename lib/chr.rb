@@ -1,4 +1,7 @@
-require 'normalize-rails'
+require 'chr/version'
+require 'chr/generators/app_generator'
+require 'chr/actions'
+require 'chr/app_builder'
 require 'bourbon'
 
 module Chr
