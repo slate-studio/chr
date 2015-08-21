@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+require 'pathname'
+
+source_path = (Pathname.new(__FILE__).dirname + '../lib').expand_path
+$LOAD_PATH << source_path
+
+require 'chr'
+
+if ['create', '--create'].include? ARGV[0]
+  ARGV.shift
+  puts "[WARNING] the chr create argument is deprecated. Just use `chr #{ARGV.join}` instead"
+end
+
+templates_root = File.expand_path(File.join("..", "templates"), File.dirname(__FILE__))
+Chr::Generators::AppGenerator.source_root templates_root
+Chr::Generators::AppGenerator.source_paths << Rails::Generators::AppGenerator.source_root << templates_root
+
+Chr::Generators::AppGenerator.start

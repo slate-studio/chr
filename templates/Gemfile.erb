@@ -1,0 +1,37 @@
+source "https://rubygems.org"
+
+ruby "<%= Chr::RUBY_VERSION %>"
+
+gem 'rails', "<%= Chr::RAILS_VERSION %>"
+
+
+# ASSETS --------------------------------------------------
+gem 'sass-rails',   '~> 5.0'
+gem 'uglifier',     '>= 1.3.0'
+gem 'coffee-rails', '~> 4.1.0'
+gem 'jquery-rails'
+gem 'turbolinks'  
+gem 'jbuilder',     '~> 2.0'
+gem 'normalize-rails'
+
+
+# ORM -----------------------------------------------------
+gem 'mongoid'
+
+
+# GENERAL -------------------------------------------------
+gem 'devise'
+
+
+# ADMIN ===================================================
+gem 'chr',        github: 'slate-studio/chr',         branch: 'feature/rb-add-generators'
+gem 'formagic',   github: 'slate-studio/formagic'
+gem 'mongosteen', github: 'slate-studio/mongosteen'
+gem 'ants',       github: 'slate-studio/ants'
+gem 'loft',       github: 'slate-studio/loft'
+gem 'meta-tags',  github: 'slate-studio/meta-tags',   branch: 'hotfix/broken_special_chars'
+
+
+group :development, :test do
+  gem 'spring'
+end

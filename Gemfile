@@ -13,7 +13,7 @@ gemspec
   gem 'formagic',   github: 'slate-studio/formagic'
   gem 'mongosteen', github: 'slate-studio/mongosteen'
   gem 'ants',       github: 'slate-studio/ants'
-  gem 'loft',     github: 'slate-studio/loft'
+  gem 'loft',       github: 'slate-studio/loft'
   gem 'mini_magick'
   gem 'rmagick'
   gem 'devise'
@@ -27,8 +27,8 @@ group :test do
   gem 'database_cleaner', '1.0.1'
   gem 'factory_girl_rails'
   gem 'capybara-webkit'
+  gem 'capybara-screenshot'
   gem 'faker'
   gem 'selenium-webdriver'
   gem 'minitest-reporters'
-
 end
