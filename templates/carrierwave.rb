@@ -13,7 +13,6 @@ CarrierWave.configure do |config|
     # PRODUCTION & STAGING
     config.storage         = :fog
     config.fog_directory   = ENV.fetch('FOG_DIRECTORY')
-    config.asset_host      = ENV.fetch('ASSET_HOST')
     config.fog_credentials = {
       provider: 'AWS',
       aws_access_key_id:     ENV.fetch('AWS_ACCESS_KEY_ID'),

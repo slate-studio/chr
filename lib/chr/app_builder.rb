@@ -193,10 +193,12 @@ module Chr
 
 
     def configure_action_mailer
-      action_mailer_host "development", %{"localhost:#{port}"}
-      action_mailer_host "test", %{"www.example.com"}
-      action_mailer_host "staging", %{ENV.fetch("HOST")}
-      action_mailer_host "production", %{ENV.fetch("HOST")}
+      action_mailer_host "development", %{"localhost:#{ port }"}
+      action_mailer_host "test",        %{ "www.example.com" }
+      action_mailer_host "staging",     %{ ENV.fetch("HOST") }
+      action_mailer_host "production",  %{ ENV.fetch("HOST") }
+
+      configure_environment "production", 'config.action_mailer.asset_host = "http://#{ ENV.fetch("ASSET_HOST") }"'
     end
 
 
@@ -320,6 +322,10 @@ module Chr
 
     def initialize_mongoid
       generate 'mongoid:config'
+      append_file "config/mongoid.yml", """\nproduction:
+  sessions:
+    default:
+      uri: <%= ENV['MONGODB_URI'] %>"""
     end
 
 
