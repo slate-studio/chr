@@ -1,14 +1,20 @@
 ENV['RAILS_ENV'] ||= 'test'
 $:.unshift File.dirname(__FILE__)
 
+require 'mongosteen'
+require 'factory_girl'
+require 'faker'
+require 'carrierwave/mongoid'
 require 'rails_app/config/environment'
 require 'rails/test_help'
-require 'devise'
+require 'ants'
+require 'loft'
 require 'database_cleaner'
+require 'minitest/reporters'
 require 'capybara/rails'
 require 'capybara/dsl'
+require 'capybara/webkit'
 require 'capybara-screenshot/minitest'
-require 'factory_girl'
 Dir[Rails.root.join("../support/**/*.rb")].each{ |f| require f }
 
 # DatabaseCleaner
@@ -20,7 +26,7 @@ Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
 
 # Capybara
 Capybara.default_driver             = :webkit
-Capybara.default_wait_time          = 10
+Capybara.default_max_wait_time      = 10
 Capybara::Screenshot.prune_strategy = :keep_last_run
 
 

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="ROBOTS" content="NOODP" />
+  <meta name="viewport" content="initial-scale=1" />
+
+  <%%#
+    Configure default meta tags values, for more details see:
+    https://github.com/kpumuk/meta-tags
+  %>
+  <%%= display_meta_tags site:        '<%= app_name %>',
+                        description: '',
+                        og: { site_name:   '<%= app_name %>',
+                              url:         '',
+                              title:       '',
+                              description: '',
+                              type:        'website',
+                              image:       '' } %>
+
+  <%%= stylesheet_link_tag :application, media: "all" %>
+  <%%= csrf_meta_tags %>
+</head>
+<body class="<%%= body_class %>">
+  <%%= render "flashes" -%>
+  <%%= yield %>
+  <%%= render "javascript" %>
+</body>
+</html>

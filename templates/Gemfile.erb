@@ -1,0 +1,38 @@
+source 'https://rubygems.org'
+ruby '<%= Chr::RUBY_VERSION %>'
+
+gem 'rails', '<%= Chr::RAILS_VERSION %>'
+gem 'sass-rails', '~> 5.0'
+gem 'uglifier'
+gem 'coffee-rails', '~> 4.1.0'
+gem 'jquery-rails'
+gem 'puma'
+gem 'recipient_interceptor'
+gem 'rack-canonical-host'
+gem 'meta-tags'
+gem 'asset_sync'
+gem 'awesome_print'
+gem 'mongoid'
+gem 'mongosteen'
+gem 'chr'
+gem 'ants'
+gem 'loft'
+
+group :development do
+  gem 'spring'
+  gem 'web-console'
+end
+
+group :development, :test do
+  gem 'figaro'
+  gem 'byebug'
+  gem 'quiet_assets'
+  gem 'bundler-audit', require: false
+  gem 'factory_girl_rails'
+  gem 'dotenv-rails'
+end
+
+group :staging, :production do
+  gem 'rack-timeout'
+  gem 'rails_12factor'
+end

@@ -7,5 +7,7 @@ Gemfile.lock
 tmp
 test/rails_app/tmp
 test/rails_app/log
+test/rails_app/public/uploads
 log
 coverage
+uploads
