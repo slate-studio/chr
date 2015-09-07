@@ -130,7 +130,7 @@ $ ->
           _position:    { type: 'float'  }
           body_html:    { type: 'text'   }
 
-  chr.start(config)
+  chr.start('Test', config)
 
 
 
