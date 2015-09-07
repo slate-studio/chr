@@ -43,7 +43,7 @@ module Chr
       # invoke :create_heroku_apps
       # invoke :create_github_repo
       invoke :setup_bundler_audit
-      invoke :setup_spring
+      #invoke :setup_spring
       invoke :outro
     end
 

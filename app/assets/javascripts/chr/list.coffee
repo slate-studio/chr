@@ -98,7 +98,7 @@ class @List
     if hash.startsWith "#/#{ @module.name }"
       for a in @$items.children()
         itemPath = $(a).attr('href')
-        if hash.startsWith(itemPath)
+        if itemPath && hash.startsWith(itemPath)
           return $(a).addClass('active')
 
 

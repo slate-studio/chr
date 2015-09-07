@@ -18,6 +18,9 @@ Rails.application.routes.draw do
     get '/'               => 'base#index'
     get '/bootstrap.json' => 'base#bootstrap_data'
 
+    # files
+    resources :assets,    controller: 'assets'    # Loft::Asset
+
     # settings
     resources :admins,    controller: 'admins'    # Ants::Admin
     resources :redirects, controller: 'redirects' # Ants::Redirect

@@ -86,7 +86,7 @@ class @Chr
     window.location.hash = path
 
 
-  start: (@config) ->
+  start: (title, @config) ->
     @$el       =$ (@config.selector ? 'body')
     @$navBar   =$ "<nav class='sidebar'>"
     @$mainMenu =$ "<div class='menu'>"

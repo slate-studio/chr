@@ -212,9 +212,9 @@ module Chr
 
 
     def setup_stylesheets
-      remove_file "app/assets/application/application.js"
+      remove_file "app/assets/javascripts/application.js"
       copy_file "application.coffee",
-                "app/assets/application/application.coffee"
+                "app/assets/javascripts/application.coffee"
     end
 
 
@@ -286,7 +286,7 @@ module Chr
 
 
     def setup_character_stylesheets
-      copy_file 'character_admin.coffee', 'app/assets/javascripts/admin.coffee'
+      template 'character_admin.coffee.erb', 'app/assets/javascripts/admin.coffee'
     end
 
 
