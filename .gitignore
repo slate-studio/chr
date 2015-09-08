@@ -11,3 +11,4 @@ test/rails_app/public/uploads
 log
 coverage
 uploads
+test/rails_app/log/test.log
