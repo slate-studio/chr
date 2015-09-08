@@ -19,16 +19,12 @@
 #   onViewShow        - on show callback
 #   onSaveSuccess     - on document succesfully saved callback
 #   defaultNewObject  - used to generate new form
-#   disableFormCache  - do not cache form changes
 #
 # Public methods:
 #   show(objectId)
 #   destroy()
 #   showSpinner()
 #   hideSpinner()
-#
-# Dependencies:
-#= require ./view_local-storage
 #
 # -----------------------------------------------------------------------------
 class @View
@@ -42,10 +38,6 @@ class @View
     if @config.fullsizeView
       @$el.addClass 'fullsize'
 
-    # disable local storage cache, as that has to be
-    # refactored to be more secure and obvious to user
-    @config.disableFormCache ||= true
-
     # header
     @$header  =$ "<header class='header'></header>"
     @$spinner =$ "<div class='spinner'></div>"
@@ -56,7 +48,6 @@ class @View
 
     # close
     @$closeBtn =$ "<a href='#{ @closePath }' class='close'>Close</a>"
-    @$closeBtn.on 'click', (e) => @_close(e)
     @$header.append @$closeBtn
 
     # content
@@ -95,7 +86,6 @@ class @View
     @_set_title()
     @form.hideValidationErrors()
     @form.updateValues(@object)
-    @_clear_local_storage_cache()
 
     @config.onSaveSuccess?(@)
 
@@ -107,14 +97,6 @@ class @View
 
 
   # EVENTS ================================================
-
-  _close: (e) ->
-    if @_changes_not_saved()
-      if confirm('Your changes are not saved, still want to close?')
-        @_clear_local_storage_cache()
-      else
-        e.preventDefault()
-
 
   _save: (e) ->
     e.preventDefault()
@@ -143,7 +125,6 @@ class @View
     if confirm("Are you sure?")
       @store.remove @object._id,
         onSuccess: =>
-          @_clear_local_storage_cache()
           chr.updateHash("#{ @closePath }", true)
           @destroy()
           chr.mobileListLock(false)
@@ -161,10 +142,6 @@ class @View
       @$saveBtn.on 'click', (e) => @_save(e)
       @$header.append @$saveBtn
 
-    # sync with local storage cache
-    if ! @config.disableFormCache
-      @_update_object_from_local_storage()
-
     # form
     object = @object || @config.defaultNewObject || null
     @form  = new (@config.formClass ? Form)(object, @config)
@@ -173,10 +150,6 @@ class @View
 
     @_add_delete_button()
     @config.onViewShow?(@)
-
-    # enable local storage caching
-    if ! @config.disableFormCache
-      @_bind_form_change()
 
 
   _show_error: ->
@@ -220,9 +193,6 @@ class @View
     # array store
     else
       @store.loadObject(objectId, callbacks)
-
-
-include(View, viewLocalStorage)
 
 
 

@@ -87,10 +87,12 @@ class @Chr
 
 
   start: (title, @config) ->
-    @$el       =$ (@config.selector ? 'body')
-    @$navBar   =$ "<nav class='sidebar'>"
-    @$mainMenu =$ "<div class='menu'>"
+    @$el        =$ (@config.selector ? 'body')
+    @$navBar    =$ "<nav class='sidebar'>"
+    @$mainMenu  =$ "<div class='menu'>"
+    @$menuTitle =$ "<div class='menu-title'>#{ title }</div>"
 
+    @$navBar.append(@$menuTitle)
     @$navBar.append(@$mainMenu)
     @$el.append(@$navBar)
 

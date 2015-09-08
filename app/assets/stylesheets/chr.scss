@@ -1,9 +1,23 @@
 @import "normalize-rails";
 @import "bourbon";
 
-@import "chr/settings";
+$base-font-family : 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif !default;
+
+$light   : 300 !default;
+$regular : 400 !default;
+$medium  : 500 !default;
+$bold    : 600 !default;
+$black   : 800 !default;
+
+$base-font-color : rgb( 89, 89, 89) !default;
+$positive-color  : rgb( 74,135,238) !default;
+$assertive-color : rgb(239, 78, 58) !default;
+$border-color    : rgb(246,246,246) !default;
+
 @import "chr/mixins";
 @import "chr/icons";
-@import "chr/main";
+
+@import "chr/layout";
+@import "chr/theme";
 
 @import "formagic";

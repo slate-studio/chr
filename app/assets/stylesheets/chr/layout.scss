@@ -1,0 +1,199 @@
+/* Layouts ----------------------------------------------------------------- */
+$tablet:  "screen and (min-width:768px)";
+$desktop: "screen and (min-width:1024px)";
+
+
+/* Global ------------------------------------------------------------------ */
+*,
+*:before,
+*:after  { box-sizing: border-box; }
+html     {  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+a        { text-decoration: none; }
+.spinner { @include spinner; }
+
+
+/* Menu -------------------------------------------------------------------- */
+.menu-title { padding : 1em; }
+.menu a {
+  display  : block;
+  position : relative;
+  padding  : 1em;
+}
+
+
+/* Header ------------------------------------------------------------------ */
+.header {
+  height     : 40px;
+  text-align : center;
+}
+
+.header {
+  .title         { @include ellipsis(70%); }
+  .title, a      { line-height: 2.5; }
+  .back, .close  { @include header-back-arrow; }
+  .new           { @extend .icon-plus; }
+  .new           { @include position(absolute, 0 0 null null); }
+  .new + .search { @include position(absolute, 0 40px inherit inherit); } // @todo: refactor to em
+  .save          { @include position(absolute, 0 1em null null); }
+  .spinner       { @include position(absolute, .4em null null null);
+    margin-left : -2.25em;
+    visibility  : hidden;
+  }
+}
+
+.show-spinner .spinner { visibility: visible; }
+
+
+/* Item -------------------------------------------------------------------- */
+.item {
+  display  : block;
+  position : relative;
+  padding  : 1em;
+}
+
+.item {
+  .icon-reorder { // @todo: rename to item-reorder
+    top        : 50%;
+    right      : 0;
+    margin-top : -20px; // @todo: refactor to em
+  }
+}
+
+.item.has-subtitle                           { padding       : .6em 1em;            }
+.item.has-thumbnail                          { padding-left  : 4.1em;               }
+.item.has-thumbnail .item-title              { line-height   : 2.15;                }
+.item.has-thumbnail.has-subtitle             { padding       : 1em 1em .75em 4.1em; }
+.item.has-thumbnail.has-subtitle .item-title { line-height   : 1.2;                 }
+.item.reorderable                            { padding-right : 2.5em;               }
+
+.item-title         { @include ellipsis; display: block; }
+.item-subtitle      { @include ellipsis; font-size: .8em; line-height: 1.5; }
+.item-thumbnail     { @include position(absolute, .5em 0 0 .5em); width: 3.1em; height: 3.1em; }
+.item-thumbnail img { width: 100%; border-radius: 1.55em; }
+
+
+/* Search ------------------------------------------------------------------ */
+.search {
+  @include position(absolute, 0 0 null null);
+  width    : 40px; // @todo: refactor to em
+  height   : 40px; // @todo: refactor to em
+  overflow : hidden;
+
+  .icon   { @extend .icon-search; }
+  .icon   { @include position(absolute, 0 null null 0); }
+  .cancel { @include position(absolute, 0 1em null null); }
+
+  input {
+    @include no-outline;
+    width   : 100%;
+    height  : 40px; // @todo: refactor to em
+    padding : 0 5em 0 2.5em;
+  }
+
+  input, .cancel { display: none; }
+}
+
+.list-search {
+  .item.is-folder, .item.is-nested_object { display: none; }
+  .new + .search  { @include position(absolute, 0 0 null 0); }
+
+  .search {
+    @include position(absolute, 0 null null null);
+    width      : 100%;
+    background : white;
+
+    input   { display: block;  }
+    .cancel { display: inline-block; }
+    .icon   {
+      &:hover  { opacity: 1; }
+      &:before { border-color: $stableColor; } // @todo: should be refactored with theme
+      &:after  { background-color: $stableColor; } // @todo: should be refactored with theme
+    }
+  }
+}
+
+
+/* View -------------------------------------------------------------------- */
+.view-saving .save    { visibility : hidden;  }
+.view-saving .spinner { visibility : visible; }
+
+
+/* Mobile ------------------------------------------------------------------ */
+.header {
+  @include position(fixed, 0 null null null);
+  width   : 100%;
+  z-index : 10;
+}
+
+.view, .list {
+  @include position(absolute, 0 0 null 0);
+  padding-top      : 41px; // @todo: refactor to em
+  min-height       : 100%;
+  background-color : white;
+  z-index          : 1;
+}
+
+.list.scroll-lock {
+  overflow : hidden;
+  bottom   : 0;
+}
+
+.content, .items {
+  position       : relative;
+  padding-bottom : 5em;
+  z-index        : 0;
+}
+
+
+/* Tablet ------------------------------------------------------------------ */
+@media #{$tablet} {
+  body { overflow: hidden; }
+
+  .menu { font-size : .8em; }
+  .menu-title { padding : .75em; }
+
+  .sidebar {
+    @include position(absolute, 0 null 0 0);
+    width        : 9em;
+    border-right : 1px solid;
+  }
+
+  .module {
+    @include position(absolute, 0 0 0 9em);
+    z-index : 1;
+  }
+
+  .view, .list {
+    bottom      : 0;
+    padding-top : 0px;
+    overflow    : hidden;
+  }
+
+  .header { @include position(relative); }
+
+  .items, .content { @include position(absolute, 41px 0 0 0); @include scrollable(); }
+
+  .view .close { @include header-back-label; }
+
+  .module .list:first-child .back { display: none; }
+}
+
+
+/* Desktop ----------------------------------------------------------------- */
+@media #{$desktop} {
+  .sidebar         { width : 10em; }
+  .module          { left  : 10em; }
+
+  .view            { left  : 22em; }
+  .view.fullsize   { left  : 0em;  }
+
+  .list            { width : 22em; }
+  .list.list-aside { left: 22em; right: 0; width: auto; }
+  .list .header    { border-right: 1px solid; }
+
+  .list.list-aside .back { @include header-back-label; }
+}
+
+
+
+

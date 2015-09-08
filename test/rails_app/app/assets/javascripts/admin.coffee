@@ -12,7 +12,6 @@
 ## List
 # disableNewItems:  true  tested
 # showWithParent:   true  tested
-# disableFormCache: true  tested
 
 ## View
 # disableDelete     - do not add delete button below the form  tested
@@ -70,7 +69,6 @@ $ ->
 
       articles:
 
-        disableFormCache: true
         arrayStore: new RailsArrayStore({
           resource:    'article'
           path:        '/admin/articles'
@@ -92,8 +90,7 @@ $ ->
         items:
           pages:
             title: 'Pages'
-            showWithParent:   true
-            disableFormCache: true
+            showWithParent: true
             items:
               articles:
 
@@ -114,7 +111,6 @@ $ ->
 
       sport_articles:
 
-        disableFormCache: true
         arrayStore: new RailsArrayStore({
           resource:    'article'
           path:        '/admin/articles'

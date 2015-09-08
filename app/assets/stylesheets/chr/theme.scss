@@ -1,0 +1,84 @@
+/* Theme ------------------------------------------------------------------- */
+
+html {
+  font-family : $base-font-family;
+  color       : $base-font-color;
+}
+
+a {
+  color : $positive-color;
+}
+
+.menu a {
+  color   : $base-font-color;
+  padding : .75em 1em;
+  &.active { background-color: $border-color; }
+}
+
+.header a {
+  transition : opacity .15s linear;
+  &:hover {
+    opacity : .5;
+  }
+}
+
+.menu-title,
+.header .title,
+.header .save {
+  font-weight : $medium;
+}
+
+.header {
+  background-color : rgba(255,255,255,.9);
+}
+
+.spinner {
+  border-color      : rgba($positive-color, 0.2);
+  border-left-color : $positive-color;
+}
+
+.item {
+  color      : $base-font-color;
+  margin-top : -1px;
+  &.active {
+    background-color : $border-color;
+    z-index          : 1;
+  }
+
+  @include bottom-border($border-color);
+  &:last-child { @include no-bottom-border; }
+}
+
+.item-subtitle {
+  color : rgba($base-font-color, .4);
+}
+
+.view-delete {
+  display      : block;
+  text-align   : center;
+  margin       : 5em 0;
+  line-height  : 2.5em;
+  color        : $assertive-color;
+  border       : 1px solid $assertive-color;
+  border-left  : none;
+  border-right : none;
+
+  &:hover,
+  &:active {
+    background-color : $assertive-color;
+    color            : white;
+  }
+}
+
+@media #{$tablet} {
+  .sidebar { border-color: $border-color; }
+}
+
+@media #{$desktop} {
+  .list .header { border-color: $border-color; }
+  .input-text textarea, .content, .items { @include custom-scrollbar(rgba($base-font-color, .5), $border-color, 3px); }
+}
+
+
+
+

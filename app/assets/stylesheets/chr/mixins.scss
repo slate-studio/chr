@@ -1,63 +1,14 @@
 /* Mixins ------------------------------------------------------------------ */
 
-@mixin hide { display: none; }
-
-@mixin truncate { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-
-@mixin scrollable { overflow: hidden; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
-
-@mixin antialiased { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-
-@mixin no-focus-outline { &:focus { outline: none; } }
-
-@mixin no-outline { @include no-focus-outline; outline: none; border: none; }
-
-@mixin border-shadow { box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); }
-
-@mixin no-border-shadow { box-shadow: none; }
-
-@mixin header-back-arrow { @include position(absolute, 0 null null 0); @extend .icon-back; overflow: hidden; height: 40px; }
-
-@mixin header-back-label { @include position(absolute, 0 null null 1em); @include header-button; width: auto; &:before { @include hide; } }
-
-@mixin header-button($color: $positiveColor) {
-  display: inline-block; height: 40px; line-height: 2.5; color: $color;
-  @include no-focus-outline; &:hover { opacity: .5; }
+@mixin custom-scrollbar($color, $bg-color, $radius) {
+  &::-webkit-scrollbar       { width: 6px; background-color: $bg-color; }
+  &::-webkit-scrollbar-thumb { background-color: $color; border-radius: $radius; }
 }
 
-@mixin custom-scrollbar {
-  &::-webkit-scrollbar       { width: 6px; background-color: $neutralColor;          }
-  &::-webkit-scrollbar-thumb { background-color: $contrastColor; border-radius: 3px; }
-}
-
-
-/* Menu Title --------------------------------------------- */
-@mixin menu-title($color) {
-   display: block; position: relative; padding: 1.5em 0 .75em 1em; font-weight: 800; color: $color;
-   // TODO: fix size for mobile, menu items too small
-}
-
-
-/* Menu Item & List Item ---------------------------------- */
-@mixin bottom-border($color) {
-  &:after { content: ''; display: block; height: 1px; background-color: $color;
-            @include position(absolute, null 0px 0px 1em); }
-}
-
-@mixin no-bottom-border { &:after { @include hide; } }
-
-@mixin list-item($color, $activeBgColor, $borderColor) {
-  display: block; position: relative; padding: 1em; color: $color; font-weight: 300;
-  margin-top: -1px; @include bottom-border($borderColor);
-  &.active     { background-color: $activeBgColor; z-index: 1; }
-  &:last-child { @include no-bottom-border; }
-}
-
-
-/* Spinner ------------------------------------------------ */
 @mixin spinner {
-  border:      .25em solid rgba($contrastColor, 0.2);
-  border-left: .25em solid $contrastColor;
+  display     : inline-block;
+  border      : .25em solid rgba(black, 0.2);
+  border-left : .25em solid black;
   -webkit-animation: spinning 1.1s infinite linear; animation: spinning 1.1s infinite linear;
   &, &:after { border-radius: 50%; width: 1.75em; height: 1.75em; }
 }
@@ -70,6 +21,53 @@
 @keyframes spinning {
   0%   { -webkit-transform: rotate(0deg);   transform: rotate(0deg);   }
   100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@mixin bottom-border($color) {
+  &:after {
+    @include position(absolute, null 0px 0px 1em);
+    content          : '';
+    display          : block;
+    height           : 1px;
+    background-color : $color;
+  }
+}
+
+@mixin no-bottom-border {
+  &:after {
+    visibility : hidden;
+  }
+}
+
+@mixin no-focus-outline {
+  &:focus {
+    outline : none;
+  }
+}
+
+@mixin no-outline {
+  @include no-focus-outline;
+  outline : none;
+  border  : none;
+}
+
+@mixin scrollable {
+  -webkit-overflow-scrolling : touch;
+  overflow                   : hidden;
+  overflow-y                 : scroll;
+}
+
+@mixin header-back-arrow {
+  @extend .icon-back;
+  @include position(absolute, 0 null null 0);
+  overflow : hidden;
+  height   : 40px; // @todo: refactor to em
+}
+
+@mixin header-back-label {
+  @include position(absolute, 0 null null 1em);
+  width : auto;
+  &:before { display: none; }
 }
 
 
