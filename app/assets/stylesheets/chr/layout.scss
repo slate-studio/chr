@@ -30,11 +30,12 @@ a        { text-decoration: none; }
 .header {
   .title         { @include ellipsis(70%); }
   .title, a      { line-height: 2.5; }
-  .back, .close  { @include header-back-arrow; }
-  .new           { @extend .icon-plus; }
   .new           { @include position(absolute, 0 0 null null); }
   .new + .search { @include position(absolute, 0 40px inherit inherit); } // @todo: refactor to em
   .save          { @include position(absolute, 0 1em null null); }
+  .back, .close  { @include position(absolute, 0 null null 0);
+    overflow : hidden;
+  }
   .spinner       { @include position(absolute, .4em null null null);
     margin-left : -2.25em;
     visibility  : hidden;
@@ -52,9 +53,12 @@ a        { text-decoration: none; }
 }
 
 .item {
-  .icon-reorder { // @todo: rename to item-reorder
-    top        : 50%;
-    right      : 0;
+  .icon-reorder {
+    @include position(absolute, 50% 0 null null);
+    margin-top : -20px; // @todo: refactor to em
+  }
+  .icon-folder {
+    @include position(absolute, 50% 0 null null);
     margin-top : -20px; // @todo: refactor to em
   }
 }
@@ -79,7 +83,6 @@ a        { text-decoration: none; }
   height   : 40px; // @todo: refactor to em
   overflow : hidden;
 
-  .icon   { @extend .icon-search; }
   .icon   { @include position(absolute, 0 null null 0); }
   .cancel { @include position(absolute, 0 1em null null); }
 
@@ -102,13 +105,9 @@ a        { text-decoration: none; }
     width      : 100%;
     background : white;
 
-    input   { display: block;  }
-    .cancel { display: inline-block; }
-    .icon   {
-      &:hover  { opacity: 1; }
-      &:before { border-color: $stableColor; } // @todo: should be refactored with theme
-      &:after  { background-color: $stableColor; } // @todo: should be refactored with theme
-    }
+    input       { display: block;  }
+    .cancel     { display: inline-block; }
+    .icon:hover { opacity: 1; }
   }
 }
 
@@ -173,7 +172,7 @@ a        { text-decoration: none; }
 
   .items, .content { @include position(absolute, 41px 0 0 0); @include scrollable(); }
 
-  .view .close { @include header-back-label; }
+  .view .header .close { @include header-back-label; }
 
   .module .list:first-child .back { display: none; }
 }

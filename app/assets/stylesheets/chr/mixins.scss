@@ -57,18 +57,81 @@
   overflow-y                 : scroll;
 }
 
-@mixin header-back-arrow {
-  @extend .icon-back;
-  @include position(absolute, 0 null null 0);
-  overflow : hidden;
-  height   : 40px; // @todo: refactor to em
-}
-
 @mixin header-back-label {
   @include position(absolute, 0 null null 1em);
   width : auto;
   &:before { display: none; }
 }
+
+/* Icons ------------------------------------------------------------------- */
+
+@mixin header-icon-base {
+  display : block;
+  width   : 40px;
+  height  : 40px;
+
+  &:before {
+    content : '';
+    display : block;
+    width   : 40px;
+    height  : 40px;
+    background-repeat : no-repeat;
+  }
+
+}
+
+@mixin icon-search($color) {
+  @include header-icon-base;
+
+  &:before {
+    background-image    : url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><circle cx='15' cy='15' r='10' stroke='#{ $color }' stroke-width='2' fill='transparent'></circle><line x1='22' y1='22' x2='30' y2='30' stroke-width='3' stroke='#{ $color }' /></svg>");
+    background-size     : 22px 22px;
+    background-position : 8px 8px;
+  }
+}
+
+@mixin icon-plus($color) {
+  @include header-icon-base;
+
+  &:before {
+    background-image    : url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='10' y1='0' x2='10' y2='20' stroke-width='2' stroke='#{ $color }' /><line x1='0' y1='10' x2='20' y2='10' stroke-width='2' stroke='#{ $color }' /></svg>");
+    background-size     : 20px 20px;
+    background-position : 10px 10px;
+  }
+}
+
+@mixin icon-folder($color) {
+  @include header-icon-base;
+
+  &:before {
+    background-image    : url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 20'><path d='M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z' fill='#{ $color }'/></svg>");
+    background-size     : 10px 16px;
+    background-position : 9px 12px;
+  }
+
+  @include transform(rotate(180deg));
+}
+
+@mixin icon-reorder($color) {
+  @include header-icon-base;
+
+  &:before {
+    background-image    : url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='0' y1='8' x2='20' y2='8' stroke-width='2' stroke='#{ $color }' /><line x1='0' y1='12' x2='20' y2='12' stroke-width='2' stroke='#{ $color }' /></svg>");
+    background-size     : 20px 20px;
+    background-position : 10px 10px;
+  }
+}
+
+@mixin icon-arrow($color) {
+  @include header-icon-base;
+
+  &:before {
+    background-image    : url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 20'><path d='M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z' fill='#{ $color }'/></svg>");
+    background-size     : 12px 20px;
+    background-position : 12px 9px;
+  }
+}
+
 
 
 
