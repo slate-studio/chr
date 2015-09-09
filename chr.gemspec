@@ -26,18 +26,16 @@ email client etc. It's responsive by default and designed to be data source inde
   s.version       = Chr::VERSION
   s.platform      = Gem::Platform::RUBY
 
-  s.add_dependency 'rails',    Chr::RAILS_VERSION
-  s.add_dependency 'coffee-rails',    '>= 4.0'
+  s.add_dependency 'rails',        Chr::RAILS_VERSION
+  s.add_dependency 'coffee-rails', '>= 4.0'
+  s.add_dependency 'formagic',     '>= 0.2.8'
   s.add_dependency 'jquery-rails'
   s.add_dependency 'sass-rails'
-  s.add_dependency 'normalize-rails', '>= 3.0'
-  s.add_dependency 'bourbon',         '>= 3.2'
-  s.add_dependency 'formagic',        '>= 0.2.6'
 
   # tests
   s.add_development_dependency 'mongosteen', '~> 0.1.8'
-  s.add_development_dependency 'ants',       '~> 0.2.1'
-  s.add_development_dependency 'loft',       '~> 0.2.3'
+  s.add_development_dependency 'ants',       '~> 0.2.2'
+  s.add_development_dependency 'loft',       '~> 0.2.4'
 
   s.add_development_dependency 'faker'
   s.add_development_dependency 'coveralls'

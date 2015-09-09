@@ -13,6 +13,11 @@ $positive-color  : rgb( 74,135,238) !default;
 $assertive-color : rgb(239, 78, 58) !default;
 $border-color    : rgb(246,246,246) !default;
 
+$formagic-base-color      : $base-font-color;
+$formagic-positive-color  : $positive-color;
+$formagic-assertive-color : $assertive-color;
+$formagic-border-color    : $border-color;
+
 /* Theme ------------------------------------------------------------------- */
 
 html {
@@ -31,7 +36,6 @@ a {
 }
 
 .header a {
-  transition : opacity .15s linear;
   &:hover {
     opacity : .5;
   }

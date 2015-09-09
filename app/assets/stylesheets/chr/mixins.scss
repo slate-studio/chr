@@ -1,10 +1,5 @@
 /* Mixins ------------------------------------------------------------------ */
 
-@mixin custom-scrollbar($color, $bg-color, $radius) {
-  &::-webkit-scrollbar       { width: 6px; background-color: $bg-color; }
-  &::-webkit-scrollbar-thumb { background-color: $color; border-radius: $radius; }
-}
-
 @mixin spinner {
   display     : inline-block;
   border      : .25em solid rgba(black, 0.2);
@@ -21,34 +16,6 @@
 @keyframes spinning {
   0%   { -webkit-transform: rotate(0deg);   transform: rotate(0deg);   }
   100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
-}
-
-@mixin bottom-border($color) {
-  &:after {
-    @include position(absolute, null 0px 0px 1em);
-    content          : '';
-    display          : block;
-    height           : 1px;
-    background-color : $color;
-  }
-}
-
-@mixin no-bottom-border {
-  &:after {
-    visibility : hidden;
-  }
-}
-
-@mixin no-focus-outline {
-  &:focus {
-    outline : none;
-  }
-}
-
-@mixin no-outline {
-  @include no-focus-outline;
-  outline : none;
-  border  : none;
 }
 
 @mixin scrollable {
@@ -77,7 +44,6 @@
     height  : 40px;
     background-repeat : no-repeat;
   }
-
 }
 
 @mixin icon-search($color) {
@@ -110,16 +76,6 @@
   }
 
   @include transform(rotate(180deg));
-}
-
-@mixin icon-reorder($color) {
-  @include header-icon-base;
-
-  &:before {
-    background-image    : url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='0' y1='8' x2='20' y2='8' stroke-width='2' stroke='#{ $color }' /><line x1='0' y1='12' x2='20' y2='12' stroke-width='2' stroke='#{ $color }' /></svg>");
-    background-size     : 20px 20px;
-    background-position : 10px 10px;
-  }
 }
 
 @mixin icon-arrow($color) {
