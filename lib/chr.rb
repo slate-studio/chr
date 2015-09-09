@@ -3,6 +3,7 @@ require 'chr/generators/app_generator'
 require 'chr/app_builder'
 
 require 'rails'
+require 'bourbon'
 require 'formagic'
 require 'jquery-rails'
 require 'coffee-rails'
