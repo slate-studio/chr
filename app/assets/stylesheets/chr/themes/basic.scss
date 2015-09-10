@@ -89,6 +89,51 @@ a {
   }
 }
 
+/* Sign in ----------------------------------------------------------------- */
+
+.signin-modal {
+  @include position(relative);
+
+  .notice, .alert {
+    text-align : center;
+    padding    : 0 1em;
+  }
+
+  .alert {
+    color : $assertive-color;
+  }
+
+  h2 {
+    text-align : center;
+    font-size  : 1em;
+    margin     : 1em 0;
+  }
+
+  input[type=submit] {
+    background-color : white;
+    border-radius    : .25em;
+    padding          : 1em 3em;
+    display          : block;
+    border           : 1px solid $positive-color;
+    margin           : 1.5em auto;
+    color            : $positive-color;
+
+    &:hover {
+      background-color : $positive-color;
+      color            : white;
+    }
+  }
+
+  input[type=submit] + a {
+    @include position(absolute, null 1em -2em null);
+  }
+
+  .label a {
+    font-size : .8em;
+    float     : right;
+  }
+}
+
 /* Icons ------------------------------------------------------------------- */
 
 .search .icon { @include icon-search($positive-color); }
@@ -107,7 +152,18 @@ a {
 /* Layouts ----------------------------------------------------------------- */
 
 @media #{$tablet} {
-  .sidebar { border-color: $border-color; }
+  .sidebar {
+    border-color : $border-color;
+  }
+  .signin-modal {
+    max-width : 26em;
+    border    : 1px solid $border-color;
+    margin    : 5em auto 1em;
+
+    form {
+      margin-left: .5em;
+    }
+  }
 }
 
 @media #{$desktop} {
