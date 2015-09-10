@@ -1,57 +1,19 @@
-# Character
+# Character [![Build Status](https://travis-ci.org/slate-studio/chr.svg?branch=master)](https://travis-ci.org/slate-studio/chr)
 
-[![Build Status](https://travis-ci.org/slate-studio/chr.svg?branch=master)](https://travis-ci.org/slate-studio/chr)
-
-
-*Powerful responsive javascript CMS for apps.*
+Character is powerful responsive javascript CMS for apps used by [Slate Studio](https://www.slatestudio.com).
 
 
 ## Quick Start
 
-Application setup:
+First install the character gem:
 
-```coffee
-#= require jquery
-#= require chr
+    gem install chr
 
-postsConfig = (data) ->
-  itemTitleField: 'title'
-  arrayStore: new RestArrayStore({
-    path:     '/admin/posts'
-    sortBy:   'title'
-  })
-  formSchema:
-    title: { type: 'string' }
-    body:  { type: 'text'   }
+Then run:
 
-$ ->
-  config =
-    modules:
-      posts: postsConfig()
+    chr projectname
 
-  chr.start(config)
-```
-
-Styles setup:
-
-```scss
-@import "normalize-rails";
-@import "chr";
-```
-
-
-## Documentation
-
-* [Rails Setup](docs/rails.md)
-* [Bootstrap Data](docs/bootstrap.md)
-* [Tests](docs/tests.md)
-
-More documentation and samples comming soon...
-
-
-## Notes
-
-1. Consider replace ```slip.js``` with [sortable.js](https://github.com/RubaXa/Sortable)
+This will create a Rails app in `projectname` using the latest version of Rails with character CMS integrated.
 
 
 ## Character family:

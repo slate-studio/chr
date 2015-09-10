@@ -16,15 +16,17 @@ build data management web applications in a fast and flexible way, e.g. CMS, new
 email client etc. It's responsive by default and designed to be data source independent.
   DESC
 
-  s.name          = 'chr'
-  s.summary       = 'Powerful responsive javascript CMS for apps.'
-  s.homepage      = 'http://github.com/slate-studio/chr'
-  s.license       = 'MIT'
-  s.files         = `git ls-files`.split("\n")
-  s.executables   = [ 'chr' ]
-  s.require_paths = [ 'lib' ]
-  s.version       = Chr::VERSION
-  s.platform      = Gem::Platform::RUBY
+  s.name             = 'chr'
+  s.summary          = 'Powerful responsive javascript CMS for apps.'
+  s.homepage         = 'http://github.com/slate-studio/chr'
+  s.extra_rdoc_files = %w[README.md LICENSE]
+  s.license          = 'MIT'
+  s.files            = `git ls-files`.split("\n")
+  s.test_files       = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.require_paths    = [ 'lib' ]
+  s.executables      = [ 'chr' ]
+  s.version          = Chr::VERSION
+  s.platform         = Gem::Platform::RUBY
 
   s.add_dependency 'rails',        Chr::RAILS_VERSION
   s.add_dependency 'coffee-rails', '>= 4.0'
