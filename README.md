@@ -15,6 +15,10 @@ Then run:
 
 This will create a Rails app in `projectname` using the latest version of Rails with character CMS integrated.
 
+Go to created project folder, run `bin/setup` & start development server with `rails s`. Go to `localhost:3000/admin`, login with `user@example.com/password`. You see default character setup, it comes with file upload, admins & redirects modules as shown on screenshot below.
+
+![Default Character Setup Demo](https://raw.github.com/slate-studio/chr/master/docs/demo.png)
+
 
 ## Character family:
 
