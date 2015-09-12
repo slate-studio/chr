@@ -1,6 +1,6 @@
 # Character [![Build Status](https://travis-ci.org/slate-studio/chr.svg?branch=master)](https://travis-ci.org/slate-studio/chr)
 
-Character is powerful responsive javascript CMS for apps used by [Slate Studio](https://www.slatestudio.com).
+Character is powerful responsive javascript-based CMS for website and applications used by [Slate Studio](https://www.slatestudio.com).
 
 
 ## Quick Start
@@ -24,7 +24,10 @@ Project is ready to deploy to [Heroku](https://www.heroku.com). Take a look at p
     Admin.create(email: 'admin@example.com', password: 'password')
 
 
-## Character family:
+## Connect Models
+
+
+## Character Family:
 
 - [Character](https://github.com/slate-studio/chr): Powerful responsive javascript CMS for apps
 - [Mongosteen](https://github.com/slate-studio/mongosteen): An easy way to add RESTful actions for Mongoid models

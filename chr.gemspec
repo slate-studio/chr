@@ -17,7 +17,7 @@ email client etc. It's responsive by default and designed to be data source inde
   DESC
 
   s.name             = 'chr'
-  s.summary          = 'Powerful responsive javascript CMS for apps.'
+  s.summary          = 'Character is powerful responsive javascript-based CMS.'
   s.homepage         = 'http://github.com/slate-studio/chr'
   s.extra_rdoc_files = %w[README.md LICENSE]
   s.license          = 'MIT'
@@ -49,5 +49,4 @@ email client etc. It's responsive by default and designed to be data source inde
   s.add_development_dependency 'capybara-screenshot'
   s.add_development_dependency 'selenium-webdriver'
   s.add_development_dependency 'minitest-reporters'
-
 end
