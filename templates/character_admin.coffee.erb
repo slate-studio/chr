@@ -11,12 +11,11 @@
     redirects: Ants.redirectsConfig()
 
 @getChrConfig = (data) ->
-  modules     = {}
-  all_modules =
+  modules =
     loft:      new Loft('Files', 'asset', '/admin/assets')
     settings:  settingsConfig()
 
-  return { modules: all_modules }
+  return { modules: modules }
 
 $ ->
   $.get '/admin/bootstrap.json', (response) ->

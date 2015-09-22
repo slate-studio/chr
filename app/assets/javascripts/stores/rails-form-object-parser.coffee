@@ -29,7 +29,7 @@
       # special case for LIST inputs, values separated with comma
       if attr_name.indexOf('[__LIST__') > -1
         attr_name = attr_name.replace('__LIST__', '')
-        values    = attr_value.split(',')
+        values    = attr_value.split('|||')
 
         for value in values
           formDataObject.append("#{ @config.resource }#{ attr_name }[]", value)

@@ -10,7 +10,11 @@
   # PRIVATE ===============================================
 
   _add_item: (path, object, position, config, type) ->
-    item = new @itemClass(@module, path, object, config, type)
+    if type == 'folder'
+      item = new Item(@module, path, object, config, type)
+    else
+      item = new @itemClass(@module, path, object, config, type)
+
     @items[object._id] = item
     @_update_item_position(item, position)
 

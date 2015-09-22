@@ -8,10 +8,10 @@ $medium  : 500 !default;
 $bold    : 600 !default;
 $black   : 800 !default;
 
-$base-font-color : rgb( 89, 89, 89) !default;
-$positive-color  : rgb( 74,135,238) !default;
-$assertive-color : rgb(239, 78, 58) !default;
-$border-color    : rgb(246,246,246) !default;
+$base-font-color : #2e2e2e !default;
+$positive-color  : #4a87ee !default;
+$assertive-color : #ee5f4a !default;
+$border-color    : #eee !default;
 
 $formagic-base-color      : $base-font-color;
 $formagic-positive-color  : $positive-color;
@@ -141,8 +141,8 @@ a {
 
 .header .new { @include icon-plus($positive-color); }
 
-.item .icon-reorder { @include icon-reorder(lighten($base-font-color, 50%)); }
-.item .icon-folder  { @include icon-folder(lighten($base-font-color, 50%)); }
+.icon-reorder { @include icon-reorder(lighten($base-font-color, 50%)); }
+.icon-folder  { @include icon-folder(lighten($base-font-color, 50%)); }
 
 .slip-reordering > .icon-reorder:before,
 .slip-reordering > .icon-reorder:after { background-color: $positive-color; }

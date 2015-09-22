@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <%= display_meta_tags site: 'hello-world', title: 'CMS' %>
+  <%%= display_meta_tags site: '<%= app_name %>', title: 'CMS' %>
 
-  <%= csrf_meta_tags %>
-  <%= stylesheet_link_tag :admin, media: 'all' %>
+  <%%= csrf_meta_tags %>
+  <%%= stylesheet_link_tag :admin, media: 'all' %>
 </head>
 
 <body class='<%= body_class %>'>
-  <%= yield %>
+  <%%= yield %>
 </body>
 
 </html>
