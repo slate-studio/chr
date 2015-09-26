@@ -102,8 +102,7 @@ a        { text-decoration: none; }
 
   .search {
     @include position(absolute, 0 null null null);
-    width      : 100%;
-    background : white;
+    width : 100%;
 
     input       { display: block;  }
     .cancel     { display: inline-block; }
