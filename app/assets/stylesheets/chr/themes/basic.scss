@@ -35,12 +35,6 @@ a {
   &.active { background-color: $border-color; }
 }
 
-.header a {
-  &:hover {
-    opacity : .5;
-  }
-}
-
 .menu-title,
 .header .title,
 .header .save {
