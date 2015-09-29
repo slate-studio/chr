@@ -14,6 +14,7 @@
 #   menuTitle            - title used for the menu link
 #   showNestedListsAside - show module root list on the left and all nested
 #                          lists on the right side for desktop
+#   onModuleInit         - after module is initialized callback
 #
 # Public methods:
 #   addNestedList (listName, config, parentList)
@@ -39,10 +40,12 @@ class @Module
     @menuTitle  = @config.menuTitle ? @config.title
     @menuTitle ?= @name.titleize()
 
-    @config.onModuleInit?(this)
-
 
   # PUBLIC ================================================
+
+  onModuleInit: ->
+    @config.onModuleInit?(this)
+
 
   addNestedList: (name, config, parentList) ->
     path = [ parentList.path, name ].join('/')

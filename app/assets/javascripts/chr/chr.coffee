@@ -79,7 +79,15 @@ class @Chr
   # PUBLIC ================================================
 
   isMobile: ->
-    $(window).width() < 760
+    $(window).width() < 768
+
+
+  isTablet: ->
+    ! @isMobile() && ! @isDesktop()
+
+
+  isDesktop: ->
+    $(window).width() >= 1024
 
 
   updateHash: (path, @skipRoute=false) ->
@@ -97,8 +105,10 @@ class @Chr
     @$el.append(@$navBar)
 
     for name, config of @config.modules
-      @modules[name] = new Module(this, name, config)
-      @_add_menu_item(name, @modules[name].menuTitle)
+      m = new Module(this, name, config)
+      @_add_menu_item(name, m.menuTitle)
+      m.onModuleInit()
+      @modules[name] = m
 
     @_bind_hashchange()
     @_on_start()
