@@ -73,7 +73,8 @@ class @Chr
       return $(this).trigger('hashchange')
 
     if ! @isMobile()
-      return @updateHash('#/' + Object.keys(@modules)[0])
+      firstMenuItemPath = @$mainMenu.find(".menu-#{ Object.keys(@modules)[0] }").attr('href')
+      return @updateHash(firstMenuItemPath)
 
 
   # PUBLIC ================================================
