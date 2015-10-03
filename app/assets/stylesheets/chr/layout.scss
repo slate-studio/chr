@@ -119,8 +119,8 @@ a        { text-decoration: none; }
 /* Mobile ------------------------------------------------------------------ */
 .header {
   @include position(fixed, 0 null null null);
-  width   : 100%;
   z-index : 10;
+  width   : 100%;
 }
 
 .view, .list {
@@ -152,8 +152,7 @@ a        { text-decoration: none; }
 
   .sidebar {
     @include position(absolute, 0 null 0 0);
-    width        : 9em;
-    border-right : 1px solid;
+    width : 9em;
   }
 
   .module {
@@ -162,9 +161,9 @@ a        { text-decoration: none; }
   }
 
   .view, .list {
-    bottom      : 0;
     padding-top : 0px;
     overflow    : hidden;
+    bottom      : 0;
   }
 
   .header { @include position(relative); }

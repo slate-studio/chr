@@ -11,7 +11,14 @@ $black   : 800 !default;
 $base-font-color : #2e2e2e !default;
 $positive-color  : #4a87ee !default;
 $assertive-color : #ee5f4a !default;
-$border-color    : #eee !default;
+$border-color    : #f6f6f6 !default;
+
+$sidebar-color           : #aaa    !default;
+$sidebar-bg-color        : #222    !default;
+$sidebar-active-color    : white   !default;
+$sidebar-active-bg-color : #1a1a1a !default;
+
+$list-bg-color : #fafafa !default;
 
 $formagic-base-color      : $base-font-color;
 $formagic-positive-color  : $positive-color;
@@ -32,7 +39,6 @@ a {
 .menu a {
   color   : $base-font-color;
   padding : .75em 1em;
-  &.active { background-color: $border-color; }
 }
 
 .menu-title,
@@ -147,8 +153,24 @@ a {
 
 @media #{$tablet} {
   .sidebar {
-    border-color : $border-color;
+    background-color : $sidebar-bg-color;
   }
+
+  .menu a {
+    color : $sidebar-color;
+    &:hover {
+      background-color : $sidebar-active-bg-color;
+    }
+    &.active {
+      background-color : $sidebar-active-bg-color;
+      color            : $sidebar-active-color;
+    }
+  }
+
+  .menu-title {
+    color : $sidebar-color;
+  }
+
   .signin-modal {
     max-width : 26em;
     border    : 1px solid $border-color;
@@ -158,13 +180,21 @@ a {
       margin-left: .5em;
     }
   }
+  .list {
+    background-color : $list-bg-color;
+    .header {
+      background-color : $list-bg-color;
+    }
+    &.list-aside {
+      background-color : white;
+      .header {
+        background-color : white;
+      }
+    }
+  }
 }
 
 @media #{$desktop} {
   .list .header { border-color: $border-color; }
-  .input-text textarea, .content, .items { @include custom-scrollbar(rgba($base-font-color, .5), $border-color, 3px); }
+  .input-text textarea, .content, .items { @include custom-scrollbar(rgba($base-font-color, .25), $border-color, 3px); }
 }
-
-
-
-
