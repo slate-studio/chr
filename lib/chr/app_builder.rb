@@ -323,7 +323,7 @@ module Chr
     def initialize_mongoid
       generate 'mongoid:config'
       append_file "config/mongoid.yml", """\nproduction:
-  sessions:
+  clients:
     default:
       uri: <%= ENV['MONGODB_URI'] %>"""
     end

@@ -2,11 +2,14 @@
 
 $base-font-family : 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif !default;
 
-$light   : 300 !default;
-$regular : 400 !default;
-$medium  : 500 !default;
-$bold    : 600 !default;
-$black   : 800 !default;
+$thin      : 100 !default;
+$light     : 300 !default;
+$regular   : 400 !default;
+$medium    : 500 !default;
+$semibold  : 600 !default;
+$bold      : 700 !default;
+$extrabold : 800 !default;
+$black     : 900 !default;
 
 $base-font-color : #2e2e2e !default;
 $positive-color  : #4a87ee !default;
@@ -44,7 +47,7 @@ a {
 .menu-title,
 .header .title,
 .header .save {
-  font-weight : $medium;
+  font-weight : $semibold;
 }
 
 .header {
@@ -157,29 +160,40 @@ a {
   }
 
   .menu a {
-    color : $sidebar-color;
+    border-left : 2px solid $sidebar-bg-color;
+    color       : $sidebar-color;
     &:hover {
       background-color : $sidebar-active-bg-color;
+      border-color     : $sidebar-active-bg-color;
+      color            : $sidebar-active-color;
     }
     &.active {
       background-color : $sidebar-active-bg-color;
+      border-color     : $positive-color;
       color            : $sidebar-active-color;
     }
   }
 
   .menu-title {
-    color : $sidebar-color;
+    font-weight : $regular;
+    color       : white;
+  }
+
+  .admin-devise_overrides-sessions {
+    background-color : $list-bg-color;
   }
 
   .signin-modal {
-    max-width : 26em;
-    border    : 1px solid $border-color;
-    margin    : 5em auto 1em;
+    background : white;
+    max-width  : 26em;
+    border     : 1px solid $border-color;
+    margin     : 5em auto 1em;
 
     form {
       margin-left: .5em;
     }
   }
+
   .list {
     background-color : $list-bg-color;
     .header {

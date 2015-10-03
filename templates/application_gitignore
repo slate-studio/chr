@@ -10,5 +10,6 @@
 /log/*
 /public/system
 /public/assets
+/public/loft
 /tags
 /tmp/*
