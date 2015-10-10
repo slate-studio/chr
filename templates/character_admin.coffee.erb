@@ -5,23 +5,21 @@
 #= require loft
 #= require ants
 
-@settingsConfig = ->
-  items:
-    admins:    Ants.adminsConfig()
-    redirects: Ants.redirectsConfig()
-
-@getChrConfig = (data) ->
+@getConfig = (data) ->
   modules =
-    loft:      new Loft('Files', 'asset', '/admin/assets')
-    settings:  settingsConfig()
+    loft: new Loft()
+    settings:
+      items:
+        admins:    new AntsAdmins()
+        redirects: new AntsRedirects()
 
   return { modules: modules }
 
 $ ->
   $.get '/admin/bootstrap.json', (response) ->
-    chrConfig = getChrConfig(response)
+    config = getConfig(response)
 
-    chr.start('<%= app_name %>', chrConfig)
+    chr.start('<%= app_name %>', config)
 
     # append signout button to the end of sidebar menu
     $('a[data-method=delete]').appendTo(".sidebar .menu").show()
