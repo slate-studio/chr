@@ -92,6 +92,31 @@ a {
   }
 }
 
+.header-tabs {
+  border : 1px solid $positive-color;
+
+  a {
+    border-right : 1px solid $positive-color;
+    font-weight  : $regular;
+    line-height  : 1;
+    font-size    : .8em;
+    padding      : .45em .75em .55em;
+    color        : $positive-color;
+
+    &:last-child {
+      border-right : none;
+    }
+
+    &.active {
+      background-color : $positive-color;
+      color            : white;
+      &:hover {
+        color : white;
+      }
+    }
+  }
+}
+
 /* Sign in ----------------------------------------------------------------- */
 
 .signin-modal {

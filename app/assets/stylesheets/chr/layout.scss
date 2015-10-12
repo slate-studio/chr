@@ -115,6 +115,19 @@ a        { text-decoration: none; }
 .view-saving .save    { visibility : hidden;  }
 .view-saving .spinner { visibility : visible; }
 
+.title.title-with-tabs { display: none; }
+
+.header-tabs {
+  @include position(relative, 0.45em null null null);
+  border-radius : 4px;
+  overflow      : hidden;
+  display       : inline-block;
+  z-index       : 1;
+
+  a { display : inline-block; }
+}
+
+
 
 /* Mobile ------------------------------------------------------------------ */
 .header {

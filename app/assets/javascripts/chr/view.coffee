@@ -26,6 +26,9 @@
 #   showSpinner()
 #   hideSpinner()
 #
+# Dependencies:
+#= require ./view_tabs
+#
 # -----------------------------------------------------------------------------
 class @View
   constructor: (@module, @config, @closePath, @listName) ->
@@ -149,6 +152,8 @@ class @View
     @form.initializePlugins()
 
     @_add_delete_button()
+    if @config.viewTabs
+      @_build_tabs()
     @config.onViewShow?(@)
 
 
@@ -193,6 +198,8 @@ class @View
     # array store
     else
       @store.loadObject(objectId, callbacks)
+
+include(View, viewTabs)
 
 
 
