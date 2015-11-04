@@ -22,8 +22,9 @@ class @ObjectStore
 
   # PUBLIC ================================================
 
-  loadObject: ->
-    @_data
+  loadObject: (callbacks={}) ->
+    callbacks.onSuccess ?= $.noop
+    callbacks.onSuccess(@_data)
 
 
   update: (id, value, callback) ->

@@ -39,7 +39,7 @@ module Chr
 
 
     def provide_dev_prime_task
-      copy_file 'development_seeds.rb', 'lib/tasks/development_seeds.rake'
+      copy_file 'dev.rake', 'lib/tasks/dev.rake'
     end
 
 
