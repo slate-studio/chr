@@ -135,11 +135,6 @@ module Chr
     end
 
 
-    def setup_asset_sync
-      copy_file 'asset_sync.rb', 'config/initializers/asset_sync.rb'
-    end
-
-
     def setup_staging_environment
       staging_file = 'config/environments/staging.rb'
       copy_file 'staging.rb', staging_file
@@ -282,7 +277,10 @@ module Chr
 
 
     def setup_character_views
-      copy_file 'character_admin_layout.html.erb', 'app/views/layouts/admin.html.erb'
+      template 'character_admin_layout.html.erb.erb',
+        'app/views/layouts/admin.html.erb',
+        force: true
+
       copy_file 'character_admin_index.html.erb',  'app/views/admin/index.html.erb'
     end
 

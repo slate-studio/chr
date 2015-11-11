@@ -80,7 +80,6 @@ module Chr
       build :enable_rack_canonical_host
       build :enable_rack_deflater
       build :setup_asset_host
-      build :setup_asset_sync
     end
 
 

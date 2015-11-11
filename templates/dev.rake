@@ -5,7 +5,7 @@ if Rails.env.development? || Rails.env.test?
     desc "Seed data for development environment"
     task prime: "db:setup" do
       include FactoryGirl::Syntax::Methods
-
+      Mongoid.purge!
       Admin.create!(name: 'Admin', email: 'user@example.com', password: 'password')
     end
   end
