@@ -744,3 +744,129 @@ ActionController::RoutingError (undefined method `devise' for Admin:Class):
   Rendered /Users/kravc/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/routes/_table.html.erb (6.4ms)
   Rendered /Users/kravc/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (8.0ms)
   Rendered /Users/kravc/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/routing_error.html.erb within rescues/layout (61.5ms)
+
+
+Started GET "/" for ::1 at 2015-11-16 12:22:58 +0200
+Processing by Rails::WelcomeController#index as HTML
+  Rendered /Users/kravc/.rvm/gems/ruby-2.2.3/gems/railties-4.2.5/lib/rails/templates/rails/welcome/index.html.erb (1.7ms)
+Completed 200 OK in 9ms (Views: 8.7ms)
+
+
+Started GET "/admin" for ::1 at 2015-11-16 12:23:01 +0200
+Processing by Admin::BaseController#index as HTML
+  Rendered admin/index.html.erb within layouts/admin (7190.4ms)
+Completed 200 OK in 8787ms (Views: 8787.2ms)
+
+
+Started GET "/assets/admin.self-be1e6d86a6cf574b240900e73fc084315f1c348c2e725f44c5c12de07fdb7f77.css?body=1" for ::1 at 2015-11-16 12:23:10 +0200
+
+
+Started GET "/assets/admin.self-930da69b66ad2a181ccfa439700eb7e1438d7e0277eae3837b2fb682c8d1d029.js?body=1" for ::1 at 2015-11-16 12:23:10 +0200
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 12:23:10 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 5ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 12:23:16 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 12:23:18 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?sport_articles=true&page=1&perPage=26" for ::1 at 2015-11-16 12:23:19 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"sport_articles"=>"true", "page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 12:23:20 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 12:23:33 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 12:23:33 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?sport_articles=true&page=1&perPage=26" for ::1 at 2015-11-16 12:23:35 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"sport_articles"=>"true", "page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 12:23:35 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 13:15:33 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 13:15:34 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 13:15:43 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 13:15:45 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?sport_articles=true&page=1&perPage=26" for ::1 at 2015-11-16 13:15:57 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"sport_articles"=>"true", "page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.2ms)
+
+
+Started GET "/admin/articles.json?sport_articles=true&page=1&perPage=26" for ::1 at 2015-11-16 13:16:01 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"sport_articles"=>"true", "page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 13:16:09 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.2ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 13:16:13 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)
+
+
+Started GET "/admin/articles.json?page=1&perPage=26" for ::1 at 2015-11-16 13:16:15 +0200
+Processing by Admin::ArticlesController#index as JSON
+  Parameters: {"page"=>"1", "perPage"=>"26"}
+Completed 200 OK in 2ms (Views: 0.1ms)

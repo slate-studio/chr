@@ -12,3 +12,4 @@ log
 coverage
 uploads
 test/rails_app/log/test.log
+test/rails_app/log/development.log
