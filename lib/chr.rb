@@ -8,6 +8,7 @@ require 'formagic'
 require 'jquery-rails'
 require 'coffee-rails'
 require 'sass-rails'
+require 'font-awesome-rails'
 
 module Chr
   if defined?(Rails) && defined?(Rails::Engine)

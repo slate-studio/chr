@@ -39,6 +39,7 @@ class @Module
     # menu item + layout
     @menuTitle  = @config.menuTitle ? @config.title
     @menuTitle ?= @name.titleize()
+    @menuIcon   = @config.menuIcon
 
 
   # PUBLIC ================================================

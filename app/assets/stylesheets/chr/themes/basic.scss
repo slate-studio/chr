@@ -44,7 +44,6 @@ a {
   padding : .75em 1em;
 }
 
-.menu-title,
 .header .title,
 .header .save {
   font-weight : $semibold;
@@ -197,11 +196,6 @@ a {
       border-color     : $positive-color;
       color            : $sidebar-active-color;
     }
-  }
-
-  .menu-title {
-    font-weight : $regular;
-    color       : white;
   }
 
   .admin-devise_overrides-sessions {

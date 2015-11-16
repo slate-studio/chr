@@ -1,5 +1,15 @@
+development:
+  clients:
+    default:
+      database: chr_development
+      hosts:
+      - localhost:27017
+      options:
+      max_retries: 1
+      retry_interval: 0
+
 test:
-  sessions:
+  clients:
     default:
       database: chr_test
       hosts:

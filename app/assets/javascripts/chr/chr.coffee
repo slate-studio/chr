@@ -49,8 +49,12 @@ class @Chr
         return $(a).addClass('active')
 
 
-  _add_menu_item: (moduleName, title) ->
-    @$mainMenu.append "<a href='#/#{ moduleName }' class='menu-#{ moduleName }'>#{ title }</a>"
+  _add_menu_item: (moduleName, title, icon) ->
+    if icon
+      @$mainMenu.append("""<a href="#/#{ moduleName }" class="menu-#{ moduleName }">
+        <i class="fa fa-#{icon} fa-fw"></i>&nbsp;#{ title }</a>""")
+    else
+      @$mainMenu.append "<a href='#/#{ moduleName }' class='menu-#{ moduleName }'>#{ title }</a>"
 
 
   _bind_hashchange: ->
@@ -99,15 +103,12 @@ class @Chr
     @$el        =$ (@config.selector ? 'body')
     @$navBar    =$ "<nav class='sidebar'>"
     @$mainMenu  =$ "<div class='menu'>"
-    @$menuTitle =$ "<div class='menu-title'>#{ title }</div>"
-
-    @$navBar.append(@$menuTitle)
     @$navBar.append(@$mainMenu)
     @$el.append(@$navBar)
 
     for name, config of @config.modules
       m = new Module(this, name, config)
-      @_add_menu_item(name, m.menuTitle)
+      @_add_menu_item(name, m.menuTitle, m.menuIcon)
       m.onModuleInit()
       @modules[name] = m
 

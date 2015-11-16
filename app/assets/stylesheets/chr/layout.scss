@@ -13,11 +13,13 @@ a        { text-decoration: none; }
 
 
 /* Menu -------------------------------------------------------------------- */
-.menu-title { padding : 1em; }
 .menu a {
   display  : block;
   position : relative;
   padding  : 1em;
+}
+.menu .fa {
+  margin-left: -.25em;
 }
 
 
@@ -161,7 +163,6 @@ a        { text-decoration: none; }
   body { overflow: hidden; }
 
   .menu { font-size : .8em; }
-  .menu-title { padding : .75em; }
 
   .sidebar {
     @include position(absolute, 0 null 0 0);

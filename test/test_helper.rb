@@ -8,7 +8,6 @@ require 'carrierwave/mongoid'
 require 'rails_app/config/environment'
 require 'rails/test_help'
 require 'ants'
-require 'loft'
 require 'database_cleaner'
 require 'minitest/reporters'
 require 'capybara/rails'
@@ -31,7 +30,7 @@ Capybara::Screenshot.prune_strategy = :keep_last_run
 
 
 class ActiveSupport::TestCase
-    def setup
+  def setup
     DatabaseCleaner.start
   end
 

@@ -4,5 +4,4 @@ class Admin::BaseController < ActionController::Base
   def index
     render '/admin/index', layout: 'admin'
   end
-
 end
