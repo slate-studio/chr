@@ -10,7 +10,7 @@
     loft: new Loft()
     settings:
       items:
-        admins:    new AntsAdmins()
+        admins:    new AntsAdminUsers()
         redirects: new AntsRedirects()
 
   return { modules: modules }
@@ -20,6 +20,4 @@ $ ->
     config = getConfig(response)
 
     chr.start('<%= app_name %>', config)
-
-    # append signout button to the end of sidebar menu
-    $('a[data-method=delete]').appendTo(".sidebar .menu").show()
+    new AntsProfile()

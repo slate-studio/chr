@@ -13,7 +13,3 @@ module BodyClassHelper
     end
   end
 end
-
-
-
-

@@ -6,7 +6,7 @@ if Rails.env.development? || Rails.env.test?
     task prime: "db:setup" do
       include FactoryGirl::Syntax::Methods
       Mongoid.purge!
-      Admin.create!(name: 'Admin', email: 'user@example.com', password: 'password')
+      AdminUser.create!(name: 'Admin', email: 'user@example.com', password: 'password')
     end
   end
 end

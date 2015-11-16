@@ -38,7 +38,7 @@ email client etc. It's responsive by default and designed to be data source inde
 
   # tests
   s.add_development_dependency 'mongosteen', '>= 0.2'
-  s.add_development_dependency 'ants', '>= 0.2.8'
+  s.add_development_dependency 'ants', '>= 0.3'
   s.add_development_dependency 'carrierwave-mongoid'
   s.add_development_dependency 'mini_magick'
 

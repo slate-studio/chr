@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   #-------------------------------------------#
   # Admin
   #-------------------------------------------#
-  devise_for :admins,
+  devise_for :admin_users,
     path: 'admin',
     controllers: {
       passwords: 'admin/devise_overrides/passwords',
@@ -15,14 +15,14 @@ Rails.application.routes.draw do
     }
 
   namespace :admin do
-    get '/'               => 'base#index'
+    get '/' => 'base#index'
     get '/bootstrap.json' => 'base#bootstrap_data'
 
     # files
-    resources :assets,    controller: 'assets'    # Loft::Asset
+    resources :assets, controller: 'assets' # Loft::Asset
 
     # settings
-    resources :admins,    controller: 'admins'    # Ants::Admin
+    resources :admin_users, controller: 'admin_users' # Ants::Admin
     resources :redirects, controller: 'redirects' # Ants::Redirect
   end
 
