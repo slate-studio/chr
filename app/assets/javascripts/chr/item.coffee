@@ -33,7 +33,6 @@ class @Item
     title ?= @object['_list_item_title']
     title ?= _firstNonEmptyValue(@object)
     title ?= "No Title"
-    title  = title.plainText()
 
     @$title =$ "<div class='item-title'>#{ title }</div>"
     @$el.append(@$title)

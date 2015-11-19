@@ -59,7 +59,7 @@ chr._list_height = ($items) ->
   $items.children().each ->
     if offset != $(this).position().top
       offset  = $(this).position().top
-      height += $(this).height()
+      height += $(this).outerHeight() - 1
 
   return height
 
