@@ -1,47 +1,53 @@
 /* Settings ---------------------------------------------------------------- */
 
-$base-font-family : 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif !default;
+$base-font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif !default;
 
-$thin      : 100 !default;
-$light     : 300 !default;
-$regular   : 400 !default;
-$medium    : 500 !default;
-$semibold  : 600 !default;
-$bold      : 700 !default;
-$extrabold : 800 !default;
-$black     : 900 !default;
+$thin: 100 !default;
+$light: 300 !default;
+$regular: 400 !default;
+$medium: 500 !default;
+$semibold: 600 !default;
+$bold: 700 !default;
+$extrabold: 800 !default;
+$black: 900 !default;
 
-$base-font-color : #2e2e2e !default;
-$positive-color  : #4a87ee !default;
-$assertive-color : #ee5f4a !default;
-$border-color    : #f6f6f6 !default;
+$white-color: #fff;
 
-$sidebar-color           : #aaa    !default;
-$sidebar-bg-color        : #222    !default;
-$sidebar-active-color    : white   !default;
-$sidebar-active-bg-color : #1a1a1a !default;
+$base-font-color: #2e2e2e !default;
+$positive-color: #4a87ee !default;
+$assertive-color: #e32e2e !default;
+$border-color: #f1f1f1 !default;
 
-$list-bg-color : #fafafa !default;
+$sidebar-color: rgba(255, 255, 255, 0.5) !default;
+$sidebar-bg-color: #414d65 !default;
+$sidebar-active-color: $white-color !default;
+$sidebar-active-bg-color: #29354f !default;
 
-$formagic-base-color      : $base-font-color;
-$formagic-positive-color  : $positive-color;
-$formagic-assertive-color : $assertive-color;
-$formagic-border-color    : $border-color;
+$list-bg-color: #fbfbfd !default;
+
+$formagic-base-color: $base-font-color;
+$formagic-positive-color: $positive-color;
+$formagic-assertive-color: $assertive-color;
+$formagic-border-color: $border-color;
 
 /* Theme ------------------------------------------------------------------- */
 
 html {
-  font-family : $base-font-family;
-  color       : $base-font-color;
+  font-family: $base-font-family;
+  color: $base-font-color;
 }
 
 a {
-  color : $positive-color;
+  color: $positive-color;
 }
 
 .menu a {
-  color   : $base-font-color;
-  padding : .75em 1em;
+  color: $base-font-color;
+  padding: .75em 1em;
+}
+
+.header .title {
+  font-size: .9em;
 }
 
 .header .title,
@@ -87,7 +93,7 @@ a {
   &:hover,
   &:active {
     background-color : $assertive-color;
-    color            : white;
+    color            : $white-color;
   }
 }
 
@@ -108,9 +114,9 @@ a {
 
     &.active {
       background-color : $positive-color;
-      color            : white;
+      color            : $white-color;
       &:hover {
-        color : white;
+        color : $white-color;
       }
     }
   }
@@ -137,7 +143,7 @@ a {
   }
 
   input[type=submit] {
-    background-color : white;
+    background-color : $white-color;
     border-radius    : .25em;
     padding          : 1em 3em;
     display          : block;
@@ -147,7 +153,7 @@ a {
 
     &:hover {
       background-color : $positive-color;
-      color            : white;
+      color            : $white-color;
     }
   }
 
@@ -180,31 +186,31 @@ a {
 
 @media #{$tablet} {
   .sidebar {
-    background-color : $sidebar-bg-color;
+    background-color: $sidebar-bg-color;
   }
 
   .menu a {
-    border-left : 2px solid $sidebar-bg-color;
-    color       : $sidebar-color;
+    border-left: 2px solid $sidebar-bg-color;
+    color: $sidebar-color;
     &:hover {
-      background-color : $sidebar-active-bg-color;
-      border-color     : $sidebar-active-bg-color;
-      color            : $sidebar-active-color;
+      background-color: $sidebar-active-bg-color;
+      border-color: $sidebar-active-bg-color;
+      color: $sidebar-active-color;
     }
     &.active {
-      background-color : $sidebar-active-bg-color;
-      border-color     : $positive-color;
-      color            : $sidebar-active-color;
+      background-color: $sidebar-active-bg-color;
+      border-color: $white-color;
+      color: $sidebar-active-color;
     }
   }
 
   .admin-devise_overrides-passwords,
   .admin-devise_overrides-sessions {
-    background-color : $list-bg-color;
+    background-color: $list-bg-color;
   }
 
   .signin-modal {
-    background : white;
+    background : $white-color;
     max-width  : 26em;
     border     : 1px solid $border-color;
     margin     : 5em auto 1em;
@@ -220,9 +226,9 @@ a {
       background-color : $list-bg-color;
     }
     &.list-aside {
-      background-color : white;
+      background-color : $white-color;
       .header {
-        background-color : white;
+        background-color : $white-color;
       }
     }
   }

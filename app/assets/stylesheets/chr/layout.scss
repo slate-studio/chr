@@ -2,7 +2,6 @@
 $tablet:  "screen and (min-width:768px)";
 $desktop: "screen and (min-width:1024px)";
 
-
 /* Global ------------------------------------------------------------------ */
 *,
 *:before,
@@ -11,26 +10,32 @@ html     {  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibil
 a        { text-decoration: none; }
 .spinner { @include spinner; }
 
-
 /* Menu -------------------------------------------------------------------- */
+.menu {
+  margin-top: 1em;
+}
+
 .menu a {
   display  : block;
   position : relative;
   padding  : 1em;
 }
+
 .menu .fa {
   margin-left: -.25em;
 }
 
-
 /* Header ------------------------------------------------------------------ */
 .header {
-  height     : 41px;
-  text-align : center;
+  height: 41px;
+  text-align: center;
 }
 
 .header {
-  .title         { @include ellipsis(70%); }
+  .title {
+    @include ellipsis(70%);
+    line-height: 41px;
+  }
   .title, a      { line-height: 2.5; }
   .new           { @include position(absolute, 0 0 null null); }
   .new + .search { @include position(absolute, 0 40px inherit inherit); } // @todo: refactor to em
@@ -45,7 +50,6 @@ a        { text-decoration: none; }
 }
 
 .show-spinner .spinner { visibility: visible; }
-
 
 /* Item -------------------------------------------------------------------- */
 .item {
@@ -76,7 +80,6 @@ a        { text-decoration: none; }
 .item-subtitle      { @include ellipsis; font-size: .8em; line-height: 1.5; }
 .item-thumbnail     { @include position(absolute, .5em 0 0 .5em); width: 3.1em; height: 3.1em; }
 .item-thumbnail img { width: 100%; border-radius: 1.55em; }
-
 
 /* Search ------------------------------------------------------------------ */
 .search {
@@ -112,7 +115,6 @@ a        { text-decoration: none; }
   }
 }
 
-
 /* View -------------------------------------------------------------------- */
 .view-saving .save    { visibility : hidden;  }
 .view-saving .spinner { visibility : visible; }
@@ -128,8 +130,6 @@ a        { text-decoration: none; }
 
   a { display : inline-block; }
 }
-
-
 
 /* Mobile ------------------------------------------------------------------ */
 .header {
@@ -156,7 +156,6 @@ a        { text-decoration: none; }
   padding-bottom : 5em;
   z-index        : 0;
 }
-
 
 /* Tablet ------------------------------------------------------------------ */
 @media #{$tablet} {
@@ -189,7 +188,6 @@ a        { text-decoration: none; }
   .module .list:first-child .back { display: none; }
 }
 
-
 /* Desktop ----------------------------------------------------------------- */
 @media #{$desktop} {
   .sidebar         { width : 10em; }
@@ -204,7 +202,3 @@ a        { text-decoration: none; }
 
   .list.list-aside .back { @include header-back-label; }
 }
-
-
-
-
