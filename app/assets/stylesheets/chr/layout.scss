@@ -36,14 +36,28 @@ a        { text-decoration: none; }
     @include ellipsis(70%);
     line-height: 41px;
   }
-  .title, a      { line-height: 2.5; }
-  .new           { @include position(absolute, 0 0 null null); }
-  .new + .search { @include position(absolute, 0 40px inherit inherit); } // @todo: refactor to em
-  .save          { @include position(absolute, 0 1em null null); }
-  .back, .close  { @include position(absolute, 0 null null 0);
-    overflow : hidden;
+  a {
+    line-height: 2.5;
   }
-  .spinner       { @include position(absolute, .4em null null null);
+  .new {
+    @include position(absolute, 0 0 null null);
+    @include header-icon-base;
+  }
+  .new + .search {
+    @include position(absolute, 0 40px inherit inherit);
+  }
+  .save {
+    @include position(absolute, 0 1em null null);
+  }
+  .back, .close {
+    @include position(absolute, 0 null null 0);
+    @include header-icon-base;
+    &:before {
+      display: none;
+    }
+  }
+  .spinner {
+    @include position(absolute, .4em null null null);
     margin-left : -2.25em;
     visibility  : hidden;
   }
@@ -59,13 +73,9 @@ a        { text-decoration: none; }
 }
 
 .item {
+  .icon-folder,
   .icon-reorder {
-    @include position(absolute, 50% 0 null null);
-    margin-top : -20px; // @todo: refactor to em
-  }
-  .icon-folder {
-    @include position(absolute, 50% 0 null null);
-    margin-top : -20px; // @todo: refactor to em
+    @include item-icon-base;
   }
 }
 
@@ -88,7 +98,13 @@ a        { text-decoration: none; }
   height   : 40px; // @todo: refactor to em
   overflow : hidden;
 
-  .icon   { @include position(absolute, 0 null null 0); }
+  .icon {
+    @include position(absolute, 0 null null 0);
+    text-align: center;
+    line-height: 40px;
+    width: 40px;
+  }
+
   .cancel { @include position(absolute, 0 1em null null); }
 
   input {

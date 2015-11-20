@@ -74,14 +74,14 @@ class @Item
     @_render_subtitle()
 
     if @type == 'folder'
-      @$el.append $("<div class='icon-folder'></div>")
+      @$el.append $("<div class='icon-folder'>#{Icons.folder}</div>")
 
     if @type == 'object'
       @_render_thumbnail()
 
       if @config.arrayStore and @config.arrayStore.reorderable
         @$el.addClass('reorderable')
-        @$el.append $("<div class='icon-reorder'></div>")
+        @$el.append $("<div class='icon-reorder'>#{Icons.reorder}</div>")
 
     if @type == 'object'
       @config.onItemRender?(this)

@@ -64,10 +64,10 @@ class @List
     @$el.append @$header
 
     # back
+    @$backBtn =$ "<a href='#/' class='back'>#{ Icons.close }</a>"
     if @parentList
-      @$backBtn =$ "<a href='#{ @parentList.path }' class='back'>Close</a>"
-    else
-      @$backBtn =$ "<a href='#/' class='back'>Close</a>"
+      @$backBtn.attr 'href', @parentList.path
+
     @$header.prepend @$backBtn
 
     # spinner & title
@@ -76,7 +76,7 @@ class @List
 
     # new item
     if not @config.disableNewItems and @config.formSchema
-      @$newBtn =$ "<a href='#{ @path }/new' class='new'></a>"
+      @$newBtn =$ "<a href='#{ @path }/new' class='new'>#{Icons.add}</a>"
       @$header.append @$newBtn
 
     if @config.items       then @_process_config_items()

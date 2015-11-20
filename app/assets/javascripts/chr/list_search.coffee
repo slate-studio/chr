@@ -8,7 +8,7 @@
 
   _bind_search: ->
     @$search       =$ "<div class='search'></div>"
-    @$searchIcon   =$ "<a href='#' class='icon'></a>"
+    @$searchIcon   =$ "<a href='#' class='icon'>#{Icons.search}</a>"
     @$searchInput  =$ "<input type='text' placeholder='Search' />"
     @$searchCancel =$ "<a href='#' class='cancel'>Cancel</a>"
 

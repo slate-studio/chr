@@ -50,7 +50,7 @@ class @View
     @$el.append @$header
 
     # close
-    @$closeBtn =$ "<a href='#{ @closePath }' class='close'>Close</a>"
+    @$closeBtn =$ "<a href='#{ @closePath }' class='close'>#{Icons.close}</a>"
     @$header.append @$closeBtn
 
     # content
@@ -200,7 +200,3 @@ class @View
       @store.loadObject(objectId, callbacks)
 
 include(View, viewTabs)
-
-
-
-

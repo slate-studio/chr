@@ -31,7 +31,6 @@ $formagic-assertive-color: $assertive-color;
 $formagic-border-color: $border-color;
 
 /* Theme ------------------------------------------------------------------- */
-
 html {
   font-family: $base-font-family;
   color: $base-font-color;
@@ -122,8 +121,11 @@ a {
   }
 }
 
-/* Sign in ----------------------------------------------------------------- */
+.search input {
+  font-size: .9em;
+}
 
+/* Sign in ----------------------------------------------------------------- */
 .signin-modal {
   @include position(relative);
 
@@ -168,22 +170,20 @@ a {
 }
 
 /* Icons ------------------------------------------------------------------- */
+.list-search .search .icon,
+.icon-reorder,
+.icon-folder {
+  color: lighten($base-font-color, 50%);
+}
 
-.search .icon { @include icon-search($positive-color); }
-.list-search .search .icon { @include icon-search(lighten($base-font-color, 40%)); }
-
-.header .new { @include icon-plus($positive-color); }
-
-.icon-reorder { @include icon-reorder(lighten($base-font-color, 50%)); }
-.icon-folder  { @include icon-folder(lighten($base-font-color, 50%)); }
-
-.slip-reordering > .icon-reorder:before,
-.slip-reordering > .icon-reorder:after { background-color: $positive-color; }
-
-.header .back, .header .close { @include icon-arrow($positive-color); }
+.header .back,
+.header .close {
+  &:before {
+    content: 'Close';
+  }
+}
 
 /* Layouts ----------------------------------------------------------------- */
-
 @media #{$tablet} {
   .sidebar {
     background-color: $sidebar-bg-color;

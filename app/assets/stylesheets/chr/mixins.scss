@@ -1,5 +1,4 @@
 /* Mixins ------------------------------------------------------------------ */
-
 @mixin spinner {
   display     : inline-block;
   border      : .25em solid rgba(black, 0.2);
@@ -26,69 +25,25 @@
 
 @mixin header-back-label {
   @include position(absolute, 0 null null 1em);
-  width : auto;
-  &:before { display: none; }
+  width: auto;
+  i {
+    display: none;
+  }
+  &:before {
+    display: inline;
+  }
 }
-
-/* Icons ------------------------------------------------------------------- */
 
 @mixin header-icon-base {
-  display : block;
-  width   : 40px;
-  height  : 40px;
-
-  &:before {
-    content : '';
-    display : block;
-    width   : 40px;
-    height  : 40px;
-    background-repeat : no-repeat;
-  }
+  width: 40px;
+  line-height: 40px;
+  text-align: center;
 }
 
-@mixin icon-search($color) {
-  @include header-icon-base;
-
-  &:before {
-    background-image    : url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><circle cx='15' cy='15' r='10' stroke='#{ $color }' stroke-width='2' fill='transparent'></circle><line x1='22' y1='22' x2='30' y2='30' stroke-width='3' stroke='#{ $color }' /></svg>");
-    background-size     : 22px 22px;
-    background-position : 8px 8px;
-  }
+@mixin item-icon-base {
+  @include position(absolute, 50% 0 null null);
+  margin-top: -20px;
+  line-height: 40px;
+  width: 30px;
+  text-align: center;
 }
-
-@mixin icon-plus($color) {
-  @include header-icon-base;
-
-  &:before {
-    background-image    : url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='10' y1='0' x2='10' y2='20' stroke-width='2' stroke='#{ $color }' /><line x1='0' y1='10' x2='20' y2='10' stroke-width='2' stroke='#{ $color }' /></svg>");
-    background-size     : 20px 20px;
-    background-position : 10px 10px;
-  }
-}
-
-@mixin icon-folder($color) {
-  @include header-icon-base;
-
-  &:before {
-    background-image    : url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 20'><path d='M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z' fill='#{ $color }'/></svg>");
-    background-size     : 10px 16px;
-    background-position : 9px 12px;
-  }
-
-  @include transform(rotate(180deg));
-}
-
-@mixin icon-arrow($color) {
-  @include header-icon-base;
-
-  &:before {
-    background-image    : url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 20'><path d='M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z' fill='#{ $color }'/></svg>");
-    background-size     : 12px 20px;
-    background-position : 12px 9px;
-  }
-}
-
-
-
-
-
