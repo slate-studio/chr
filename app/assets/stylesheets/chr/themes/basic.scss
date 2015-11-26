@@ -63,6 +63,14 @@ a {
   border-left-color : $positive-color;
 }
 
+.refresh {
+  color: $border-color;
+  text-align: center;
+
+  i { @include position(relative, 4px null null null); }
+  &:hover { color: rgba($base-font-color, .4); }
+}
+
 .item {
   color      : $base-font-color;
   margin-top : -1px;

@@ -63,7 +63,17 @@ a        { text-decoration: none; }
   }
 }
 
-.show-spinner .spinner { visibility: visible; }
+.refresh {
+  @include position(absolute);
+  display: inline-block;
+  width: 30px;
+  margin-left: -30px;
+}
+
+.show-spinner {
+  .spinner { visibility: visible; }
+  .refresh { visibility: hidden; }
+}
 
 /* Item -------------------------------------------------------------------- */
 .item {

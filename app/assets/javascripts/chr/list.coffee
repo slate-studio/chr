@@ -18,6 +18,7 @@
 #   itemSubtitleField  - object attributes name for list item subtitle
 #   disableNewItems    - do not show new item button in list header
 #   disableUpdateItems - do not update list items
+#   disableRefresh     - do not show refresh button in header
 #   onListInit         - callback on list is initialized
 #   onListShow         - callback on list is shown
 #   objects            - objects array to be added to the store on start
@@ -71,8 +72,12 @@ class @List
     @$header.prepend @$backBtn
 
     # spinner & title
+    @$title =$ "<span class='title'>#{ @title }</span>"
     @$header.append "<div class='spinner'></div>"
-    @$header.append "<span class='title'>#{ @title }</span>"
+    @$header.append @$title
+
+    if @config.arrayStore && !@config.disableRefresh
+      @_add_refresh()
 
     # new item
     if not @config.disableNewItems and @config.formSchema
@@ -86,12 +91,19 @@ class @List
 
     @config.onListInit?(@)
 
-
   # PRIVATE ===============================================
+
+  _add_refresh: ->
+    @$refreshBtn =$ """<a href='#' class='refresh'>
+                         <i class='fa fa-refresh'></i>
+                       </a>"""
+    @$title.prepend(@$refreshBtn)
+    @$refreshBtn.on "click", (e) =>
+      e.preventDefault()
+      @updateItems()
 
   _bind_hashchange: ->
     $(chr).on 'hashchange', => @_set_active_item()
-
 
   _set_active_item: ->
     hash = window.location.hash
@@ -100,7 +112,6 @@ class @List
         itemPath = $(a).attr('href')
         if itemPath && hash.startsWith(itemPath)
           return $(a).addClass('active')
-
 
   # PUBLIC ================================================
 
