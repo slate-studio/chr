@@ -14,9 +14,9 @@
 
 #= require formagic
 
-@Icons =
-  reorder: "<i class='fa fa-ellipsis-v'></i>"
-  folder: "<i class='fa fa-angle-right'></i>"
-  search: "<i class='fa fa-search'></i>"
-  add: "<i class='fa fa-plus'></i>"
-  close: "<i class='fa fa-chevron-left'></i>"
+@Icons ?= {}
+@Icons.reorder = "<i class='fa fa-ellipsis-v'></i>"
+@Icons.folder = "<i class='fa fa-angle-right'></i>"
+@Icons.search = "<i class='fa fa-search'></i>"
+@Icons.add = "<i class='fa fa-plus'></i>"
+@Icons.close = "<i class='fa fa-chevron-left'></i>"
