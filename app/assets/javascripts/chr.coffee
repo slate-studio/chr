@@ -4,6 +4,7 @@
 #= require ./chr/list
 #= require ./chr/item
 #= require ./chr/view
+#= require ./chr/module-categories
 
 #= require ./stores/object
 #= require ./stores/array

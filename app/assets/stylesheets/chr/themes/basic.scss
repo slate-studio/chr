@@ -240,6 +240,12 @@ a {
       }
     }
   }
+
+  .module-categories {
+    .view .header {
+      border-color: $border-color;
+    }
+  }
 }
 
 @media #{$desktop} {

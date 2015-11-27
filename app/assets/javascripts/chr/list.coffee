@@ -109,9 +109,11 @@ class @List
     hash = window.location.hash
     if hash.startsWith "#/#{ @module.name }"
       for a in @$items.children()
-        itemPath = $(a).attr('href')
-        if itemPath && hash.startsWith(itemPath)
-          return $(a).addClass('active')
+        $a =$ a
+        if $a.data("path")
+          for p in $a.data("path").split(",")
+            if hash.startsWith(p)
+              return $a.addClass('active')
 
   # PUBLIC ================================================
 

@@ -21,7 +21,11 @@
 # -----------------------------------------------------------------------------
 class @Item
   constructor: (@module, @path, @object, @config, @type) ->
-    @$el =$ """<a class='item is-#{ @type }' href='#{ @path }' data-id='#{ @object._id }'></a>"""
+    @$el =$ """<a class='item is-#{ @type }'
+                  href='#{ @path }'
+                  data-id='#{ @object._id }'
+                  data-path='#{ @path }'>
+               </a>"""
     @render()
 
 
