@@ -217,20 +217,21 @@ a        { text-decoration: none; }
     .list:first-child { right: 0; left: initial; }
     .list.list-aside { right: 22em; left: 0; }
     .list.list-aside .back { visibility: hidden; }
-    .view { right: 22em; left: 0; }
+    .view:not(.fullsize) { right: 22em; left: 0; }
     .view .header { border-right: 1px solid; }
+    .list:first-child .icon-folder { visibility: hidden; }
   }
 }
 
 /* Desktop ----------------------------------------------------------------- */
 @media #{$desktop} {
-  .sidebar         { width : 10em; }
-  .module          { left  : 10em; }
+  .sidebar         { width: 10em; }
+  .module          { left: 10em; }
 
-  .view            { left  : 22em; }
-  .view.fullsize   { left  : 0em;  }
+  .view            { left: 22em; }
+  .view.fullsize   { left: 0em;  }
 
-  .list            { width : 22em; }
+  .list            { width: 22em; }
   .list.list-aside { left: 22em; right: 0; width: auto; }
   .list .header    { border-right: 1px solid; }
 
