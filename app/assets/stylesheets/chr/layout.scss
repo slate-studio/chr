@@ -215,8 +215,8 @@ a        { text-decoration: none; }
 
   .module-categories {
     .list:first-child { right: 0; left: initial; }
-    .list-aside { right: 22em; left: 0; }
-    .list-aside .back { visibility: hidden; }
+    .list.list-aside { right: 22em; left: 0; }
+    .list.list-aside .back { visibility: hidden; }
     .view { right: 22em; left: 0; }
     .view .header { border-right: 1px solid; }
   }

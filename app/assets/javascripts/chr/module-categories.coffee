@@ -26,7 +26,10 @@
 #   new ModuleCategories(config, 'by_channel', postsListConfig)
 # ------------------------------------------------------------------------------
 
-# TODO: fix issue after cancel search button is clicked.
+# TODO:
+# 1. fix issue after cancel search button is clicked
+# 2. fix issue with deep linking to nested list
+# 3. add method of editing rootList document
 
 class @ModuleCategories
   constructor: (config, @scopeParam, @nestedListConfigMethod) ->
