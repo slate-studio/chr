@@ -23,6 +23,15 @@
   overflow-y                 : scroll;
 }
 
+@mixin header-back-icon {
+  @include header-icon-base;
+  left: 0;
+  i { display: inline; }
+  &:before {
+    display: none;
+  }
+}
+
 @mixin header-back-label {
   @include position(absolute, 0 null null 1em);
   width: auto;
@@ -41,7 +50,7 @@
 }
 
 @mixin item-icon-base {
-  @include position(absolute, 50% 0 null null);
+  @include position(absolute, 50% null null null);
   margin-top: -20px;
   line-height: 40px;
   width: 30px;

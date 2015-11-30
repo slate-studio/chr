@@ -11,9 +11,10 @@ $bold: 700 !default;
 $extrabold: 800 !default;
 $black: 900 !default;
 
-$white-color: #fff;
+$white-color: #fff !default;
 
 $base-font-color: #2e2e2e !default;
+$secondary-font-color: rgba($base-font-color, .4) !default;
 $positive-color: #4a87ee !default;
 $assertive-color: #e32e2e !default;
 $border-color: #f1f1f1 !default;
@@ -23,7 +24,7 @@ $sidebar-bg-color: #414d65 !default;
 $sidebar-active-color: $white-color !default;
 $sidebar-active-bg-color: #29354f !default;
 
-$list-bg-color: #fbfbfd !default;
+$bg-color: #fbfbfd !default;
 
 $formagic-base-color: $base-font-color;
 $formagic-positive-color: $positive-color;
@@ -36,6 +37,10 @@ html {
   color: $base-font-color;
 }
 
+body {
+  background-color: $bg-color;
+}
+
 a {
   color: $positive-color;
 }
@@ -43,6 +48,10 @@ a {
 .menu a {
   color: $base-font-color;
   padding: .75em 1em;
+}
+
+.header {
+  background-color: $white-color;
 }
 
 .header .title {
@@ -54,13 +63,9 @@ a {
   font-weight : $semibold;
 }
 
-.header {
-  background-color : rgba(255,255,255,.9);
-}
-
 .spinner {
-  border-color      : rgba($positive-color, 0.2);
-  border-left-color : $positive-color;
+  border-color: rgba($positive-color, 0.2);
+  border-left-color: $positive-color;
 }
 
 .refresh {
@@ -72,11 +77,11 @@ a {
 }
 
 .item {
-  color      : $base-font-color;
-  margin-top : -1px;
+  color: $base-font-color;
+  margin-top: -1px;
   &.active {
-    background-color : $border-color;
-    z-index          : 1;
+    background-color: $border-color;
+    z-index: 1;
   }
 
   @include bottom-border($border-color);
@@ -84,23 +89,35 @@ a {
 }
 
 .item-subtitle {
-  color : rgba($base-font-color, .4);
+  color: $secondary-font-color;
+}
+
+.view {
+  background-color: $bg-color;
+}
+
+.view .header {
+  box-shadow: 0 0 1px rgba(0,0,0,0.15);
+}
+
+.form {
+  max-width: 44em;
+  margin: 0 auto;
 }
 
 .view-delete {
-  display      : block;
-  text-align   : center;
-  margin       : 5em 0;
-  line-height  : 2.5em;
-  color        : $assertive-color;
-  border       : 1px solid $assertive-color;
-  border-left  : none;
-  border-right : none;
+  display: block;
+  text-align: center;
+  margin: 5em 0;
+  line-height: 2.5em;
+  color: $assertive-color;
+  border-top: 1px solid $assertive-color;
+  border-bottom: 1px solid $assertive-color;
 
   &:hover,
   &:active {
-    background-color : $assertive-color;
-    color            : $white-color;
+    background-color: $assertive-color;
+    color: $white-color;
   }
 }
 
@@ -179,9 +196,13 @@ a {
 
 /* Icons ------------------------------------------------------------------- */
 .list-search .search .icon,
-.icon-reorder,
-.icon-folder {
-  color: lighten($base-font-color, 50%);
+.item {
+  .icon-reorder, .icon-folder {
+    color: $secondary-font-color;
+  }
+  .icon-reorder:hover {
+    color: $positive-color;
+  }
 }
 
 .header .back,
@@ -214,34 +235,28 @@ a {
 
   .admin-devise_overrides-passwords,
   .admin-devise_overrides-sessions {
-    background-color: $list-bg-color;
+    background-color: $bg-color;
   }
 
   .signin-modal {
-    background : $white-color;
-    max-width  : 26em;
-    border     : 1px solid $border-color;
-    margin     : 5em auto 1em;
+    background: $white-color;
+    max-width: 26em;
+    margin: 5em auto 1em;
+    box-shadow: 0 0 1px rgba(0,0,0,0.15);
+    border: 1px solid $white-color;
 
     form {
       margin-left: .5em;
     }
   }
 
-  .list {
-    background-color : $list-bg-color;
-    .header {
-      background-color : $list-bg-color;
-    }
-    &.list-aside {
-      background-color : $white-color;
+  .module-categories {
+    .list:first-child {
+      background-color: $bg-color;
       .header {
-        background-color : $white-color;
+        background-color: $bg-color;
       }
     }
-  }
-
-  .module-categories {
     .view .header {
       border-color: $border-color;
     }

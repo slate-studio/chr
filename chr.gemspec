@@ -30,7 +30,7 @@ email client etc. It's responsive by default and designed to be data source inde
 
   s.add_dependency 'rails', Chr::RAILS_VERSION
   s.add_dependency 'coffee-rails', '>= 4.0'
-  s.add_dependency 'formagic', '>= 0.2.8'
+  s.add_dependency 'formagic', '>= 0.3.4'
   s.add_dependency 'jquery-rails'
   s.add_dependency 'sass-rails'
   s.add_dependency 'bourbon'

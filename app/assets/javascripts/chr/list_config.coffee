@@ -39,8 +39,8 @@
       item_type = 'nested_object'
 
       if config.items || config.arrayStore
-        item_type = 'folder'
         @module.addNestedList(slug, config, this)
+        item_type = 'folder'
 
       @_add_item("#{ @path }/#{ slug }", object, 0, config, item_type)
       @_config_items_count += 1

@@ -26,6 +26,11 @@ class @Item
                   data-id='#{ @object._id }'
                   data-path='#{ @path }'>
                </a>"""
+
+    if @type == 'folder'
+      if !@config.showWithParent
+        @$el.addClass 'folder-nested'
+
     @render()
 
 
@@ -77,8 +82,8 @@ class @Item
     @_render_title()
     @_render_subtitle()
 
-    if @type == 'folder'
-      @$el.append $("<div class='icon-folder'>#{Icons.folder}</div>")
+    # if @type == 'folder'
+    @$el.append $("<div class='icon-folder'>#{Icons.folder}</div>")
 
     if @type == 'object'
       @_render_thumbnail()
