@@ -215,6 +215,8 @@ a { text-decoration: none; }
     bottom      : 0;
   }
 
+  .view.fullsize .close { @include header-back-icon; }
+
   .header { @include position(relative); }
 
   .items, .content { @include position(absolute, 41px 0 0 0); @include scrollable(); }
