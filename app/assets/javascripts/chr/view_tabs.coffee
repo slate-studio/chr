@@ -1,17 +1,31 @@
 # -----------------------------------------------------------------------------
+# Author: Alexander Kravets <alex@slatestudio.com>,
+#         Slate Studio (http://www.slatestudio.com)
+# -----------------------------------------------------------------------------
 # VIEW TABS
 # -----------------------------------------------------------------------------
-
+# Example:
+#
+#   viewTabs:
+#     editor: 'Page'
+#     settings: 'Options'
+#   formSchema:
+#     editor:
+#       type: 'group'
+#       inputs:
+#         ...
+#     settings:
+#       type: 'group'
+#       inputs:
+#         ...
+# -----------------------------------------------------------------------------
 @viewTabs =
-
-  # PRIVATE ===============================================
-
+  # PRIVATE ===================================================================
   _build_tabs: ->
     @$title.addClass 'title-with-tabs'
 
     @_create_tabs()
     @_activate_tab(0)
-
 
   _create_tabs: ->
     @tabGroups = []
@@ -27,7 +41,6 @@
       @tabGroups.push(groupsHash[tab_id])
       @$tabs.append(@_create_button(tab_title))
 
-
   _create_button: (name) ->
     $tabButton =$ "<a href='#'>#{ name }</a>"
     $tabButton.on 'click', (e) =>
@@ -35,11 +48,9 @@
       e.preventDefault()
     return $tabButton
 
-
   _on_tab_click: ($link) ->
     index = @$tabs.children().index($link)
     @_activate_tab(index)
-
 
   _activate_tab: (index) ->
     @$tabs.children().removeClass('active')
