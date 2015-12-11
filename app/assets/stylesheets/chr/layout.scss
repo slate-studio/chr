@@ -94,9 +94,9 @@ a { text-decoration: none; }
 
 
 .item.has-subtitle { padding: 0.6em 2em 0.6em 1em; }
-.item.has-thumbnail { padding-left: 4.1em; }
+.item.has-thumbnail { padding-left: 4.5em; }
 .item.has-thumbnail .item-title { line-height: 2.15; }
-.item.has-thumbnail.has-subtitle { padding: 1em 2em .75em 4.1em; }
+.item.has-thumbnail.has-subtitle { padding: 1em 2em .75em 4.5em; }
 .item.has-thumbnail.has-subtitle .item-title { line-height : 1.2; }
 
 .item.reorderable {
@@ -106,9 +106,13 @@ a { text-decoration: none; }
   }
 }
 
-.item-title         { @include ellipsis; display: block; }
-.item-subtitle      { @include ellipsis; font-size: .8em; }
-.item-thumbnail     { @include position(absolute, .5em 0 0 .5em); width: 3.1em; height: 3.1em; }
+.item-title { @include ellipsis; display: block; }
+.item-subtitle { @include ellipsis; font-size: .8em; }
+.item-thumbnail {
+  @include position(absolute, 0.75em null null 1.5em);
+  width: 2.5em;
+  height: 2.5em;
+}
 .item-thumbnail img { width: 100%; border-radius: 1.55em; }
 
 /* Search ------------------------------------------------------------------ */
