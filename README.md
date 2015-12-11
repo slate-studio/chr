@@ -15,13 +15,17 @@ Then run:
 
 This will create a Rails app in `projectname` using the latest version of Rails with character CMS integrated.
 
-Go to created project folder, run `bin/setup` and start development server with `rails s`. Go to `localhost:3000/admin` and login with `user@example.com/password`. You see default character initial configuration, it gives `file uploader`, `admins` and `redirects` modules out of the box as shown on screenshot below.
+Go to the created project folder. To create an admin user, open a rails console with `rails c` and execute the following line :
+
+    AdminUser.create(email: 'admin@example.com', password: 'password', name: 'admin')
+
+Start the development server with `rails s`. Go to `localhost:3000/admin` and login with the credentials you used above. You see default character initial configuration, it gives `file uploader`, `admins` and `redirects` modules out of the box as shown on screenshot below.
 
 ![Default Character Setup Demo](https://raw.github.com/slate-studio/chr/master/docs/demo.png)
 
 Project is ready to deploy to [Heroku](https://www.heroku.com). Take a look at projects `README.md` to add plugins, create S3 bucket and setup `ENV` settings required to run the app. After deploy first admin has to be created via `heroku run console`:
 
-    Admin.create(email: 'admin@example.com', password: 'password')
+    AdminUser.create(email: 'admin@example.com', password: 'password', name: 'admin')
 
 
 ## Connect Models
