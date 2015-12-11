@@ -37,10 +37,6 @@ html {
   color: $base-font-color;
 }
 
-body {
-  background-color: $bg-color;
-}
-
 a {
   color: $positive-color;
 }
@@ -158,10 +154,6 @@ a {
     padding    : 0 1em;
   }
 
-  .alert {
-    color : $assertive-color;
-  }
-
   h2 {
     text-align : center;
     font-size  : 1em;
@@ -213,6 +205,10 @@ a {
 
 /* Layouts ----------------------------------------------------------------- */
 @media #{$tablet} {
+  body {
+    background-color: $bg-color;
+  }
+
   .sidebar {
     background-color: $sidebar-bg-color;
   }
