@@ -115,10 +115,8 @@ class @Chr
     @_bind_hashchange()
     @_on_start()
 
-
   showAlert: (message) ->
     console.log 'Alert: ' + message
-
 
   showError: (message) ->
     alert 'Error: ' + message
