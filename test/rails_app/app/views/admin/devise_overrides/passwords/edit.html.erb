@@ -1,0 +1,31 @@
+<% set_meta_tags title: "Change Password" %>
+
+<div class='signin-modal'>
+  <h2>Change password</h2>
+  <p class='notice'><%= notice %></p>
+  <p class='alert'><%= alert %></p>
+
+  <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+    <%= f.hidden_field :reset_password_token %>
+
+    <label for='admin_user_password' class='form-input input-required input-string'>
+      <div class='label'>
+        New password
+        <% if @minimum_password_length %>
+          <em>(<%= @minimum_password_length %> characters minimum)</em>
+        <% end %>
+      </div>
+      <%= f.password_field :password, autocomplete: "off", tabindex: 1 %>
+    </label>
+
+    <label for='admin_user_password_confirmation' class='form-input input-required input-string'>
+      <div class='label'>Confirm new password</div>
+      <%= f.password_field :password_confirmation, autocomplete: "off", tabindex: 2 %>
+    </label>
+
+    <%= devise_error_messages! %>
+
+    <%= f.submit "Change password", tabindex: 3 %>
+    <%= link_to "Sign In", new_session_path(resource_name) %>
+  <% end %>
+</div>

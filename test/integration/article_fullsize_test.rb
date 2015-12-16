@@ -1,22 +1,22 @@
   #-------------------------------------------------------------------------------------
-  
+
   ## Config
 
   # disableNewItems:  true - do not show new item button in list header
   # showWithParent:   true - show list on a aside from parent
-  # disableFormCache: true 
+  # disableFormCache: true
   # searchable:       true - add search button
   # reorderable:      true - permit reorder items
   # disableDelete:    true - do not add delete button below the form
-  # disableSave:      true - do not add save button in header    
+  # disableSave:      true - do not add save button in header
   # fullsizeView:     true - use fullsize layout in desktop mode
   # urlParams:        Article.sport_articles  - additional parameter to be included into request
   # sortReverse:      true - reverse objects sorting (descending order), default: false
-  
+
   # compoundModule:   true - add this, if module is compound (add extra test)
   # pagination:       true - add this, if there are many objects (add extra test)
   # uploaderImage:    true - run tests, for checking uploader
-  
+
   #-------------------------------------------------------------------------------------
 
 require 'test_helper'

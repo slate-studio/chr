@@ -2,7 +2,7 @@
 # indicated Ruby runtime
 language: ruby
 rvm:
-- 2.2.2
+- 2.2.3
 
 # Make Travis CI to start the MongoDB service on boot
 services:
@@ -14,5 +14,5 @@ notifications:
 before_install:
   - sh -c 'if [ -n "$QMAKE" ]; then sudo apt-add-repository -y ppa:ubuntu-sdk-team/ppa && sudo apt-get update && sudo apt-get install libqt5webkit5-dev qtdeclarative5-dev; fi'
 
-script: 
+script:
   - xvfb-run rake test

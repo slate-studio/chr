@@ -9,7 +9,8 @@ require "action_controller/railtie"
 require "action_mailer/railtie"
 require "action_view/railtie"
 require "sprockets/railtie"
-require "rails/test_unit/railtie"
+# require "devise"
+# require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -19,8 +20,17 @@ FactoryGirl.definition_file_paths << Pathname.new("../factories")
 FactoryGirl.definition_file_paths.uniq!
 FactoryGirl.find_definitions
 
+
 module RailsApp
   class Application < Rails::Application
+
+      config.generators do |generate|
+        generate.helper false
+        generate.javascript_engine false
+        generate.stylesheets false
+      end
+
+    config.action_controller.action_on_unpermitted_parameters = :raise
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -34,3 +44,4 @@ module RailsApp
     # config.i18n.default_locale = :de
   end
 end
+Mongo::Logger.logger.level = Logger::INFO

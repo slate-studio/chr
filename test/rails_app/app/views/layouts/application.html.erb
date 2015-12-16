@@ -1,14 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>RailsApp</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <meta charset="utf-8" />
+  <meta name="ROBOTS" content="NOODP" />
+  <meta name="viewport" content="initial-scale=1" />
+
+  <%#
+    Configure default meta tags values, for more details see:
+    https://github.com/kpumuk/meta-tags
+  %>
+  <%= display_meta_tags site:        'rails_app',
+                        description: '',
+                        og: { site_name:   'rails_app',
+                              url:         '',
+                              title:       '',
+                              description: '',
+                              type:        'website',
+                              image:       '' } %>
+
+  <%= stylesheet_link_tag :application, media: "all" %>
   <%= csrf_meta_tags %>
 </head>
-<body>
-
-<%= yield %>
-
+<body class="<%= body_class %>">
+  <%= render "flashes" -%>
+  <%= yield %>
+  <%= render "javascript" %>
 </body>
 </html>

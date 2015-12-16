@@ -7,7 +7,7 @@ module CharacterViewTest
       wait_for_ajax
       # Select Module
       select_last_module_from_list(list_of_modules)
-      # Select Item 
+      # Select Item
       find("div.item-title", :text => instance_of_class.title).click
       wait_for_ajax
       assert page.has_css?("section.view.#{list_of_modules.last}")
@@ -36,7 +36,7 @@ module CharacterViewTest
       wait_for_ajax
       # Select Module
       select_last_module_from_list(list_of_modules)
-      # Click "+" 
+      # Click "+"
       get_path_from_modules_list(list_of_modules)
       find("a[href='##{@path}/new']").click
       find('label.input-title input').set("10 ways to lose weight")
@@ -54,6 +54,7 @@ module CharacterViewTest
       count_of_objects = class_name.count
       show_form_of_item(list_of_modules, instance_of_class.id)
       find_link('Delete').click
+      page.driver.browser.switch_to.alert.accept
       wait_for_ajax
       assert_not page.has_content?(instance_of_class.title)
       assert_equal count_of_objects - 1, class_name.count
@@ -66,7 +67,7 @@ module CharacterViewTest
       instance_of_class = FactoryGirl.create(factory_name)
       show_form_of_item(list_of_modules, instance_of_class.id)
       get_path_from_modules_list(list_of_modules)
-      find("a[href='##{@path}']", :text => 'Close').click
+      find("a[href='##{@path}'].close").click
       wait_for_ajax
       assert_not page.has_css?("section.view.#{list_of_modules.last}")
     end

@@ -10,7 +10,3 @@ class ArticleImageUploader < CarrierWave::Uploader::Base
   end
 
 end
-
-
-
-
