@@ -1,4 +1,5 @@
 # Character [![Build Status](https://travis-ci.org/slate-studio/chr.svg?branch=master)](https://travis-ci.org/slate-studio/chr)
+[![Code Climate](https://codeclimate.com/github/slate-studio/chr/badges/gpa.svg)](https://codeclimate.com/github/slate-studio/chr)
 
 Character is powerful responsive javascript-based CMS for website and applications used by [Slate Studio](https://www.slatestudio.com).
 
