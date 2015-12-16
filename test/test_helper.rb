@@ -24,10 +24,14 @@ DatabaseCleaner.clean_with(:truncation)
 Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
 
 # Capybara
-Capybara.default_driver             = :webkit
+Capybara.default_driver             = :selenium
+# Capybara.default_driver             = :webkit
 Capybara.default_max_wait_time      = 10
 Capybara::Screenshot.prune_strategy = :keep_last_run
 
+# Capybara.register_driver :selenium_chrome do |app|
+#   Capybara::Selenium::Driver.new(app, :browser => :chrome)
+# end
 
 class ActiveSupport::TestCase
   def setup
@@ -39,12 +43,13 @@ class ActiveSupport::TestCase
   end
 
   def wait_for_ajax
-    Timeout.timeout(Capybara.default_wait_time) do
-      loop do
-        active = page.evaluate_script('$.active').to_i
-        break if active == 0
-      end
-    end
+    sleep 1
+    # Timeout.timeout(Capybara.default_wait_time) do
+    #   loop do
+    #     active = page.evaluate_script('$.active').to_i
+    #     break if active == 0
+    #   end
+    # end
   end
 
   # Add more helper methods to be used by all tests here...
@@ -63,5 +68,6 @@ class ActionDispatch::IntegrationTest
     Capybara.reset_sessions!
     Capybara.use_default_driver
     DatabaseCleaner.clean
+    page.driver.quit()
   end
 end

@@ -1,5 +1,5 @@
   #-------------------------------------------------------------------------------------
-  
+
   ## Config
 
   # disableNewItems:  true - do not show new item button in list header
@@ -8,7 +8,7 @@
   # searchable:       true - add search button
   # reorderable:      true - permit reorder items
   # disableDelete:    true - do not add delete button below the form
-  # disableSave:      true - do not add save button in header    
+  # disableSave:      true - do not add save button in header
   # fullsizeView:     true - use fullsize layout in desktop mode
   # urlParams:        Article.sport_articles  - additional parameter to be included into request
   # sortReverse:      true - reverse objects sorting (descending order), default: false

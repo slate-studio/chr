@@ -28,7 +28,7 @@ module CharacterPaginationTest
       select_last_module_from_list(list_of_modules)
       list_of_modules -= [list_of_modules.last]
       get_path_from_modules_list(list_of_modules)
-      find("a[href='##{@path}'].back", :text => 'Close').click
+      find("a[href='##{@path}'].back").click
       wait_for_ajax
       assert_not page.has_css?("a[data-id='#{instance_of_class.id}']")
     end
@@ -53,11 +53,11 @@ module CharacterPaginationTest
     end
   end
 
- 
+
   def chage_position_to_end_and_check_pagination(factory_name, class_name, list_of_modules)
     # If Module without disableFormCache need add reload page after "save"
     test 'Change Position to the End and Check Pagination' do
-      create_per_page_plus_n_objects(2, factory_name)      
+      create_per_page_plus_n_objects(2, factory_name)
       show_form_of_item(list_of_modules, @first_item.id)
       find('label.input-_position input').set(@last_item._position + 5)
       find_link('Save').click
@@ -92,7 +92,7 @@ module CharacterPaginationTest
 
   def chage_position_to_begin_and_check_pagination(factory_name, class_name, list_of_modules)
     test 'Change Position to Begin and Check Pagination' do
-      create_per_page_plus_n_objects(2, factory_name)      
+      create_per_page_plus_n_objects(2, factory_name)
       show_form_of_item(list_of_modules, @last_item.id)
       assert_not page.has_css?("a[data-id='#{@last_item.id}']")
       find('label.input-_position input').set(@first_item._position - 5)
@@ -111,11 +111,11 @@ module CharacterPaginationTest
 
   def create_first_item_and_check_pagination(factory_name, class_name, list_of_modules)
     test 'Create First Item and Check Pagination' do
-      create_per_page_plus_n_objects(2, factory_name)      
+      create_per_page_plus_n_objects(2, factory_name)
       visit('/admin')
       wait_for_ajax
       select_last_module_from_list(list_of_modules)
-      # Click "+" 
+      # Click "+"
       get_path_from_modules_list(list_of_modules)
       find("a[href='##{@path}/new']").click
       find('label.input-title input').set("10 ways to lose weight")
@@ -137,11 +137,11 @@ module CharacterPaginationTest
 
   def create_last_item_on_page_and_check_pagination(factory_name, class_name, list_of_modules)
     test 'Create Last Item to Page and Check Pagination' do
-      create_per_page_plus_n_objects(2, factory_name)      
+      create_per_page_plus_n_objects(2, factory_name)
       visit('/admin')
       wait_for_ajax
       select_last_module_from_list(list_of_modules)
-      # Click "+" 
+      # Click "+"
       get_path_from_modules_list(list_of_modules)
       find("a[href='##{@path}/new']").click
       find('label.input-title input').set("10 ways to lose weight")

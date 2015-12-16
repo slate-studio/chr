@@ -39,8 +39,6 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
-    Rails.application.configure do
-    config.active_support.test_order = :sorted
-  end
 
+  config.action_mailer.default_url_options = { host:  "www.example.com"  }
 end

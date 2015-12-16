@@ -1,0 +1,29 @@
+<% set_meta_tags title: "Sing in" %>
+
+<div class='signin-modal'>
+  <h2>Sign in</h2>
+  <p class='notice'><%= notice %></p>
+  <p class='alert'><%= alert %></p>
+
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <label for='admin_user_email' class='form-input input-required input-string'>
+      <div class='label'>Email</div>
+      <%= f.email_field :email, autofocus: true, tabindex: 1 %>
+    </label>
+
+    <label for='admin_user_password' class='form-input input-required input-string'>
+      <div class='label'>Password <%= link_to 'Forgot?', new_password_path(resource_name) %></div>
+      <%= f.password_field :password, autocomplete: "off", tabindex: 2 %>
+    </label>
+
+    <label for='admin_user_remember_me' class='form-input input-switch'>
+      <div class='switch'>
+        <%= f.check_box :remember_me, tabindex: 3 %>
+        <div class='checkbox'></div>
+      </div>
+      <span class='label'>Remember me</span>
+    </label>
+
+    <%= f.submit "Sign in", tabindex: 4 %>
+  <% end %>
+</div>

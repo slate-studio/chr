@@ -40,7 +40,3 @@ class Article
   end
 
 end
-
-
-
-

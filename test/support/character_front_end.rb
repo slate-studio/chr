@@ -48,7 +48,7 @@ module CharacterFrontEnd
     show_item(factory_name, list_of_modules)
     open_item_and_close(factory_name, list_of_modules)
     add_class_active(factory_name, list_of_modules)
-    
+
     if config[:disableNewItems]
       disable_new_item(factory_name, list_of_modules)
     else
@@ -58,7 +58,7 @@ module CharacterFrontEnd
       end
       add_item(factory_name, class_name, list_of_modules)
     end
-    
+
     if config[:showWithParent]
       show_with_parent(factory_name, list_of_modules)
     end
@@ -92,15 +92,15 @@ module CharacterFrontEnd
       end
       chage_title(factory_name, class_name, list_of_modules)
     end
-      
-    if config[:fullsizeView]  
+
+    if config[:fullsizeView]
       fullsize_view(factory_name, list_of_modules)
     end
 
     if config[:compoundModule]
       click_back(factory_name, list_of_modules)
     end
-      
+
     if config[:pagination]
       pagination(factory_name, class_name, list_of_modules)
     end
@@ -120,7 +120,7 @@ module CharacterFrontEnd
       remove_image(factory_name, list_of_modules)
     end
 
-  end 
+  end
 
       # save_and_open_screenshot
 
@@ -130,7 +130,7 @@ module CharacterFrontEnd
       @path = ''
       list_of_modules.each do |module_name|
         @path += '/' + module_name
-      end 
+      end
     end
 
 
@@ -154,7 +154,7 @@ module CharacterFrontEnd
     def create_n_objects(count, factory_name)
       @instances_of_class = []
       n = 0
-      count.times do 
+      count.times do
       @instances_of_class[n] = FactoryGirl.create(factory_name)
       n += 1
       end
@@ -163,7 +163,7 @@ module CharacterFrontEnd
 
     def create_per_page_plus_n_objects(n, factory_name)
       y                        =  current_window.size[1]
-      @items_per_page          = ((y+50)/60)*2
+      @items_per_page          = ((y)/60)*2
       @loaded_items            = @items_per_page
       create_n_objects(@items_per_page+n, factory_name)
       @first_item              = @instances_of_class.first
@@ -183,6 +183,7 @@ module CharacterFrontEnd
       source = find("a[data-id='#{from.id}']").find("div.icon-reorder")
       target = find("a[data-id='#{to.id}']").find("div.icon-reorder")
       source.drag_to(target)
+      # page.driver.browser.action.drag_and_drop(source.native, target.native).perform
       wait_for_ajax
     end
 
