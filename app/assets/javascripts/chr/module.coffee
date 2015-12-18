@@ -19,7 +19,6 @@
 #   destroyView ()
 #   show ()
 #   hide ()
-#
 # -----------------------------------------------------------------------------
 class @Module
   constructor: (@chr, @name, @config) ->
@@ -36,17 +35,14 @@ class @Module
     @menuTitle ?= @name.titleize()
     @menuIcon   = @config.menuIcon
 
-
-  # PUBLIC ================================================
+  # PUBLIC ====================================================================
 
   onModuleInit: ->
     @config.onModuleInit?(this)
 
-
   addNestedList: (name, config, parentList) ->
     path = [ parentList.path, name ].join('/')
     @nestedLists[name] = new List(this, path, name, config, parentList)
-
 
   showList: (name) ->
     if ! name # show root list, hide all nested
@@ -57,28 +53,19 @@ class @Module
 
     @activeList.show()
 
-
   showView: (objectId, config) ->
     @view = new View(this, config, @activeList.path, @activeList.name)
     @$el.append(@view.$el)
     @view.show(objectId)
 
-
   show: ->
     @$el.show()
     @showList()
-
 
   hide: ->
     @destroyView()
     @$el.hide()
 
-
   destroyView: ->
     @view?.destroy()
     @view = null
-
-
-
-
-

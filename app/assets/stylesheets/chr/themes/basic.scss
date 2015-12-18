@@ -120,6 +120,7 @@ a {
   border : 1px solid $positive-color;
 
   a {
+    background-color: $white-color;
     border-right : 1px solid $positive-color;
     font-weight  : $regular;
     line-height  : 1;
@@ -132,10 +133,10 @@ a {
     }
 
     &.active {
-      background-color : $positive-color;
-      color            : $white-color;
+      background-color: $positive-color;
+      color: $white-color;
       &:hover {
-        color : $white-color;
+        color: $white-color;
       }
     }
   }
@@ -198,8 +199,12 @@ a {
 
 .header .back,
 .header .close {
+  color: $secondary-font-color;
   &:before {
     content: 'Close';
+  }
+  &:hover {
+    color: $base-font-color;
   }
 }
 

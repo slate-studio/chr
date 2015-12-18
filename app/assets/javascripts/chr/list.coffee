@@ -1,15 +1,9 @@
 # -----------------------------------------------------------------------------
 # Author: Alexander Kravets <alex@slatestudio.com>,
 #         Slate Studio (http://www.slatestudio.com)
-#
-# Coding Guide:
-#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
-# -----------------------------------------------------------------------------
-
 # -----------------------------------------------------------------------------
 # LIST
 # -----------------------------------------------------------------------------
-#
 # Configuration options:
 #   title              - list title
 #   subtitle           - list subtitle
@@ -23,6 +17,7 @@
 #   onListShow         - callback on list is shown
 #   objects            - objects array to be added to the store on start
 #   showWithParent     - show list on a aside from parent
+#   listTabs           - hash with tab names and extra url parameters
 #
 # Public methods:
 #   showSpinner()
@@ -31,13 +26,14 @@
 #   show()        - show list
 #   updateItems() - update list items (sync through store with backend)
 #   isVisible()   - check if list is visible
+#   selectTab(name, resestList) - select list tab
 #
 # Dependencies:
 #= require ./list_config
 #= require ./list_pagination
 #= require ./list_reorder
 #= require ./list_search
-#
+#= require ./list_tabs
 # -----------------------------------------------------------------------------
 
 class @List
@@ -91,7 +87,7 @@ class @List
 
     @config.onListInit?(@)
 
-  # PRIVATE ===============================================
+  # PRIVATE ===================================================================
 
   _add_refresh: ->
     @$refreshBtn =$ """<a href='#' class='refresh'>
@@ -115,25 +111,21 @@ class @List
             if hash.startsWith(p)
               return $a.addClass('active')
 
-  # PUBLIC ================================================
+  # PUBLIC ====================================================================
 
   showSpinner: ->
     @$el.addClass('show-spinner')
 
-
   hideSpinner: ->
     @$el.removeClass('show-spinner')
 
-
   hide: ->
     @$el.hide()
-
 
   show: (callback) ->
     @$el.show 0, =>
       @config.onListShow?(@)
       callback?()
-
 
   updateItems: ->
     if not @config.disableUpdateItems
@@ -142,12 +134,8 @@ class @List
         @$items.scrollTop(0)
         @config.arrayStore.reset()
 
-
 include(List, listConfig)
 include(List, listPagination)
 include(List, listReorder)
 include(List, listSearch)
-
-
-
-
+include(List, listTabs)

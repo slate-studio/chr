@@ -165,9 +165,8 @@ a { text-decoration: none; }
 .header-tabs {
   @include position(relative, 0.45em null null null);
   border-radius : 4px;
-  overflow      : hidden;
-  display       : inline-block;
-  z-index       : 1;
+  overflow: hidden;
+  display: inline-block;
 
   a { display : inline-block; }
 }

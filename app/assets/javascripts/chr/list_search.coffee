@@ -1,10 +1,9 @@
 # -----------------------------------------------------------------------------
 # LIST SEARCH
 # -----------------------------------------------------------------------------
-
 @listSearch =
 
-  # PRIVATE ===============================================
+  # PRIVATE ===================================================================
 
   _bind_search: ->
     @$search       =$ "<div class='search'></div>"
@@ -27,27 +26,20 @@
     @$searchIcon.on   'click', (e) => e.preventDefault() ; @_on_search_show()
     @$searchCancel.on 'click', (e) => e.preventDefault() ; @_on_search_cancel()
 
-
-  # EVENTS ================================================
+  # EVENTS ====================================================================
 
   _on_search: ->
     query = @$searchInput.val()
     @showSpinner()
     @config.arrayStore.search(query)
 
-
   _on_search_show: ->
     @$el.addClass('list-search')
     @$searchInput.focus()
     @$search.show()
-
 
   _on_search_cancel: ->
     @$el.removeClass('list-search')
     @$searchInput.val('')
     @showSpinner()
     @config.arrayStore.reset()
-
-
-
-

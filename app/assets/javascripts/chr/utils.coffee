@@ -1,11 +1,6 @@
 # -----------------------------------------------------------------------------
 # Author: Alexander Kravets <alex@slatestudio.com>,
 #         Slate Studio (http://www.slatestudio.com)
-#
-# Coding Guide:
-#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
-# -----------------------------------------------------------------------------
-
 # -----------------------------------------------------------------------------
 # UTILS
 # -----------------------------------------------------------------------------
@@ -58,7 +53,6 @@ if typeof String.prototype.endsWith != 'function'
 # String.plainText
 if typeof String.prototype.plainText != 'function'
   String.prototype.plainText = () -> return $("<div>#{ this }</div>").text()
-
 
 # -----------------------------------------------------------------------------
 # Mixins: http://arcturo.github.io/library/coffeescript/03_classes.html

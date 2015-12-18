@@ -1,18 +1,13 @@
 # -----------------------------------------------------------------------------
 # Author: Alexander Kravets <alex@slatestudio.com>,
 #         Slate Studio (http://www.slatestudio.com)
-#
-# Coding Guide:
-#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
-# -----------------------------------------------------------------------------
-
 # -----------------------------------------------------------------------------
 # CHARACTER ROUTER
 # -----------------------------------------------------------------------------
 
 @chrRouter =
 
-  # PRIVATE ===============================================
+  # PRIVATE ===================================================================
 
   # format: #/<module>[/<list>]+[/new]OR[/view/<objectId>]
   _parse_path: ->
@@ -60,7 +55,6 @@
         params.config         = parentList.config.items[nestedViewName]
 
     return params
-
 
   _route: ->
     params = @_parse_path()
@@ -113,7 +107,6 @@
       if update_active_list_items
         @module.activeList.updateItems()
 
-
     params.config ?= @module.activeList.config
 
     # show view
@@ -122,8 +115,7 @@
 
     @mobileListLock(params.showView)
 
-
-  # PUBLIC ================================================
+  # PUBLIC ====================================================================
 
   mobileListLock: (showView) ->
     if chr.isMobile()
@@ -135,7 +127,3 @@
       if ! showView
         @module.activeList.$el.removeClass('scroll-lock')
         $(window).scrollTop( @module.activeList.scrollCache ? 0)
-
-
-
-

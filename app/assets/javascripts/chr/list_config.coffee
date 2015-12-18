@@ -1,13 +1,11 @@
-
 # -----------------------------------------------------------------------------
 # LIST CONFIG
 # Methods for processing:
 #   - @config.items
 #   - @config.arrayStore
 # -----------------------------------------------------------------------------
-
 @listConfig =
-  # PRIVATE ===============================================
+  # PRIVATE ===================================================================
 
   _add_item: (path, object, position, config, type) ->
     if type == 'folder'
@@ -18,7 +16,6 @@
     @items[object._id] = item
     @_update_item_position(item, position)
 
-
   _update_item_position: (item, position) ->
     # skip static items in the head of list
     position = @_config_items_count + position
@@ -27,7 +24,6 @@
     else
       @$items.append(item.$el.hide())
       $(@$items.children()[position - 1]).after(item.$el.show())
-
 
   _process_config_items: ->
     for slug, config of @config.items
@@ -45,11 +41,9 @@
       @_add_item("#{ @path }/#{ slug }", object, 0, config, item_type)
       @_config_items_count += 1
 
-
   _bind_config_array_store: ->
     # item added
     @config.arrayStore.on 'object_added', (e, data) =>
-
       @_add_item("#{ @path }/view/#{ data.object._id }", data.object, data.position, @config, 'object')
 
     if @config.objects
@@ -79,6 +73,5 @@
     if @config.arrayStore.reorderable
       @_bind_reorder()
 
-
-
-
+    if @config.listTabs
+      @_bind_tabs()

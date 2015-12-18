@@ -1,15 +1,9 @@
 # -----------------------------------------------------------------------------
 # Author: Alexander Kravets <alex@slatestudio.com>,
 #         Slate Studio (http://www.slatestudio.com)
-#
-# Coding Guide:
-#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
-# -----------------------------------------------------------------------------
-
 # -----------------------------------------------------------------------------
 # LIST ITEM
 # -----------------------------------------------------------------------------
-#
 # config options:
 #   onItemRender
 #
@@ -17,7 +11,6 @@
 #   render()
 #   destroy()
 #   position()
-#
 # -----------------------------------------------------------------------------
 class @Item
   constructor: (@module, @path, @object, @config, @type) ->
@@ -33,8 +26,7 @@ class @Item
 
     @render()
 
-
-  # PRIVATE ===============================================
+  # PRIVATE ===================================================================
 
   _render_title: ->
     title  = @object.__title__ # title for @config.items
@@ -45,7 +37,6 @@ class @Item
 
     @$title =$ "<div class='item-title'>#{ title }</div>"
     @$el.append(@$title)
-
 
   _render_subtitle: ->
     subtitle = @object.__subtitle__ # subtitle for @config.items
@@ -60,7 +51,6 @@ class @Item
       @$el.append(@$subtitle)
       @$el.addClass 'has-subtitle'
 
-
   _render_thumbnail: ->
     imageUrl  = @config.itemThumbnail?(@object)
     imageUrl ?= @object[@config.itemThumbnail]
@@ -73,8 +63,7 @@ class @Item
         @$el.append(@$thumbnail)
         @$el.addClass 'has-thumbnail'
 
-
-  # PUBLIC ================================================
+  # PUBLIC ====================================================================
 
   render: ->
     @$el.html('').removeClass('has-subtitle has-thumbnail')
@@ -95,15 +84,9 @@ class @Item
     if @type == 'object'
       @config.onItemRender?(this)
 
-
   destroy: ->
     @$el.remove()
-
 
   position: ->
     positionFieldName = @config.arrayStore.sortBy
     parseFloat(@object[positionFieldName])
-
-
-
-

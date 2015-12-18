@@ -2,8 +2,6 @@
 # Author: Alexander Kravets <alex@slatestudio.com>,
 #         Slate Studio (http://www.slatestudio.com)
 # ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
 # MODULE CATEGORIES
 # ------------------------------------------------------------------------------
 # This is helper to implement UI for has many relations with an option to edit

@@ -1,15 +1,9 @@
 # -----------------------------------------------------------------------------
 # Author: Alexander Kravets <alex@slatestudio.com>,
 #         Slate Studio (http://www.slatestudio.com)
-#
-# Coding Guide:
-#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
-# -----------------------------------------------------------------------------
-
 # -----------------------------------------------------------------------------
 # REST ARRAY STORE
 # -----------------------------------------------------------------------------
-#
 # Config options:
 #   pagination  - enable pagination for resource index, default `true`
 #   searchable  - enable resource search, default `false`
@@ -23,21 +17,22 @@
 #   push
 #   update
 #   remove
-#
+#   filter
 # -----------------------------------------------------------------------------
 class @RestArrayStore extends ArrayStore
 
-  # PRIVATE ===============================================
+  # PRIVATE ===================================================================
 
   _initialize_store: ->
-    @dataFetchLock  = false
+    @dataFetchLock = false
     @lastPageLoaded = false
 
-    @searchable     = @config.searchable ? false
-    @searchQuery    = ''
+    @searchable = @config.searchable ? false
+    @searchQuery = ''
+    @filterParams = {}
 
-    @pagination     = @config.pagination ? true
-    @nextPage       = 1
+    @pagination = @config.pagination ? true
+    @nextPage = 1
     @objectsPerPage = chr.itemsPerPageRequest ? 20
 
     @requestParams ?=
@@ -47,16 +42,13 @@ class @RestArrayStore extends ArrayStore
 
     @_configure_store()
 
-
   _configure_store: ->
     @ajaxConfig = {}
-
 
   # generate rest url for resource
   _resource_url: (type, id) ->
     objectPath = if id then "/#{ id }" else ''
     "#{ @config.path }#{ objectPath }"
-
 
   _request_url: (type, id) ->
     url = @_resource_url(type, id)
@@ -66,7 +58,6 @@ class @RestArrayStore extends ArrayStore
       url = "#{ url }?#{ extraParamsString }"
 
     return url
-
 
   # do requests to database api
   _ajax: (type, id, data, success, error) ->
@@ -83,7 +74,6 @@ class @RestArrayStore extends ArrayStore
 
     @dataFetchLock = true
     $.ajax options
-
 
   # check how this works with sorting enabled
   _sync_with_data_objects: (objects) ->
@@ -109,7 +99,6 @@ class @RestArrayStore extends ArrayStore
     for id in updateDataObjectIds
       @_update_data_object(id, objectsMap[id])
 
-
   # update next page counter and check if the last page was loaded
   _update_next_page: (data) ->
     if @pagination
@@ -123,17 +112,14 @@ class @RestArrayStore extends ArrayStore
       else
         @lastPageLoaded = true
 
-
   _is_pagination_edge_case: ->
     ( @pagination && @lastPageLoaded == false )
-
 
   _reload_current_page: (callbacks) ->
     @nextPage -= 1
     @load(true, callbacks)
 
-
-  # PUBLIC ================================================
+  # PUBLIC ====================================================================
 
   # load a single object
   loadObject: (id, callbacks={}) ->
@@ -145,7 +131,6 @@ class @RestArrayStore extends ArrayStore
       callbacks.onSuccess(object)
     ), callbacks.onError
 
-
   # load next page objects from database and trigger 'objects_added' event
   load: (sync=false, callbacks={}) ->
     callbacks.onSuccess ?= $.noop
@@ -154,11 +139,15 @@ class @RestArrayStore extends ArrayStore
     params = {}
 
     if @pagination
-      params[@requestParams.page]    = @nextPage
+      params[@requestParams.page] = @nextPage
       params[@requestParams.perPage] = @objectsPerPage
 
     if @searchable && @searchQuery.length > 0
-      params[@requestParams.search]  = @searchQuery
+      params[@requestParams.search] = @searchQuery
+
+    else
+      # apply filter params if there is no search query
+      $.extend(params, @filterParams)
 
     params = $.param(params)
 
@@ -175,18 +164,22 @@ class @RestArrayStore extends ArrayStore
       $(this).trigger('objects_added', { objects: data })
     ), -> chr.showError('Error while loading data, application error 500.')
 
+  # reset data and load again first page, this method is used by filters and
+  # search. when search is canceled it should keep previously set filter params
+  reset: (@searchQuery='', filterParams) ->
+    if filterParams
+      @filterParams = filterParams
 
-  # reset data and load again first page
-  reset: (@searchQuery='') ->
     @lastPageLoaded = false
-    @nextPage       = 1
+    @nextPage = 1
     @load(true)
-
 
   # load search results first page
   search: (searchQuery) ->
     @reset(searchQuery)
 
+  filter: (filterParams) ->
+    @reset('', filterParams)
 
   # add new object
   push: (serializedFormObject, callbacks={}) ->
@@ -206,7 +199,6 @@ class @RestArrayStore extends ArrayStore
       callbacks.onSuccess(data)
 
     ), callbacks.onError
-
 
   # update objects attributes
   update: (id, serializedFormObject, callbacks={}) ->
@@ -232,7 +224,6 @@ class @RestArrayStore extends ArrayStore
 
     ), callbacks.onError
 
-
   # delete object
   remove: (id, callbacks={}) ->
     callbacks.onSuccess ?= $.noop
@@ -249,7 +240,3 @@ class @RestArrayStore extends ArrayStore
         callbacks.onSuccess()
 
     ), callbacks.onError
-
-
-
-

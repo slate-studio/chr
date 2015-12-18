@@ -1,15 +1,9 @@
 # -----------------------------------------------------------------------------
 # Author: Alexander Kravets <alex@slatestudio.com>,
 #         Slate Studio (http://www.slatestudio.com)
-#
-# Coding Guide:
-#   https://github.com/thoughtbot/guides/tree/master/style/coffeescript
-# -----------------------------------------------------------------------------
-
 # -----------------------------------------------------------------------------
 # CHARACTER
 # -----------------------------------------------------------------------------
-#
 # Public attributes:
 #   modules
 #   formInputs
@@ -24,7 +18,6 @@
 #
 # Dependencies:
 #= require ./chr_router
-#
 # -----------------------------------------------------------------------------
 class @Chr
   constructor: ->
@@ -33,8 +26,7 @@ class @Chr
 
     @itemsPerPageRequest = Math.ceil($(window).height() / 60) * 2
 
-
-  # PRIVATE ===============================================
+  # PRIVATE ===================================================================
 
   _unset_active_items: ->
     $('.sidebar .menu a.active').removeClass('active')
@@ -80,24 +72,19 @@ class @Chr
       firstMenuItemPath = @$mainMenu.find(".menu-#{ Object.keys(@modules)[0] }").attr('href')
       return @updateHash(firstMenuItemPath)
 
-
-  # PUBLIC ================================================
+  # PUBLIC ====================================================================
 
   isMobile: ->
     $(window).width() < 768
 
-
   isTablet: ->
     ! @isMobile() && ! @isDesktop()
-
 
   isDesktop: ->
     $(window).width() >= 1024
 
-
   updateHash: (path, @skipRoute=false) ->
     window.location.hash = path
-
 
   start: (title, @config) ->
     @$el        =$ (@config.selector ? 'body')
@@ -124,15 +111,9 @@ class @Chr
   showNotification: (message) ->
     alert message
 
-
 include(Chr, chrRouter)
 
-
-# ---------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Initialize `chr` object in global scope
-# ---------------------------------------------------------
+# -----------------------------------------------------------------------------
 window.chr = new Chr()
-
-
-
-

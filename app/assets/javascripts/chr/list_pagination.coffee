@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 
 @listPagination =
-  # PRIVATE ===============================================
+  # PRIVATE ===================================================================
 
   _bind_pagination: ->
     if chr.isMobile()
@@ -11,7 +11,6 @@
 
     else
       @_bind_desktop_scroll()
-
 
   _bind_desktop_scroll: ->
     @lastScrollTop = 0
@@ -25,7 +24,6 @@
         chr._load_next_page($viewport, this, scroll_top)
 
       @lastScrollTop = scroll_top
-
 
 chr._bind_mobile_scroll = ->
   if ! @_mobile_scroll_binded
@@ -51,7 +49,6 @@ chr._bind_mobile_scroll = ->
 
     @_mobile_scroll_binded = true
 
-
 chr._list_height = ($items) ->
   height = 0
   offset = null
@@ -62,7 +59,6 @@ chr._list_height = ($items) ->
       height += $(this).outerHeight() - 1
 
   return height
-
 
 chr._load_next_page = ($viewport, list, scroll_top) ->
   $items = list.$items
@@ -83,7 +79,3 @@ chr._load_next_page = ($viewport, list, scroll_top) ->
   store.load false,
     onSuccess: => ;
     onError:   => chr.showAlert("Can't load next page, server error 500.")
-
-
-
-
