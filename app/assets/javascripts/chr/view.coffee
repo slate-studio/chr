@@ -119,7 +119,7 @@ class @View
           @_add_delete_button()
           chr.updateHash("#{ @closePath }/view/#{ @object._id }", true)
           @path = window.location.hash
-          @config.onViewShow?(@)
+          @config.onEditShow?(@)
         onError: (errors) =>
           @_save_error('Document is not created due to an error.', errors)
 
