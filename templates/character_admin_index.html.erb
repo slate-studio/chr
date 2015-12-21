@@ -1,2 +1,5 @@
 <%= javascript_include_tag :admin %>
-<%= render partial: 'ants/profile' %>
+
+<% if admin_user_signed_in? %>
+  <%= render partial: 'ants/profile' %>
+<% end %>

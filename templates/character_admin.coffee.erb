@@ -4,20 +4,35 @@
 #= require chr
 #= require loft
 #= require ants
+#= require journal
 
-@getConfig = (data) ->
-  modules =
-    loft: new Loft()
-    settings:
-      items:
-        admins: new AntsAdminUsers()
-        redirects: new AntsRedirects()
+@redirectToSignIn = ->
+  signinPath = "/admin/sign_in"
+  if window.location.hash
+    returnTo = window.location.hash.substring(1)
+    signinPath = "#{signinPath}?return_to=#{returnTo}"
+  window.location = signinPath
 
-  return { modules: modules }
+@addWebsiteLink = ->
+  $link =$ """<a href='/' target='_blank'>
+                <i class='fa fa-home fa-fw'></i> View Site
+              </a>"""
+  chr.$mainMenu.prepend $link
 
 $ ->
-  $.get '/admin/bootstrap.json', (response) ->
-    config = getConfig(response)
-
-    chr.start('<%= app_name %>', config)
+  $.get("/admin/bootstrap.json", (response) ->
+    chr.start "<%= app_name %>",
+      modules:
+        posts: new JournalPosts()
+        pages: new JournalPages()
+        loft: new Loft()
+        settings:
+          menuIcon: "cog"
+          items:
+            categories: new JournalCategories()
+            admins: new AntsAdminUsers()
+            redirects: new AntsRedirects()
     new AntsProfile()
+  ).fail (response) ->
+    if response.status == 401
+      redirectToSignIn(response)

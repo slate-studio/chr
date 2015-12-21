@@ -1,9 +1,11 @@
-class Admin::DeviseOverrides::PasswordsController < Devise::PasswordsController
-  layout 'admin'
+module Admin
+  class DeviseOverrides::PasswordsController < Devise::PasswordsController
+    layout 'admin'
 
-  protected
+    protected
 
-  def after_resetting_password_path_for(resource)
-    admin_path
+    def after_resetting_password_path_for(resource)
+      admin_path
+    end
   end
 end

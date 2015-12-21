@@ -58,11 +58,6 @@ module Chr
     end
 
 
-    def configure_newrelic
-      template 'newrelic.yml.erb', 'config/newrelic.yml'
-    end
-
-
     def configure_smtp
       copy_file 'smtp.rb', 'config/smtp.rb'
 
