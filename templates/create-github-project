@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if [ "$1" == "" ] || [ "$2" == "" ] || [ "$3" == "" ]; then
+    echo "Github login, pass and new repo_name must be provided"
+    exit 1
+fi
+GIHUB_LOGIN="$1"
+GITHUB_PASS="$2"
+REPO_NAME="$3"
+echo "Creating new repo on github..."
+
+CLONE_URL=$(rake deploy:create_github_repo github_login="${GIHUB_LOGIN}" github_pass="${GITHUB_PASS}" repo_name="${REPO_NAME}")
+
+git init
+git add .
+git commit -m "first commit"
+git remote add origin "${CLONE_URL}"
+git push -u origin master

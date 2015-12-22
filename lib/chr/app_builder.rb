@@ -313,6 +313,23 @@ module Chr
     end
 
 
+    def gtihub_project
+      copy_file "create-github-project", "bin/create-github-project"
+      copy_file "create-github-repo.rake", "lib/tasks/deploy/create-github-repo.rake"
+    end
+
+
+    def heroku_deploy
+      copy_file "deploy-heroku", "bin/deploy-heroku"
+    end
+
+
+    def s3_setup
+      copy_file "setup-s3", "bin/setup-s3"
+      copy_file "create-s3-bucket.rake", "lib/tasks/deploy/create-s3-bucket.rake"
+    end
+
+
     def initialize_mongoid
       generate 'mongoid:config'
       append_file "config/mongoid.yml", """\nproduction:

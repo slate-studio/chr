@@ -40,6 +40,7 @@ module Chr
       invoke :setup_character
       invoke :setup_database
       invoke :setup_git
+      invoke :create_deploy_scripts
       # invoke :create_heroku_apps
       # invoke :create_github_repo
       invoke :setup_bundler_audit
@@ -167,6 +168,14 @@ module Chr
 
     def init_git
       build :init_git
+    end
+
+
+    def create_deploy_scripts
+      say 'Creating deploy scripts'
+      build :gtihub_project
+      build :heroku_deploy
+      build :s3_setup
     end
 
 
