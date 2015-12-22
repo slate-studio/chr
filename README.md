@@ -8,7 +8,7 @@ Character is powerful responsive javascript-based CMS for website and applicatio
 
 ## Quick Start
 
-For Rails demo project and to understanding how Character works please check out our boilerplate project [Venice](https://github.com/alexkravets/venice) — it assumes you have Ruby & MongoDB installed on your local machine.
+For Rails demo project and to understand how Character works please check out our boilerplate project [Venice](https://github.com/alexkravets/venice) — it assumes you have Ruby & MongoDB installed on your local machine.
 
 
 ## Character Family:
@@ -22,7 +22,7 @@ For Rails demo project and to understanding how Character works please check out
 
 ## License
 
-Copyright © 2015 [Slate Studio, LLC](http://slatestudio.com). Character is free software, and may be redistributed under the terms specified in the [license](LICENSE.md).
+Copyright © 2015 [Slate Studio, LLC](http://slatestudio.com). Character is free software, and may be redistributed under the terms specified in the [license](LICENSE).
 
 
 ## About Slate Studio
