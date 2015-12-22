@@ -172,7 +172,7 @@ module Chr
 
 
     def create_deploy_scripts
-      say 'Creating deploy scripts'
+      say "Creating deploy scripts"
       build :gtihub_project
       build :heroku_deploy
       build :s3_setup

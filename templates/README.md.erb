@@ -36,7 +36,8 @@ Before create github project you will need:
 - [Generate and add ssh key to github](https://help.github.com/articles/generating-ssh-keys/)
 
 Run this create-github-project script to create, inititate, add git remote and pull github repo:
-`% ./bin/create-github-project <github_username> <github_pass> <new_repo_name>`
+
+    ./bin/create-github-project <github_username> <github_pass> <new_repo_name>
 
 
 ## Deploying to Heroku
@@ -51,7 +52,8 @@ Before deploy to heroku you will need:
 
 
 Run this deploy-heroku script to set up create, connect and setup heroku app:
-`% ./bin/deploy-heroku <app_name>`
+
+    ./bin/deploy-heroku <app_name>
 
 
 ## Setup S3
@@ -64,7 +66,5 @@ Before Setup S3 you will need:
 
 Run setup-s3 script to create a new bucket, create user with permission only for new bucket on s3 and set appropriate variables to Heroku.
 
-`% ./bin/setup-s3 <access_key_id> <secret_access_key>`
+    ./bin/setup-s3 <access_key_id> <secret_access_key>
 
-
-Good luck, have fun, program well and program in style!

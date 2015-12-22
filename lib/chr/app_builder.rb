@@ -315,7 +315,8 @@ module Chr
 
     def gtihub_project
       copy_file "create-github-project", "bin/create-github-project"
-      copy_file "create-github-repo.rake", "lib/tasks/deploy/create-github-repo.rake"
+      copy_file "create-github-repo.rake",
+                "lib/tasks/deploy/create-github-repo.rake"
     end
 
 
@@ -326,7 +327,8 @@ module Chr
 
     def s3_setup
       copy_file "setup-s3", "bin/setup-s3"
-      copy_file "create-s3-bucket.rake", "lib/tasks/deploy/create-s3-bucket.rake"
+      copy_file "create-s3-bucket.rake",
+                "lib/tasks/deploy/create-s3-bucket.rake"
     end
 
 
