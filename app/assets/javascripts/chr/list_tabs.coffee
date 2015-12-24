@@ -18,12 +18,11 @@
     @selectTab($firstTab, false)
 
   _add_tab: (title, urlParams) ->
-    $tab =$ "<a href='#'>#{title}</a>"
+    $tab =$ "<button>#{title}</button>"
     @$tabs.append $tab
     @tabLinks.push $tab
 
     $tab.on "click", (e) =>
-      e.preventDefault()
       $tab =$ e.currentTarget
       @selectTab($tab, true)
 

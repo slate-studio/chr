@@ -8,6 +8,7 @@ $desktop: "screen and (min-width:1024px)";
 *:after { box-sizing: border-box; }
 html {  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 a { text-decoration: none; }
+button { outline: none; }
 .spinner { @include spinner; }
 
 /* Menu -------------------------------------------------------------------- */
@@ -165,10 +166,16 @@ a { text-decoration: none; }
 .header-tabs {
   @include position(relative, 0.45em null null null);
   border-radius : 4px;
-  overflow: hidden;
   display: inline-block;
+  overflow: hidden;
 
-  a { display : inline-block; }
+  button {
+    margin-right: 1px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 }
 
 /* Mobile ------------------------------------------------------------------ */
