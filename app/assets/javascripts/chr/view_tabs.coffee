@@ -51,6 +51,7 @@
     index = @$tabs.children().index($link)
     @_activate_tab(index)
     @$content.scrollTop(0)
+    @$content.trigger("scroll")
 
   _activate_tab: (index) ->
     @$tabs.children().removeClass("active")
