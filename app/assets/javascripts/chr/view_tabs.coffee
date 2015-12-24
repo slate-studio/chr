@@ -42,10 +42,9 @@
       @$tabs.append(@_create_button(tab_title))
 
   _create_button: (name) ->
-    $tabButton =$ "<a href='#'>#{ name }</a>"
+    $tabButton =$ "<button>#{ name }</button>"
     $tabButton.on 'click', (e) =>
       @_on_tab_click($(e.currentTarget))
-      e.preventDefault()
     return $tabButton
 
   _on_tab_click: ($link) ->
