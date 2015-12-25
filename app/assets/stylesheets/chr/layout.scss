@@ -85,6 +85,12 @@ button { outline: none; }
   .icon-reorder {
     @include item-icon-base;
     left: 0;
+
+    &:after {
+      @include position(absolute, 0 0 0 0);
+      content: "";
+      display: block;
+    }
   }
 
   .icon-folder {
