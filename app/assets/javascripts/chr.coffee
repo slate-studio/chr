@@ -21,3 +21,21 @@
 @Icons.search = "<i class='fa fa-search'></i>"
 @Icons.add = "<i class='fa fa-plus'></i>"
 @Icons.close = "<i class='fa fa-chevron-left'></i>"
+
+class @Foo
+
+  constructor: ->
+
+  bar: -> 'bar'
+
+  change_h1: ->
+    $('h1').text('Title Changed')
+
+  request: (callback)->
+    url = "/foo"
+    $.ajax
+      url: url
+      type: 'GET'
+      dataType: 'script'
+      success: (data) ->
+        callback(null, data)

@@ -53,4 +53,7 @@ email client etc. It's responsive by default and designed to be data source inde
 
   s.add_development_dependency "sprockets-rails", "< 3.0.0" # Problems with Konacha 3.7.0 for 3+
   s.add_development_dependency "konacha"
+  s.add_development_dependency "ejs"
+  s.add_development_dependency "responders", "2.1.0" # Problems with Tests (don't work with database cleaner)
+
 end

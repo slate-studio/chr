@@ -16,3 +16,5 @@ before_install:
 
 script:
   - xvfb-run rake test
+  - xvfb-run rake konacha:run
+
