@@ -119,7 +119,7 @@ button { outline: none; }
   padding-left: 2em;
 
   .item-thumbnail { left: 1.8em; }
-  &.has-thumbnail.has-subtitle { padding-left: 5em; }
+  &.has-thumbnail { padding-left: 5em; }
   &:after { left: 2em; }
 }
 
