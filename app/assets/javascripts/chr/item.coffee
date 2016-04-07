@@ -30,10 +30,10 @@ class @Item
 
   _render_title: ->
     title  = @object.__title__ # title for @config.items
-    title ?= @object[@config.itemTitleField]
-    title ?= @object['_list_item_title']
-    title ?= _firstNonEmptyValue(@object)
-    title ?= "No Title"
+    title ||= @object[@config.itemTitleField]
+    title ||= @object['_list_item_title']
+    title ||= _firstNonEmptyValue(@object)
+    title ||= "No Title"
 
     @$title =$ "<div class='item-title'>#{ title }</div>"
     @$el.append(@$title)
