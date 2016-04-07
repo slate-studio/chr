@@ -102,9 +102,9 @@ button { outline: none; }
 
 .item.has-subtitle { padding: 0.6em 2em 0.6em 1em; }
 .item.has-thumbnail { padding-left: 4.5em; }
-.item.has-thumbnail .item-title { line-height: 2.15; }
+.item.has-thumbnail .item-title { line-height: 2.15; min-height: 2.15em; }
 .item.has-thumbnail.has-subtitle { padding: 1em 2em .75em 4em; }
-.item.has-thumbnail.has-subtitle .item-title { line-height : 1.2; }
+.item.has-thumbnail.has-subtitle .item-title { line-height : 1.2; min-height: 0; }
 
 .item-title { @include ellipsis; display: block; }
 .item-subtitle { @include ellipsis; font-size: 0.8em; }
@@ -113,7 +113,14 @@ button { outline: none; }
   width: 2.5em;
   height: 2.5em;
 }
-.item-thumbnail img { width: 100%; border-radius: 1.55em; }
+.item-thumbnail img {
+  border-radius: 1.55em;
+  height: inherit;
+  -o-object-fit: cover;
+  object-fit: cover;
+  overflow: hidden;
+  width: inherit;
+}
 
 .item.reorderable {
   padding-left: 2em;
